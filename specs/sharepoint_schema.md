@@ -27,7 +27,7 @@ Conventions :
 | `date_debut_parcours`| Date and Time         | oui         | -                  | Date seule (pas d'heure), format ISO 8601               | Utilisee pour calculer la fin de parcours (max + 12 mois) |
 | `date_prochain_rdv`  | Date and Time         | oui         | -                  | Date seule (pas d'heure), format ISO 8601               | Declencheur du Flow J-5 (invitation) et Flow J (PDF)       |
 | `statut`             | Choice                | oui         | `actif`            | `actif` / `suspendu` / `termine`                        | `suspendu` = pause temporaire, `termine` = parcours clos   |
-| `Title`              | Single line of text   | non         | -                  | Colonne built-in SharePoint, peut rester vide           | Ignoree fonctionnellement, conservee car non supprimable   |
+| `Title`              | Single line of text   | oui         | -                  | Format : "{prenom} {nom}"                               | Rempli automatiquement par le Flow a la creation. Sert de libelle lisible dans les vues SharePoint. |
 
 **Index recommandes** :
 - `email` : index pour recherche rapide par le Flow
@@ -54,7 +54,7 @@ Conventions :
 | `zielmarkt`            | Multiple lines of text| non         | -                 | Texte libre, max 3 000 car.     | Region, branche, taille d'entreprise ciblee                          |
 | `date_creation`        | Date and Time         | oui         | `[now]`           | Date + heure ISO 8601           | Renseignee automatiquement par le Flow onboarding                    |
 | `date_modification`    | Date and Time         | non         | -                 | Date + heure ISO 8601           | Mis a jour si le participant re-soumet le formulaire onboarding      |
-| `Title`                | Single line of text   | non         | -                 | Built-in, ignoree fonctionnellement | Conservee car non supprimable dans SharePoint                    |
+| `Title`                | Single line of text   | oui         | -                 | Format : "Profil - {prenom_participant} {nom_participant}" | Rempli automatiquement par le Flow a la creation. Sert de libelle lisible dans les vues SharePoint. |
 
 **Index recommandes** :
 - `id_participant` : index pour lookup depuis le Flow
@@ -82,7 +82,7 @@ Conventions :
 | `wo_brauche_ich_unterstuetzung`  | Multiple lines of text| non         | -                 | Texte libre, max 3 000 car.                                                             | Points sur lesquels le participant souhaite un soutien                 |
 | `themen_naechster_termin`        | Multiple lines of text| non         | -                 | Texte libre, max 3 000 car.                                                             | Sujets a aborder au prochain RDV                                       |
 | `sonstige_anmerkungen`           | Multiple lines of text| non         | -                 | Texte libre, max 3 000 car.                                                             | Remarques diverses                                                     |
-| `Title`                          | Single line of text   | non         | -                 | Built-in, ignoree fonctionnellement                                                     | Conservee car non supprimable dans SharePoint                          |
+| `Title`                          | Single line of text   | oui         | -                 | Format : "{date_rdv_ISO} - {prenom_participant} {nom_participant}", date au format YYYY-MM-DD pour garantir le tri lexicographique dans les vues SharePoint | Rempli automatiquement par le Flow a la creation. Sert de libelle lisible dans les vues SharePoint. |
 
 **Index recommandes** :
 - `id_participant` : index pour lookup depuis le Flow

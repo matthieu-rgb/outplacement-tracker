@@ -23,14 +23,14 @@ Conventions :
 
 **Objet** :
 ```
-Ihr naechster Beratungstermin am {{date_rdv}} - Bitte Kurzbericht ausfullen
+Ihr nächster Beratungstermin am {{date_rdv}} - Bitte Kurzbericht ausfüllen
 ```
 
 **Corps (texte brut, compatible avec les clients mail sans HTML) :**
 ```
 Guten Tag {{prenom}} {{nom}},
 
-Ihr naechster Beratungstermin findet am {{date_rdv}} statt.
+Ihr nächster Beratungstermin findet am {{date_rdv}} statt.
 
 Um diesen Termin optimal vorzubereiten, bitten wir Sie, bis zum Vortag kurz folgende Fragen zu beantworten (ca. 5 Minuten):
 
@@ -38,9 +38,9 @@ Um diesen Termin optimal vorzubereiten, bitten wir Sie, bis zum Vortag kurz folg
 
 Nur die erste Frage ist Pflichtangabe. Alle anderen Felder sind freiwillig.
 
-Wenn Sie Fragen haben oder den Termin verschieben muessen, wenden Sie sich bitte an Ihre Beraterin.
+Wenn Sie Fragen haben oder den Termin verschieben müssen, wenden Sie sich bitte an Ihre Beraterin.
 
-Mit freundlichen Gruessen,
+Mit freundlichen Grüßen,
 Ihr Transfer-Team
 
 
@@ -56,7 +56,7 @@ Diese E-Mail wurde automatisch generiert. Bitte antworten Sie nicht direkt auf d
 
   <p>Guten Tag {{prenom}} {{nom}},</p>
 
-  <p>Ihr naechster Beratungstermin findet am <strong>{{date_rdv}}</strong> statt.</p>
+  <p>Ihr nächster Beratungstermin findet am <strong>{{date_rdv}}</strong> statt.</p>
 
   <p>Um diesen Termin optimal vorzubereiten, bitten wir Sie, bis zum Vortag kurz folgende Fragen zu beantworten (ca. 5 Minuten):</p>
 
@@ -69,9 +69,9 @@ Diese E-Mail wurde automatisch generiert. Bitte antworten Sie nicht direkt auf d
 
   <p style="font-size: 12px; color: #666666;">Nur die erste Frage ist Pflichtangabe. Alle anderen Felder sind freiwillig.</p>
 
-  <p>Wenn Sie Fragen haben oder den Termin verschieben muessen, wenden Sie sich bitte an Ihre Beraterin.</p>
+  <p>Wenn Sie Fragen haben oder den Termin verschieben müssen, wenden Sie sich bitte an Ihre Beraterin.</p>
 
-  <p>Mit freundlichen Gruessen,<br>Ihr Transfer-Team</p>
+  <p>Mit freundlichen Grüßen,<br>Ihr Transfer-Team</p>
 
   <hr style="border: none; border-top: 1px solid #dddddd; margin: 30px 0;">
   <p style="font-size: 11px; color: #999999;">Diese E-Mail wurde automatisch generiert. Bitte antworten Sie nicht direkt auf diese Nachricht.</p>
@@ -99,7 +99,7 @@ Dear {{prenom}} {{nom}},
 
 Your next appointment with your advisor is scheduled for {{date_rdv}}.
 
-To help prepare for this session, we kindly ask you to answer a few short questions before the day before your appointment (approx. 5 minutes):
+To help prepare for this session, we kindly ask you to answer a few short questions at least the day before your appointment (approx. 5 minutes):
 
 {{lien_formulaire}}
 
@@ -125,7 +125,7 @@ This email was generated automatically. Please do not reply directly to this mes
 
   <p>Your next appointment with your advisor is scheduled for <strong>{{date_rdv}}</strong>.</p>
 
-  <p>To help prepare for this session, we kindly ask you to answer a few short questions before the day before your appointment (approx. 5 minutes):</p>
+  <p>To help prepare for this session, we kindly ask you to answer a few short questions at least the day before your appointment (approx. 5 minutes):</p>
 
   <p style="text-align: center; margin: 30px 0;">
     <a href="{{lien_formulaire}}"
@@ -164,17 +164,17 @@ Transfer Mappe - {{prenom_participant}} {{nom_participant}} - Termin heute {{dat
 ```
 Guten Morgen,
 
-im Anhang finden Sie die aktuelle Transfer Mappe von {{prenom_participant}} {{nom_participant}} fuer den Beratungstermin heute, {{date_rdv}}.
+im Anhang finden Sie die aktuelle Transfer Mappe von {{prenom_participant}} {{nom_participant}} für den Beratungstermin heute, {{date_rdv}}.
 
-Das Dokument enthaelt:
-- Das Karriereprofil des Teilnehmers (falls ausgefuellt)
+Das Dokument enthält:
+- Das Karriereprofil des Teilnehmers (falls ausgefüllt)
 - Alle bisher eingereichten Monatsberichte in chronologischer Reihenfolge
-- Freie Unterschriftenfelder fuer die Zielvereinbarung
+- Freie Unterschriftenfelder für die Zielvereinbarung
 
 Eine Kopie wurde in SharePoint gespeichert:
 {{lien_pdf_sharepoint}}
 
-Mit freundlichen Gruessen,
+Mit freundlichen Grüßen,
 Transfer Mappe System
 
 
@@ -190,20 +190,20 @@ Diese E-Mail wurde automatisch generiert.
 
   <p>Guten Morgen,</p>
 
-  <p>im Anhang finden Sie die aktuelle Transfer Mappe von <strong>{{prenom_participant}} {{nom_participant}}</strong> fuer den Beratungstermin heute, <strong>{{date_rdv}}</strong>.</p>
+  <p>im Anhang finden Sie die aktuelle Transfer Mappe von <strong>{{prenom_participant}} {{nom_participant}}</strong> für den Beratungstermin heute, <strong>{{date_rdv}}</strong>.</p>
 
-  <p>Das Dokument enthaelt:</p>
+  <p>Das Dokument enthält:</p>
   <ul>
-    <li>Das Karriereprofil des Teilnehmers (falls ausgefuellt)</li>
+    <li>Das Karriereprofil des Teilnehmers (falls ausgefüllt)</li>
     <li>Alle bisher eingereichten Monatsberichte in chronologischer Reihenfolge</li>
-    <li>Freie Unterschriftenfelder fuer die Zielvereinbarung</li>
+    <li>Freie Unterschriftenfelder für die Zielvereinbarung</li>
   </ul>
 
   <p>Eine Kopie wurde in SharePoint gespeichert:<br>
     <a href="{{lien_pdf_sharepoint}}" style="color: #003DA5;">Zum Dokument in SharePoint</a>
   </p>
 
-  <p>Mit freundlichen Gruessen,<br>Transfer Mappe System</p>
+  <p>Mit freundlichen Grüßen,<br>Transfer Mappe System</p>
 
   <hr style="border: none; border-top: 1px solid #dddddd; margin: 30px 0;">
   <p style="font-size: 11px; color: #999999;">Diese E-Mail wurde automatisch generiert.</p>
@@ -284,7 +284,7 @@ This email was generated automatically.
 ## Notes de configuration Power Automate
 
 - **Expediteur** : utiliser une shared mailbox (ex. transfer@societe.de) configuree par l'administrateur M365. Ne pas utiliser le compte personnel d'un utilisateur.
-- **Encodage** : UTF-8 pour tous les templates. Les umlauts allemands (ae, oe, ue, ss) sont supportes nativement par Outlook et les clients IMAP courants.
+- **Encodage** : UTF-8 pour tous les templates. Les umlauts allemands (ü, ö, ä, ß) sont supportes en UTF-8 par le connecteur Office 365 Outlook et les clients IMAP courants. Les identifiants techniques (colonnes SharePoint, Tag values) restent en ae/oe/ue/ss.
 - **Piece jointe** (Template 3 et 4) : le PDF cumulatif est attache via l'action "Add an attachment" de Power Automate. Taille maximale recommandee : 10 MB (largement suffisant pour un PDF 12 mois).
 - **Lien formulaire** (Template 1 et 2) : le lien est genere par l'action "Get the response details" ou via une variable prefigurée. Il n'est pas reutilisable entre participants.
 - **Test** : toujours tester l'envoi avec une adresse de test avant mise en production. Ne jamais mettre une adresse personnelle reelle dans les variables de test.

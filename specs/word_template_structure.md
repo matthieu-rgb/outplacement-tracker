@@ -206,7 +206,7 @@ Le Flow traduit le code interne SharePoint en libelle lisible avant injection da
 
 | Code SharePoint              | Libelle DE                | Libelle EN                |
 |------------------------------|---------------------------|---------------------------|
-| `vollstaendig_erreicht`      | Vollstaendig erreicht     | Fully achieved            |
+| `vollstaendig_erreicht`      | Vollständig erreicht      | Fully achieved            |
 | `teilweise_erreicht`         | Teilweise erreicht        | Partially achieved        |
 | `nicht_erreicht`             | Nicht erreicht            | Not achieved              |
 | `noch_nicht_relevant`        | Noch nicht relevant       | Not yet relevant          |

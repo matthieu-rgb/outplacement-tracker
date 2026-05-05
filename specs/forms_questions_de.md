@@ -18,7 +18,7 @@ Conventions :
 **Texte d'introduction** (affiche en haut du formulaire) :
 
 > Dieser kurze Fragebogen hilft Ihrer Beraterin, Sie und Ihre Ziele besser zu verstehen.
-> Die Angaben sind freiwillig - Sie entscheiden, was Sie teilen moechten. Sie koennen dieses Formular jederzeit erneut ausfullen, um Ihre Angaben zu aktualisieren.
+> Die Angaben sind freiwillig - Sie entscheiden, was Sie teilen möchten. Sie können dieses Formular jederzeit erneut ausfüllen, um Ihre Angaben zu aktualisieren.
 > Alle Informationen bleiben vertraulich und werden ausschliesslich im Rahmen Ihrer Begleitung verwendet.
 
 ---
@@ -28,7 +28,7 @@ Conventions :
 **Type** : Mehrzeiliger Text (Multiple lines of text)
 **Obligatoire** : non
 **Titre** : Ihr berufliches Hauptziel (Plan A)
-**Description / sous-texte** : Welche berufliche Richtung moechten Sie anstreben? Welche Art von Stelle suchen Sie? In welcher Branche oder Region?
+**Description / sous-texte** : Welche berufliche Richtung möchten Sie anstreben? Welche Art von Stelle suchen Sie? In welcher Branche oder Region?
 **Placeholder** : Beispiel: Projektmanager im Maschinenbau, Rhein-Saar-Region, Unternehmen ab 200 Mitarbeitern
 **Colonne SharePoint cible** : `Profils.plan_a`
 
@@ -39,8 +39,8 @@ Conventions :
 **Type** : Mehrzeiliger Text
 **Obligatoire** : non
 **Titre** : Ihr berufliches Alternativziel (Plan B)
-**Description / sous-texte** : Falls Plan A nicht greift - welche alternative berufliche Richtung waere fuer Sie ebenfalls interessant?
-**Placeholder** : Beispiel: Selbststandigkeit als Berater, oder Wechsel in den oeffentlichen Dienst
+**Description / sous-texte** : Falls Plan A nicht greift - welche alternative berufliche Richtung wäre für Sie ebenfalls interessant?
+**Placeholder** : Beispiel: Selbstständigkeit als Berater, oder Wechsel in den öffentlichen Dienst
 **Colonne SharePoint cible** : `Profils.plan_b`
 
 ---
@@ -49,9 +49,9 @@ Conventions :
 
 **Type** : Mehrzeiliger Text
 **Obligatoire** : non
-**Titre** : Ihr berufliches Profil und Ihre Staerken
-**Description / sous-texte** : Was sind Ihre zentralen Kompetenzen? Was macht Sie fuer Arbeitgeber besonders interessant? Welche Erfahrungen oder Qualifikationen heben Sie hervor?
-**Placeholder** : Beispiel: 15 Jahre Erfahrung in der Fahrzeugelektronik, spezialisiert auf CAN-Bus und Diagnose, Fuehrungserfahrung mit Teams bis 8 Personen, Deutsch und Franzoesisch fliessend
+**Titre** : Ihr berufliches Profil und Ihre Stärken
+**Description / sous-texte** : Was sind Ihre zentralen Kompetenzen? Was macht Sie für Arbeitgeber besonders interessant? Welche Erfahrungen oder Qualifikationen heben Sie hervor?
+**Placeholder** : Beispiel: 15 Jahre Erfahrung in der Fahrzeugelektronik, spezialisiert auf CAN-Bus und Diagnose, Führungserfahrung mit Teams bis 8 Personen, Deutsch und Französisch fließend
 **Colonne SharePoint cible** : `Profils.marketingplan`
 
 ---
@@ -61,16 +61,16 @@ Conventions :
 **Type** : Mehrzeiliger Text
 **Obligatoire** : non
 **Titre** : Ihr Zielmarkt
-**Description / sous-texte** : In welchem Umfeld moechten Sie arbeiten? Denken Sie an Region, Branche, Unternehmensgroesse oder Unternehmenstyp.
-**Placeholder** : Beispiel: Saarland / Lothringen / Luxemburg, Automobilindustrie oder Maschinenbau, mittelstaendische Unternehmen (100-500 Mitarbeiter)
+**Description / sous-texte** : In welchem Umfeld möchten Sie arbeiten? Denken Sie an Region, Branche, Unternehmensgröße oder Unternehmenstyp.
+**Placeholder** : Beispiel: Saarland / Lothringen / Luxemburg, Automobilindustrie oder Maschinenbau, mittelständische Unternehmen (100-500 Mitarbeiter)
 **Colonne SharePoint cible** : `Profils.zielmarkt`
 
 ---
 
 **Texte de confirmation** (affiche apres soumission) :
 
-> Vielen Dank fuer Ihre Angaben. Ihr Karriereprofil wurde gespeichert und steht Ihrer Beraterin zur Verfuegung.
-> Sie koennen dieses Formular jederzeit erneut ausfullen, um Ihre Angaben zu aktualisieren.
+> Vielen Dank für Ihre Angaben. Ihr Karriereprofil wurde gespeichert und steht Ihrer Beraterin zur Verfügung.
+> Sie können dieses Formular jederzeit erneut ausfüllen, um Ihre Angaben zu aktualisieren.
 
 ---
 
@@ -80,7 +80,7 @@ Conventions :
 
 **Texte d'introduction** (affiche en haut du formulaire) :
 
-> Bitte nehmen Sie sich 5 Minuten Zeit, um diesen kurzen Bericht vor Ihrem naechsten Beratungstermin auszufuellen.
+> Bitte nehmen Sie sich 5 Minuten Zeit, um diesen kurzen Bericht vor Ihrem nächsten Beratungstermin auszufüllen.
 > Nur die erste Frage ist Pflichtangabe. Alle anderen Felder sind freiwillig - Sie entscheiden, was Sie teilen moechten.
 > Diese Informationen helfen Ihrer Beraterin, den Termin gezielt vorzubereiten.
 
@@ -91,7 +91,7 @@ Conventions :
 **Type** : Mehrzeiliger Text
 **Obligatoire** : oui
 **Titre** : Wie war Ihr Monat? (*)
-**Description / sous-texte** : Bitte beschreiben Sie kurz, wie der vergangene Monat verlaufen ist - beruflich und/oder persoenllich, was auch immer Ihnen wichtig erscheint.
+**Description / sous-texte** : Bitte beschreiben Sie kurz, wie der vergangene Monat verlaufen ist - beruflich und/oder persönlich, was auch immer Ihnen wichtig erscheint.
 **Placeholder** : Ihr Bericht hier...
 **Colonne SharePoint cible** : `BilansMensuels.bilan_general`
 
@@ -106,7 +106,7 @@ Conventions :
 **Titre** : Wie stehen Sie bei den vereinbarten Zielen?
 **Description / sous-texte** : Denken Sie an die Ziele, die Sie beim letzten Termin mit Ihrer Beraterin vereinbart haben.
 **Options** (choix unique) :
-- Vollstaendig erreicht
+- Vollständig erreicht
 - Teilweise erreicht
 - Nicht erreicht
 - Noch nicht relevant
@@ -119,8 +119,8 @@ Conventions :
 
 **Partie 2b - Texte libre**
 **Obligatoire** : non
-**Titre** : Moechten Sie dazu etwas erlaeutern?
-**Description / sous-texte** : (optional) Kurze Erklaerung oder Kontext zu Ihrer Antwort oben.
+**Titre** : Möchten Sie dazu etwas erläutern?
+**Description / sous-texte** : (optional) Kurze Erklärung oder Kontext zu Ihrer Antwort oben.
 **Placeholder** : Ihre Erlaeuterung hier...
 **Colonne SharePoint cible** : `BilansMensuels.statut_objectifs_detail`
 
@@ -141,8 +141,8 @@ Conventions :
 
 **Type** : Mehrzeiliger Text
 **Obligatoire** : non
-**Titre** : Wo brauchen Sie Unterstuetzung?
-**Description / sous-texte** : (optional) In welchen Bereichen wuerden Sie sich Hilfe oder Unterstuetzung wuenschen - von Ihrer Beraterin oder anderweitig?
+**Titre** : Wo brauchen Sie Unterstützung?
+**Description / sous-texte** : (optional) In welchen Bereichen würden Sie sich Hilfe oder Unterstützung wünschen - von Ihrer Beraterin oder anderweitig?
 **Placeholder** : Ihre Antwort hier...
 **Colonne SharePoint cible** : `BilansMensuels.wo_brauche_ich_unterstuetzung`
 
@@ -152,8 +152,8 @@ Conventions :
 
 **Type** : Mehrzeiliger Text
 **Obligatoire** : non
-**Titre** : Welche Themen moechten Sie beim naechsten Termin besprechen?
-**Description / sous-texte** : (optional) Was liegt Ihnen besonders am Herzen fuer das naechste Gespraech?
+**Titre** : Welche Themen möchten Sie beim nächsten Termin besprechen?
+**Description / sous-texte** : (optional) Was liegt Ihnen besonders am Herzen für das nächste Gespräch?
 **Placeholder** : Ihre Antwort hier...
 **Colonne SharePoint cible** : `BilansMensuels.themen_naechster_termin`
 
@@ -172,7 +172,7 @@ Conventions :
 
 **Texte de confirmation** (affiche apres soumission) :
 
-> Vielen Dank fuer Ihren Bericht. Ihre Beraterin wird diesen vor Ihrem Termin lesen.
+> Vielen Dank für Ihren Bericht. Ihre Beraterin wird diesen vor Ihrem Termin lesen.
 > Wir freuen uns darauf, Sie bald zu sehen.
 
 ---

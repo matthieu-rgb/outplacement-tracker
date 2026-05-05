@@ -41,7 +41,7 @@ Erstellt am :      [Content Control : doc_date_generation]
 
 [Espace vertical]
 [Pied de page de garde - mention de confidentialite]
-Vertraulich - Nur fuer den internen Gebrauch
+Vertraulich - Nur für den internen Gebrauch
 ```
 
 **Styles appliques :**
@@ -66,7 +66,7 @@ Plan A - Berufliches Hauptziel
 Plan B - Berufliches Alternativziel
 [Content Control : profil_plan_b]
 
-Berufliches Profil und Staerken (Marketingplan)
+Berufliches Profil und Stärken (Marketingplan)
 [Content Control : profil_marketingplan]
 
 Zielmarkt
@@ -93,7 +93,7 @@ Chaque section est identique en structure. Remplacer `NN` par `01`, `02`, ..., `
 Termin :           [Content Control : bilan_NN_date_rdv]
 Eingereicht am :   [Content Control : bilan_NN_date_soumission]
 
-Monatlicher Rueckblick *
+Monatlicher Rückblick *
 [Content Control : bilan_NN_bilan_general]
 
 Stand der vereinbarten Ziele
@@ -103,10 +103,10 @@ Stand der vereinbarten Ziele
 Was lief gut?
 [Content Control : bilan_NN_was_lief_gut]
 
-Wo brauche ich Unterstuetzung?
+Wo brauche ich Unterstützung?
 [Content Control : bilan_NN_wo_brauche_ich]
 
-Themen fuer den naechsten Termin
+Themen für den nächsten Termin
 [Content Control : bilan_NN_themen_naechster_termin]
 
 Sonstige Anmerkungen
