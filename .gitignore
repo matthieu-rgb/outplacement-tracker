@@ -1,0 +1,30 @@
+# Outils de developpement locaux
+.claude/
+
+# Systeme
+.DS_Store
+Thumbs.db
+
+# Editeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Node
+node_modules/
+package-lock.json
+
+# Builds temporaires
+*.tmp
+*.bak
+build/
+dist/
