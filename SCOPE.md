@@ -109,7 +109,7 @@ La v0.1 est consideree comme livree lorsque :
 
 - [ ] Le repo GitHub contient l'integralite des fichiers listes dans la section 3.5
 - [ ] Le PDF de pitch est genere et integre dans `docs/`
-- [ ] La solution a ete testee de bout en bout dans un tenant Microsoft 365 Developer Program
+- [ ] Les implementation guides de la solution (Flows, Forms) sont valides et coherents avec les specs SharePoint et Word (ADR-006 : critere ajuste, test tenant Dev reporte post-livraison)
 - [ ] Au moins 5 sample PDFs de sortie sont disponibles dans `samples/`
 - [ ] Un Loom ou GIF de demonstration est integre au README ou au pitch
 - [ ] Le tag `v0.1.0` est cree sur le repo GitHub

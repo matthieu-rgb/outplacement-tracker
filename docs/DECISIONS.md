@@ -162,3 +162,52 @@ Le livrable Sprint 1 prevoyait la livraison de deux fichiers .docx avec Content 
 - La construction des .docx est estimee a 30 minutes par template pour un administrateur M365 competent
 - Aucune perte de qualite sur les livrables : les specs sont plus utilisables que des .docx mal formes
 - Le Sprint 2 demarre par la construction et validation des .docx dans un tenant Developer Program
+
+---
+
+## ADR-006 : Livraison Sprint 2 en mode blueprint sans tenant Microsoft 365
+
+**Statut** : Accepte
+**Date** : 2026-05-05
+
+### Contexte
+
+Aucun tenant Microsoft 365 Developer Program n'etait disponible au moment du Sprint 2.
+Les options explorees (Visual Studio Dev Essentials, trial Business Basic) n'ont pas
+abouti dans le delai du sprint.
+
+### Alternatives evaluees
+
+1. Bloquer le sprint jusqu'a obtention d'un tenant (duree indefinie)
+2. Produire des exports JSON "simules" manuellement (risque d'erreurs non detectees,
+   et les JSON Power Automate sont difficilement lisibles sans interface graphique)
+3. Livrer un "blueprint" : implementation guides detailles en Markdown + assets
+   construisables et testes localement
+
+### Decision
+
+**Option 3** : livraison en mode blueprint.
+
+Les Flows Power Automate et Microsoft Forms ne sont pas exportes en JSON mais
+documentes comme "implementation guides" : des documents Markdown suffisamment
+precis pour qu'un administrateur M365 puisse reconstruire les Flows et Forms
+a partir de zero, action par action.
+
+Les templates Word sont construits par script Python (python-docx) et valides
+localement (118 Content Controls verifies par assertion). Les sample PDFs sont
+generes en local via LibreOffice headless.
+
+### Consequences
+
+- Le kit est entierement livrable sans tenant
+- Le deploiement sur tenant reel prend 2 a 4 heures au lieu de 30 minutes
+  (si les JSON etaient importables directement)
+- Les implementation guides sont verifiables de facon independante : chaque action
+  Power Automate est documentee avec ses parametres et expressions exactes
+- Le critere de "done" du Sprint 2 est ajuste : "implementation guides valides et
+  coherents entre eux" plutot que "tests bout-en-bout dans tenant Dev"
+- Si un tenant devient disponible apres livraison, les guides peuvent etre implementes
+  puis exportes en JSON pour une future v0.1.1
+- Aucune perte de qualite metier : les specs de reference (sharepoint_schema.md,
+  word_template_structure.md, forms_questions_*.md, email_templates.md) restent
+  la source de verite, et les guides blueprint en derivent directement

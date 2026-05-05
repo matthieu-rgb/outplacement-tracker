@@ -1,0 +1,59 @@
+{
+  "version": "1.0",
+  "description": "Schema declaratif des listes SharePoint pour outplacement-tracker v0.1",
+  "site": "{SITE_URL}",
+  "lists": [
+    {
+      "title": "Participants",
+      "description": "Un enregistrement par participant suivi. Table centrale.",
+      "template": "GenericList",
+      "versioning": true,
+      "columns": [
+        { "internalName": "nom", "displayName": "Nom", "type": "Text", "required": true, "maxLength": 255 },
+        { "internalName": "prenom", "displayName": "Prenom", "type": "Text", "required": true, "maxLength": 255 },
+        { "internalName": "email", "displayName": "Email", "type": "Text", "required": true, "maxLength": 255 },
+        { "internalName": "langue", "displayName": "Langue", "type": "Choice", "required": true, "default": "DE", "choices": ["DE", "EN"] },
+        { "internalName": "id_conseillere", "displayName": "Conseillere (email M365)", "type": "Text", "required": true, "maxLength": 255 },
+        { "internalName": "date_debut_parcours", "displayName": "Date debut parcours", "type": "DateTime", "required": true, "format": "DateOnly" },
+        { "internalName": "date_prochain_rdv", "displayName": "Date prochain RDV", "type": "DateTime", "required": true, "format": "DateOnly" },
+        { "internalName": "statut", "displayName": "Statut", "type": "Choice", "required": true, "default": "actif", "choices": ["actif", "suspendu", "termine"] },
+        { "internalName": "Title", "displayName": "Title", "type": "Text", "required": true, "description": "Format: {prenom} {nom} - rempli automatiquement par le Flow" }
+      ]
+    },
+    {
+      "title": "Profils",
+      "description": "Profil de carriere optionnel, un par participant.",
+      "template": "GenericList",
+      "versioning": true,
+      "columns": [
+        { "internalName": "id_participant", "displayName": "ID Participant", "type": "Number", "required": true, "description": "Cle etrangere vers Participants.id" },
+        { "internalName": "plan_a", "displayName": "Plan A", "type": "Note", "required": false, "maxLength": 3000 },
+        { "internalName": "plan_b", "displayName": "Plan B", "type": "Note", "required": false, "maxLength": 3000 },
+        { "internalName": "marketingplan", "displayName": "Marketingplan", "type": "Note", "required": false, "maxLength": 3000 },
+        { "internalName": "zielmarkt", "displayName": "Zielmarkt", "type": "Note", "required": false, "maxLength": 3000 },
+        { "internalName": "date_creation", "displayName": "Date creation", "type": "DateTime", "required": true },
+        { "internalName": "date_modification", "displayName": "Date modification", "type": "DateTime", "required": false },
+        { "internalName": "Title", "displayName": "Title", "type": "Text", "required": true, "description": "Format: Profil - {prenom_participant} {nom_participant} - rempli par le Flow" }
+      ]
+    },
+    {
+      "title": "BilansMensuels",
+      "description": "Un enregistrement par bilan soumis. Zero a 12 par participant.",
+      "template": "GenericList",
+      "versioning": true,
+      "columns": [
+        { "internalName": "id_participant", "displayName": "ID Participant", "type": "Number", "required": true },
+        { "internalName": "date_rdv", "displayName": "Date RDV", "type": "DateTime", "required": true, "format": "DateOnly" },
+        { "internalName": "date_soumission", "displayName": "Date soumission", "type": "DateTime", "required": true },
+        { "internalName": "bilan_general", "displayName": "Bilan general", "type": "Note", "required": true, "maxLength": 5000 },
+        { "internalName": "statut_objectifs", "displayName": "Statut objectifs", "type": "Choice", "required": false, "choices": ["vollstaendig_erreicht", "teilweise_erreicht", "nicht_erreicht", "noch_nicht_relevant"] },
+        { "internalName": "statut_objectifs_detail", "displayName": "Statut objectifs detail", "type": "Note", "required": false, "maxLength": 3000 },
+        { "internalName": "was_lief_gut", "displayName": "Was lief gut", "type": "Note", "required": false, "maxLength": 3000 },
+        { "internalName": "wo_brauche_ich_unterstuetzung", "displayName": "Wo brauche ich Unterstuetzung", "type": "Note", "required": false, "maxLength": 3000 },
+        { "internalName": "themen_naechster_termin", "displayName": "Themen naechster Termin", "type": "Note", "required": false, "maxLength": 3000 },
+        { "internalName": "sonstige_anmerkungen", "displayName": "Sonstige Anmerkungen", "type": "Note", "required": false, "maxLength": 3000 },
+        { "internalName": "Title", "displayName": "Title", "type": "Text", "required": true, "description": "Format: YYYY-MM-DD - {prenom_participant} {nom_participant} - rempli par le Flow" }
+      ]
+    }
+  ]
+}

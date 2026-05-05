@@ -38,34 +38,43 @@ Plan de travail decoupe en 3 sprints. Chaque sprint produit des livrables concre
 
 ## Sprint 2 : Automatisation Power Platform
 
-**Objectif** : produire les exports Power Automate, le script de provisioning SharePoint, et tester l'ensemble dans un tenant Microsoft 365 Developer Program.
+**Objectif** : produire le kit d'integration complet (implementation guides, scripts, templates, samples).
+Livraison en mode blueprint sans tenant (ADR-006) : les Flows et Forms sont documentes
+en implementation guides Markdown au lieu d'exports JSON.
 
 **Livrables**
 
-- [ ] `power_automate/Flow_1_Invitation_J-5.json` : export du Flow J-5 importable
-- [ ] `power_automate/Flow_2_Generation_PDF.json` : export du Flow de generation PDF
-- [ ] `power_automate/IMPORT_GUIDE.md` : procedure d'import dans Power Automate, variables a ajuster
-- [ ] `sharepoint/lists_schema.json` : schema declaratif des listes
-- [ ] `sharepoint/setup_lists.ps1` : script PowerShell PnP pour creer les listes en une commande
-- [ ] `forms/form_onboarding_de.json` : structure du Forms onboarding DE (export ou specification d'import)
-- [ ] `forms/form_onboarding_en.json`
-- [ ] `forms/form_bilan_mensuel_de.json`
-- [ ] `forms/form_bilan_mensuel_en.json`
-- [ ] `samples/sample_pdf_output_de.pdf` : exemple de PDF cumulatif sur 3 mois fictifs
-- [ ] `samples/sample_pdf_output_en.pdf` : version EN
+- [x] `templates/word/transfer_mappe_template_de.docx` : template Word DE avec 118 Content Controls
+- [x] `templates/word/transfer_mappe_template_en.docx` : template Word EN avec 118 Content Controls
+- [x] `templates/word/build_templates.py` : script de generation des templates
+- [x] `sharepoint/lists_schema.json` : schema declaratif des 3 listes SharePoint
+- [x] `sharepoint/setup_lists.ps1` : script PowerShell PnP idempotent
+- [x] `forms/forms_construction_guide.md` : guide pas-a-pas pour creer les 4 formulaires
+- [x] `power_automate/Flow_1_Invitation_J-5.md` : implementation guide du Flow J-5
+- [x] `power_automate/Flow_2_Generation_PDF.md` : implementation guide du Flow PDF
+- [x] `power_automate/IMPORT_GUIDE.md` : guide global de mise en place (7 etapes)
+- [x] `samples/sample_pdf_output_de.pdf` : PDF cumulatif DE - Max Mustermann - 3 mois fictifs
+- [x] `samples/sample_pdf_output_en.pdf` : PDF cumulatif EN - John Doe - 3 mois fictifs
+- [x] `samples/build_samples.py` : script Python de generation des samples
+- [x] `docs/DECISIONS.md` : ADR-006 (livraison blueprint sans tenant)
+
+**Note ADR-006** : livraison en mode blueprint. Les Flows Power Automate et Microsoft Forms
+sont documentes en implementation guides Markdown au lieu d'exports JSON importables.
+Decision justifiee par l'absence de tenant Dev disponible dans le delai du sprint.
+Deploiement reel par l'admin M365 du client en suivant les guides : 2 a 4 heures.
 
 **Domaines mobilises**
 
-- Microsoft 365 : construction et export des Flows et Forms, script PnP
-- Architecture : revue de l'enchainement des Flows et de la coherence des donnees
-- Securite et DSGVO : audit des Flows (logs, gestion des erreurs, pas de fuite d'email)
+- Microsoft 365 : implementation guides Flows et Forms, script PnP
+- Architecture : coherence inter-listes, Tag values, expressions Power Automate
+- Securite et DSGVO : donnees fictives anonymisees, pas de PII dans les guides
 
-**Definition of done**
+**Definition of done (ajustee par ADR-006)**
 
-- Solution testee en bout-en-bout dans un tenant Dev avec 3 participants fictifs et 3 mois de bilans
-- Sample PDFs generes par le vrai systeme, pas a la main
-- Aucun email personnel n'apparait dans les Flows, les emails ou la documentation
-- Commit `feat: sprint 2 - power platform automation and tested samples`
+- Implementation guides valides et coherents avec les specs SharePoint et Word
+- Scripts Python executes et valides (118 Content Controls par template, PDFs generes)
+- Aucun email personnel ni PII reel dans les guides ou les samples
+- Commit `feat: sprint 2 - integration kit (templates, scripts, implementation guides)`
 
 ---
 
