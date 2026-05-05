@@ -24,7 +24,7 @@ Plusieurs stacks sont envisageables pour delivrer un suivi mensuel automatise av
 
 - Microsoft 365 (Forms + SharePoint + Power Automate)
 - Google Workspace (Forms + Sheets + Apps Script)
-- n8n self-hosted avec PostgreSQL et Tally
+- Solution self-hosted (n8n + PostgreSQL)
 - Solution custom Node.js sur VPS
 
 ### Alternatives evaluees
@@ -33,7 +33,7 @@ Plusieurs stacks sont envisageables pour delivrer un suivi mensuel automatise av
 |---|---|---|---|---|
 | Microsoft 365 | 0 (deja paye) | Native | Quasi nulle | Tres fort |
 | Google Workspace | 0 si deja en place | OK | Faible | Moyen |
-| n8n self-hosted | ~30 EUR/mois | A gerer (AVV requis) | Forte | Faible (souverainete moins evidente) |
+| Self-hosted | ~30 EUR/mois | A gerer (AVV requis) | Forte | Faible |
 | Custom Node.js | Variable | A gerer | Forte | Faible |
 
 ### Decision
@@ -91,7 +91,7 @@ Le PDF cumulatif contient des emplacements de signature vides en bas de chaque Z
 
 Plusieurs approches du suivi mensuel ont ete envisagees, depuis le tracking detaille de chaque candidature et contact jusqu'au bilan declaratif libre.
 
-La Transfer Mappe d'origine (10 k Beratung GmbH, version 2026 V1) precise explicitement en page 2 que le document appartient au participant et est un outil a son service, pas un outil de surveillance.
+La Transfer Mappe d'origine precise explicitement que le document appartient au participant et est un outil a son service, pas un outil de surveillance.
 
 ### Alternatives evaluees
 
@@ -134,27 +134,3 @@ Le PDF cumulatif empile les bilans mensuels chronologiquement. Le template Word 
 - Le template Word inclut jusqu'a 12 sections mensuelles avec un mecanisme de boucle Power Automate
 - Si une societe gere des cas plus longs (rare), il suffit d'ajouter des sections au template
 - Pas de limite technique cote Power Automate ou SharePoint (volume largement compatible)
-
----
-
-## ADR-005 : Organisation projet en sub-agents
-
-**Statut** : Accepte
-**Date** : 2026-05-05
-
-### Contexte
-
-Le projet implique plusieurs domaines d'expertise (Microsoft 365, securite, redaction, design). Une approche generaliste avec un seul agent Claude Code risque de produire un livrable moyen sur tout sans exceller nulle part.
-
-### Decision
-
-Le projet utilise une architecture en **6 sub-agents specialises** (Tech Lead, M365 Expert, Software Architect, Security/DSGVO, Technical Writer, Design/Frontend).
-
-Chaque agent est defini dans `.claude/agents/`. Le Tech Lead orchestre les autres et arbitre.
-
-### Consequences
-
-- Travail cloisonne par domaine, qualite plus elevee
-- Reviews croisees obligatoires (au moins 2 reviewers par livrable critique)
-- Discipline projet renforcee : SCOPE, BACKLOG, DECISIONS, SPRINTS sont les fichiers sacres
-- Effort initial de mise en place plus eleve, mais retombees fortes en qualite et en reproductibilite

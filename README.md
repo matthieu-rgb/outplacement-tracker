@@ -13,7 +13,7 @@ Cette solution propose une alternative legere : un formulaire mensuel envoye 5 j
 ```
 J-5 avant RDV    -> le participant recoit un mail avec un lien Forms
                     et y resume librement son mois
-                    
+
 Jour J du RDV    -> la conseillere recoit un PDF cumulatif avec
                     l'historique complet du participant et le
                     bilan du mois ecoule
@@ -43,18 +43,6 @@ Resume :
 5. Ajuster les variables (boite mail expediteur, conseillere par defaut)
 
 Temps de deploiement estime : 1 a 2 heures pour un administrateur Microsoft 365.
-
-## Pour les developpeurs
-
-Le projet utilise une architecture en sub-agents specialises pour Claude Code. Voir `.claude/agents/` pour les definitions de chaque role.
-
-```bash
-# A la racine du repo
-claude
-> demarre le sprint 1
-```
-
-Le Tech Lead orchestrera le travail, deleguera aux specialistes, et reviendra vers toi pour validation.
 
 ## Statut
 
