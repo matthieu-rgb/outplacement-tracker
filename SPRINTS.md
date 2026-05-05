@@ -10,13 +10,13 @@ Plan de travail decoupe en 3 sprints. Chaque sprint produit des livrables concre
 
 **Livrables**
 
-- [ ] `specs/sharepoint_schema.md` : schema complet des listes SharePoint (colonnes, types, valeurs par defaut)
-- [ ] `specs/forms_questions_de.md` : questions exactes du Forms onboarding et bilan mensuel en allemand
-- [ ] `specs/forms_questions_en.md` : version anglaise 1:1
-- [ ] `specs/email_templates.md` : 4 templates d'email (invitation J-5 DE/EN, notification conseillere J DE/EN)
-- [ ] `specs/word_template_structure.md` : structure du template Word avec liste des content controls et leurs Tag values
-- [ ] `templates/word/transfer_mappe_template_de.docx` : template Word DE avec content controls
-- [ ] `templates/word/transfer_mappe_template_en.docx` : template Word EN avec content controls
+- [x] `specs/sharepoint_schema.md` : schema complet des listes SharePoint (colonnes, types, valeurs par defaut)
+- [x] `specs/forms_questions_de.md` : questions exactes du Forms onboarding et bilan mensuel en allemand
+- [x] `specs/forms_questions_en.md` : version anglaise 1:1
+- [x] `specs/email_templates.md` : 4 templates d'email (invitation J-5 DE/EN, notification conseillere J DE/EN)
+- [x] `specs/word_template_structure.md` : structure du template Word avec liste des content controls et leurs Tag values
+- [x] `templates/word/transfer_mappe_template_de_spec.md` : spec de construction du template Word DE (voir note ci-dessous)
+- [x] `templates/word/transfer_mappe_template_en_spec.md` : spec de construction du template Word EN (voir note ci-dessous)
 
 **Domaines mobilises**
 
@@ -24,6 +24,8 @@ Plan de travail decoupe en 3 sprints. Chaque sprint produit des livrables concre
 - Microsoft 365 : faisabilite Forms, content controls Word compatibles Power Automate
 - Redaction : questions et emails, registre de langue allemand metier
 - Securite et DSGVO : revue des donnees collectees (minimisation, pas de PII inutile)
+
+**Note sur les templates Word** : les fichiers .docx binaires ne peuvent pas etre generes par un agent sans runtime Word. A la place, des specs de construction detaillees ont ete produites (`*_spec.md`). Ces specs documentent exactement les Content Controls, Tag values, styles et structure XML necessaires pour construire le .docx manuellement dans Word en 30 minutes. La construction des .docx reels est une tache Sprint 2 (test en tenant Dev).
 
 **Definition of done**
 

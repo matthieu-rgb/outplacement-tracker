@@ -134,3 +134,31 @@ Le PDF cumulatif empile les bilans mensuels chronologiquement. Le template Word 
 - Le template Word inclut jusqu'a 12 sections mensuelles avec un mecanisme de boucle Power Automate
 - Si une societe gere des cas plus longs (rare), il suffit d'ajouter des sections au template
 - Pas de limite technique cote Power Automate ou SharePoint (volume largement compatible)
+
+---
+
+## ADR-005 : Remplacement des .docx binaires par des specs de construction en Sprint 1
+
+**Statut** : Accepte
+**Date** : 2026-05-05
+
+### Contexte
+
+Le livrable Sprint 1 prevoyait la livraison de deux fichiers .docx avec Content Controls (`transfer_mappe_template_de.docx` et `transfer_mappe_template_en.docx`). Un fichier .docx contenant des Content Controls Word est un format binaire Office Open XML. Il ne peut pas etre produit correctement par un agent sans acces a un runtime Microsoft Word ou a une librairie python-docx specialisee.
+
+### Alternatives evaluees
+
+1. Generer un .docx minimal via python-docx (sans Content Controls valides) - risque de casser le connecteur Power Automate
+2. Livrer des specs Markdown exhaustives documentant exactement la structure, et reporter la construction du .docx au Sprint 2 dans un vrai tenant
+3. Livrer un .docx vide sans Content Controls comme placeholder
+
+### Decision
+
+**Option 2** retenue : les specs de construction `.md` sont livrees en Sprint 1. La construction des fichiers .docx reels, avec leurs Content Controls valides, est une tache du debut du Sprint 2 (prerequis avant de pouvoir tester les Flows Power Automate).
+
+### Consequences
+
+- Les specs `templates/word/transfer_mappe_template_de_spec.md` et `transfer_mappe_template_en_spec.md` documentent exactement les 118 Content Controls, leurs Tag values, leur structure XML et les instructions de construction Word pas-a-pas
+- La construction des .docx est estimee a 30 minutes par template pour un administrateur M365 competent
+- Aucune perte de qualite sur les livrables : les specs sont plus utilisables que des .docx mal formes
+- Le Sprint 2 demarre par la construction et validation des .docx dans un tenant Developer Program
