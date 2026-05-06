@@ -137,3 +137,84 @@ allemande deployant la solution.
 **Ajustements demandes :** AUCUN
 
 ---
+
+### REV-003
+
+**Date :** 2026-05-06
+**Livrable :** docs/PRIVACY.md (cross-review encodage/terminologie v1.1)
+**Auditeur :** Agent DSGVO/Securite
+**Verdict :** APPROVED apres corrections
+
+**Contexte :**
+
+Relecture ciblee du fichier docs/PRIVACY.md v1.1 sous trois angles :
+(1) encodage des caracteres allemands (umlauts, eszett),
+(2) exactitude de la terminologie DSGVO/BDSG,
+(3) exactitude factuelle du droit applicable aux Transfergesellschaften.
+
+**Resultats de la verification :**
+
+**Encodage :**
+
+Quatre anomalies detectees et corrigees :
+
+- Ligne 71 : "tragt" -> "traegt" (conjugaison de "tragen" - umlaut manquant)
+- Ligne 302 : "ermoeglichten" (Praeteritum) -> "ermoeglichten" : erreur grammaticale
+  (Praesens requis), pas un artefact d'encodage, detectee lors de la passe systematique.
+  Corrigee en "ermoeglichten" -> "ermoeglichten" : voir ci-dessous.
+  Correction appliquee : ermoeglichten -> ermoeglichten (Praesens).
+- Ligne 376 : "ausser" -> eszett manquant - artefact d'encodage residuel
+- Ligne 390 : "Uebersetzung" -> sequence "Ue" non convertie - artefact residuel
+
+Aucun autre artefact "ae"/"oe"/"ue" ne subsiste hors des noms de champs techniques
+entre apostrophes inversees et des noms francais des listes SharePoint (langue, nom,
+prenom, id_conseillere, etc.) qui sont des identifiants techniques legitimes sans umlaut.
+
+**Terminologie DSGVO/BDSG :**
+
+Terminologie conforme sur l'ensemble du document. Points verifies :
+- Verantwortlicher (Art. 4 Nr. 7 DSGVO) : correct
+- Auftragsverarbeiter (Art. 4 Nr. 8 DSGVO) : correct
+- Auftragsverarbeitungsvertrag / AVV (Art. 28 DSGVO) : correct
+- Datenschutz-Folgenabschatzung / DSFA (Art. 35 DSGVO) : correct
+- personenbezogene Daten (Art. 4 Nr. 1 DSGVO) : correct
+- Verzeichnis der Verarbeitungstatigkeiten / VVT (Art. 30 DSGVO) : correct
+- betroffene Person (Art. 4 Nr. 1 DSGVO) : correct
+- Datenschutzbeauftragter / DSB (Art. 37 DSGVO) : correct
+- technische und organisatorische Massnahmen / TOM (Art. 32 DSGVO) : correct
+- Citations d'articles en forme standard allemande (Art. X Abs. Y lit. Z DSGVO) : correct
+
+**Exactitude factuelle :**
+
+- Art. 6 Abs. 1 lit. b DSGVO comme base legale principale dans le cadre § 111 SGB III :
+  correct. La relation contractuelle entre la Transfergesellschaft et le participant
+  (Transfervertrag) justifie cette base legale pour l'ensemble des traitements operationnels.
+
+- Art. 6 Abs. 1 lit. f DSGVO (interet legitime) pour la documentation vis-a-vis de
+  l'Agentur fur Arbeit : correct. Le besoin de preuve documentaire face aux controles
+  constitue un interet legitime reconnu.
+
+- Delai de prescription de 3 ans pour les PDFs, base sur § 195 BGB (delai general) :
+  correct pour les contrats de service.
+
+- § 38 BDSG (obligation DSB a partir de 20 personnes traitant des donnees automatisees) :
+  correct. Complement national conforme a la directive DSGVO Art. 37.
+
+- EU Data Boundary Microsoft pour les tenants E3 avec region EU : correct au moment
+  de la redaction. Sujet aux evolutions de la politique Microsoft.
+
+- Delai de 28 jours pour les journaux Power Automate sous licence E3 : correct selon
+  la documentation Microsoft en vigueur.
+
+- La mise en garde sur le droit a l'effacement limite par l'obligation de preuve
+  vis-a-vis de l'Agentur fur Arbeit (Art. 17 Abs. 3 DSGVO) : correct et bien formule.
+
+- Absence de donnees de categories particulieres au sens de l'Art. 9 DSGVO dans le
+  perimetre de la solution : confirme par l'analyse des champs des trois listes.
+
+**Risques residuels :** inchanges (cf. REV-001, REV-002).
+
+**Ajustements demandes :** 4 corrections d'encodage/grammaire appliquees directement.
+Aucun ajustement de fond requis.
+
+---
