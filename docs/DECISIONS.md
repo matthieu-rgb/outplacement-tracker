@@ -211,3 +211,49 @@ generes en local via LibreOffice headless.
 - Aucune perte de qualite metier : les specs de reference (sharepoint_schema.md,
   word_template_structure.md, forms_questions_*.md, email_templates.md) restent
   la source de verite, et les guides blueprint en derivent directement
+
+---
+
+## ADR-007 : Politique de langue par document
+
+**Statut** : Accepte
+**Date** : 2026-05-06
+
+### Contexte
+
+Les documents du projet ont ete produits sans politique de langue explicite. Le resultat
+est un melange inconsistant : PITCH.pdf en partie francais alors qu'il vise des decideurs
+allemands, README.md en francais alors qu'il vise des visiteurs GitHub internationaux,
+INSTALLATION.md en francais alors qu'il vise un administrateur M365 en Allemagne.
+
+La politique de langue doit etre derivee du public cible de chaque document, pas d'une
+preference de redaction de l'auteur.
+
+### Decision
+
+Chaque document est redige dans la langue de son public cible.
+
+| Document | Public cible | Langue |
+|---|---|---|
+| README.md | Visiteurs GitHub (international) | English |
+| CHANGELOG.md | Developpeurs (international) | English |
+| docs/ARCHITECTURE.md | Architectes et decideurs IT (international) | English |
+| docs/INSTALLATION.md | Administrateur M365 du client (Allemagne) | Deutsch |
+| docs/FAQ.md | Conseillers et equipe IT du client (Allemagne) | Deutsch |
+| docs/PRIVACY.md | DPO et service juridique du client (Allemagne) | Deutsch |
+| docs/PITCH.pdf | Decideurs de la societe de reclassement (Allemagne) | Deutsch |
+| SCOPE.md, SPRINTS.md, BACKLOG.md, ASSUMPTIONS.md, DECISIONS.md, docs/SECURITY_REVIEWS.md | Auteur (usage interne) | Francais (inchange) |
+| .claude/agents/* | Auteur (usage interne) | Francais (inchange) |
+
+### Consequences
+
+- Les documents en allemand utilisent les umlauts corrects (u, o, a, ss) et le
+  vocabulaire metier du secteur (Transfergesellschaft, Zielvereinbarung, Beraterin,
+  Teilnehmer, Bericht)
+- Les documents en anglais utilisent un anglais professionnel sobre, sans marketing
+- Les documents internes (auteur) restent en francais, inchanges
+- Les specs techniques dans specs/ et les implementation guides dans power_automate/
+  et forms/ ne sont pas dans le perimetre de cette correction : leur public cible est
+  l'auteur, leur langue est indifferente
+- ADR-007 s'applique retroactivement : les documents existants non conformes sont
+  reecrits

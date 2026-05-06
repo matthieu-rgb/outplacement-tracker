@@ -1,129 +1,132 @@
 # FAQ - outplacement-tracker
 
-Questions frequentes pour deux publics : les conseillers qui utilisent la solution au quotidien,
-et les administrateurs M365 qui la deployent.
+Haufig gestellte Fragen fur zwei Zielgruppen: die Beraterinnen, die die Losung taglich nutzen,
+und die IT- / M365-Administratoren, die sie bereitstellen.
 
 ---
 
-## Pour les conseillers / Beraterinnen
+## Fur Beraterinnen
 
-### Quand est-ce que je recois le PDF ?
+### Wann erhalte ich das PDF?
 
-Le Flow 2 genere le PDF le matin du jour du rendez-vous et l'envoie par email a la conseillere
-designee dans le champ `id_conseillere` du participant. Le PDF est egalement sauvegarde
-automatiquement dans la bibliotheque `TransferMappes` de SharePoint.
+Der PDF-Generierungsflow erstellt das PDF am Morgen des Termintags und sendet es per E-Mail
+an die Beraterin, die im Feld `id_conseillere` des Teilnehmers eingetragen ist. Das PDF wird
+ausserdem automatisch in der Dokumentbibliothek `TransferMappes` in SharePoint gespeichert.
 
-### Le participant est-il oblige de remplir le formulaire ?
+### Muss der Teilnehmer das Formular ausfullen?
 
-Non. Le champ `bilan_general` (Gesamtbewertung des Monats) est le seul champ obligatoire
-dans le formulaire de bilan mensuel. Les cinq autres champs sont optionnels. Le participant
-decide de ce qu'il partage.
+Nein. Das Feld `bilan_general` (Gesamtbewertung des Monats) ist das einzige Pflichtfeld
+im Monatsbericht-Formular. Die funf weiteren Felder sind optional. Der Teilnehmer entscheidet
+selbst, was er mitteilt.
 
-### Que se passe-t-il si le participant ne remplit pas le formulaire ?
+### Was passiert, wenn der Teilnehmer das Formular nicht ausfulllt?
 
-Le PDF est genere quand meme. Il contient l'historique complet des mois precedents.
-La section du mois en cours indique qu'aucun bilan n'a ete soumis pour cette periode.
-Le RDV peut avoir lieu normalement.
+Das PDF wird trotzdem generiert. Es enthalt den vollstandigen Verlauf der Vorermonate.
+Im Abschnitt des laufenden Monats wird angegeben, dass fur diesen Zeitraum kein Monatsbericht
+eingereicht wurde. Der Termin kann normal stattfinden.
 
-### Puis-je acceder aux reponses directement dans SharePoint ?
+### Kann ich auf die Antworten direkt in SharePoint zugreifen?
 
-Oui, sous reserve d'avoir des droits Membre sur le site SharePoint `TransferMappe`.
-Les bilans sont stockes dans la liste `BilansMensuels`. Les profils et objectifs sont
-dans la liste `Profils`.
+Ja, sofern Sie Mitgliedszugriff auf die SharePoint-Website `TransferMappe` haben.
+Die Monatsberichte sind in der Liste `BilansMensuels` gespeichert. Profile und Ziele befinden
+sich in der Liste `Profils`.
 
-### Le PDF est-il accessible apres le rendez-vous ?
+### Ist das PDF nach dem Termin noch zuganglich?
 
-Oui. Chaque PDF genere est sauvegarde dans la bibliotheque de documents `TransferMappes`
-de SharePoint, organise par participant. Il reste accessible tant que les donnees
-du participant n'ont pas ete supprimees.
+Ja. Jedes generierte PDF wird in der Dokumentbibliothek `TransferMappes` in SharePoint
+nach Teilnehmer geordnet gespeichert. Es bleibt zuganglich, solange die Daten des Teilnehmers
+nicht geloscht wurden.
 
-### Un participant peut-il voir les donnees des autres participants ?
+### Kann ein Teilnehmer die Daten anderer Teilnehmer einsehen?
 
-Non. Les participants n'ont aucun acces au site SharePoint. Ils interagissent uniquement
-via les formulaires Microsoft Forms, qui sont individuels et ne donnent acces a aucune
-autre donnee.
+Nein. Teilnehmer haben keinen Zugriff auf die SharePoint-Website. Sie interagieren
+ausschliesslich uber Microsoft Forms-Formulare, die individuell sind und keinen Zugriff
+auf andere Daten gewahren.
 
-### Comment modifier le formulaire si j'ai des questions supplementaires ?
+### Wie kann ich das Formular anpassen, wenn ich zusatzliche Fragen hinzufugen mochte?
 
-La modification du formulaire se fait dans l'interface Microsoft Forms. Apres ajout d'une
-question, il faut : 1) ajouter la colonne correspondante dans la liste SharePoint `BilansMensuels`,
-2) ajouter le Content Control correspondant dans le template Word, 3) mettre a jour
-l'action "Populate" dans le Flow 2. Voir `specs/sharepoint_schema.md` et
-`specs/word_template_structure.md` pour les conventions de nommage.
+Die Anpassung des Formulars erfolgt uber die Microsoft Forms-Oberflache. Nach dem Hinzufugen
+einer Frage sind folgende Schritte erforderlich: 1) die entsprechende Spalte in der
+SharePoint-Liste `BilansMensuels` hinzufugen, 2) den entsprechenden Content Control in
+der Word-Vorlage hinzufugen, 3) die Aktion "Populate" im PDF-Generierungsflow aktualisieren.
+Die Benennungskonventionen sind in `specs/sharepoint_schema.md` und `specs/word_template_structure.md`
+dokumentiert.
 
-### Le formulaire est-il disponible en plusieurs langues ?
+### Ist das Formular in mehreren Sprachen verfugbar?
 
-Oui. Il existe deux versions du formulaire de bilan mensuel : une en allemand (DE) et
-une en anglais (EN). La langue du formulaire envoye a un participant est determinee par
-le champ `langue` dans la liste `Participants`.
+Ja. Es gibt zwei Versionen des Monatsbericht-Formulars: eine auf Deutsch (DE) und eine
+auf Englisch (EN). Die Sprache des an einen Teilnehmer gesendeten Formulars wird durch
+das Feld `langue` in der Liste `Participants` bestimmt.
 
 ---
 
-## Pour l'equipe IT / administrateur M365
+## Fur die IT / M365-Administration
 
-### Quels sont les prerequis de licences ?
+### Welche Lizenzvoraussetzungen gibt es?
 
-Un plan Microsoft 365 E3 ou superieur est requis. La solution utilise exclusivement des
-connecteurs standard inclus dans E3 : SharePoint, Outlook, Word Online Business, et
-Power Automate (plan seeded). Aucun connecteur Premium n'est necessaire.
+Ein Microsoft 365 E3-Plan oder hoher ist erforderlich. Die Losung verwendet ausschliesslich
+Standard-Connectoren, die in E3 enthalten sind: SharePoint, Outlook, Word Online Business
+und Power Automate (Seeded-Plan). Es werden keine Premium-Connectoren benotigt.
 
-### Combien de temps prend le deploiement ?
+### Wie lange dauert die Bereitstellung?
 
-Entre 2 et 4 heures pour un administrateur M365 competent, en suivant les guides
-du kit. Le script PowerShell PnP provisionne les listes SharePoint en quelques minutes.
-La partie la plus longue est la construction manuelle des Flows dans Power Automate
-(voir `power_automate/IMPORT_GUIDE.md`).
+Zwischen 2 und 4 Stunden fur einen kompetenten M365-Administrator, der die Anleitungen
+des Kits befolgt. Das PnP PowerShell-Skript stellt die SharePoint-Listen in wenigen
+Minuten bereit. Der langste Teil ist die manuelle Erstellung der Flows in Power Automate
+(siehe `power_automate/IMPORT_GUIDE.md`).
 
-### Peut-on deployer sans PowerShell ?
+### Kann die Bereitstellung ohne PowerShell erfolgen?
 
-Techniquement oui. Les listes SharePoint peuvent etre creees manuellement via l'interface
-web. Le script `sharepoint/setup_lists.ps1` est fortement recommande car il est idempotent
-et garantit la coherence des colonnes. L'alternative manuelle est documentee dans
-`specs/sharepoint_schema.md`.
+Technisch ja. Die SharePoint-Listen konnen manuell uber die Weboberflache erstellt werden.
+Das Skript `sharepoint/setup_lists.ps1` wird jedoch dringend empfohlen, da es idempotent ist
+und die Konsistenz der Spalten gewahrleistet. Die manuelle Alternative ist in
+`specs/sharepoint_schema.md` dokumentiert.
 
-### Est-ce que le kit necessite une application Azure AD ?
+### Benotigt das Kit eine Azure AD-Anwendungsregistrierung?
 
-Non. Les Flows Power Automate utilisent uniquement des connecteurs standard qui s'authentifient
-via le compte de service de l'administrateur. Aucune inscription d'application dans
-Azure AD n'est requise.
+Nein. Die Power Automate-Flows verwenden ausschliesslich Standard-Connectoren, die sich
+uber das Administratordienstkonto authentifizieren. Eine Anwendungsregistrierung in
+Azure AD ist nicht erforderlich.
 
-### Comment mettre a jour les templates Word ?
+### Wie werden die Word-Vorlagen aktualisiert?
 
-Deposer le nouveau fichier `.docx` dans la bibliotheque SharePoint a l'emplacement
-`/sites/TransferMappe/TransferMappes/Templates/`. Les Flows lisent le fichier a chaque
-execution : la mise a jour est prise en compte immediatement, sans modifier les Flows.
-Les Tag values des Content Controls doivent rester identiques si la structure est preservee.
+Die neue `.docx`-Datei in die SharePoint-Bibliothek unter
+`/sites/TransferMappe/TransferMappes/Templates/` hochladen. Die Flows lesen die Datei
+bei jeder Ausfuhrung: Die Aktualisierung wird sofort ubernommen, ohne die Flows andern
+zu mussen. Die Tag-Werte der Content Controls mussen unverandert bleiben, solange die
+Struktur beibehalten wird.
 
-### Que se passe-t-il si un Flow echoue ?
+### Was passiert, wenn ein Flow fehlschlagt?
 
-Les deux Flows envoient un email d'erreur a l'adresse administrateur configuree dans
-la variable `varAdminEmail`. L'historique d'execution complet est consultable dans
-Power Automate sous "Mes flux" > selectionner le Flow > "Historique des executions (28 jours)".
+Beide Flows senden eine Fehler-E-Mail an die in der Variablen `varAdminEmail` konfigurierte
+Administratoradresse. Den vollstandigen Ausfuhrungsverlauf finden Sie in Power Automate
+unter **Power Automate > Meine Flows** > den Flow auswahlen > "Ausfuhrungsverlauf (28 Tage)".
 
-### Peut-on limiter l'acces a certaines conseillers seulement ?
+### Kann der Zugriff auf bestimmte Beraterinnen eingeschrankt werden?
 
-Oui. Les droits SharePoint sont geres au niveau du site et des listes. Chaque conseillere
-peut etre limitee a ses propres participants en combinant des vues filtrees sur `id_conseillere`
-et des droits restreints. Pour une segmentation stricte, des groupes SharePoint distincts
-par conseillere sont recommandes. Voir la documentation Microsoft sur les permissions SharePoint.
+Ja. Die SharePoint-Berechtigungen werden auf Ebene der Website und der Listen verwaltet.
+Jede Beraterin kann auf ihre eigenen Teilnehmer beschrankt werden, indem gefilterte
+Ansichten auf `id_conseillere` mit eingeschrankten Berechtigungen kombiniert werden.
+Fur eine strikte Segmentierung werden separate SharePoint-Gruppen pro Beraterin empfohlen.
+Siehe die Microsoft-Dokumentation zu SharePoint-Berechtigungen.
 
-### Comment supprimer les donnees d'un participant apres fin de parcours ?
+### Wie werden die Daten eines Teilnehmers nach Abschluss des Beratungsprozesses geloscht?
 
-Les donnees sont reparties sur 3 listes SharePoint (`Participants`, `Profils`, `BilansMensuels`)
-et dans la bibliotheque `TransferMappes` (PDFs). La suppression manuelle est possible
-depuis l'interface SharePoint. Un Flow de suppression automatique declanche apres
-expiration de la periode de retention est documente dans `BACKLOG.md` (v0.2).
+Die Daten verteilen sich auf 3 SharePoint-Listen (`Participants`, `Profils`, `BilansMensuels`)
+und die Dokumentbibliothek `TransferMappes` (PDFs). Die manuelle Loschung ist uber die
+SharePoint-Oberflache moglich. Ein automatischer Losch-Flow, der nach Ablauf der
+Aufbewahrungsfrist ausgelost wird, ist in `BACKLOG.md` (v0.2) dokumentiert.
 
-### La solution est-elle conforme au DSGVO ?
+### Ist die Losung DSGVO-konform?
 
-La solution est deployee dans le tenant Microsoft 365 du client. Aucune donnee ne sort
-du tenant. L'organisation qui deploie la solution est responsable de traitement (Verantwortlicher)
-au sens du DSGVO et assume integralement les obligations de conformite. Voir `docs/PRIVACY.md`
-pour le detail des donnees collectees, les bases juridiques applicables et le modele
-de responsabilite.
+Die Losung wird im Microsoft 365-Tenant des Kunden bereitgestellt. Es werden keine Daten
+ausserhalb des Tenants ubertragen. Die Organisation, die die Losung bereitstellt, ist
+Verantwortlicher im Sinne der DSGVO und tragt die vollstandige Verantwortung fur die
+Erfullung der Compliance-Anforderungen. Details zu den erhobenen Daten, den anwendbaren
+Rechtsgrundlagen und dem Verantwortlichkeitsmodell finden Sie in `docs/PRIVACY.md`.
 
-### Peut-on avoir plusieurs conseillers pour des participants differents ?
+### Konnen mehrere Beraterinnen fur verschiedene Teilnehmer zustandig sein?
 
-Oui. Le champ `id_conseillere` est renseigne individuellement pour chaque participant
-dans la liste `Participants`. Chaque participant peut etre assigne a un(e) conseiller(e)
-different(e). Le Flow 2 envoie le PDF a l'adresse `id_conseillere` du participant concerne.
+Ja. Das Feld `id_conseillere` wird individuell fur jeden Teilnehmer in der Liste `Participants`
+ausgefullt. Jeder Teilnehmer kann einer anderen Beraterin zugewiesen werden. Der
+PDF-Generierungsflow sendet das PDF an die Adresse `id_conseillere` des jeweiligen Teilnehmers.

@@ -1,540 +1,555 @@
-# PRIVACY.md - Protection des donnees personnelles
+# Datenschutzinformation - outplacement-tracker
 
-outplacement-tracker v0.1 - Document a destination des organisations deployant cette solution
-
----
-
-## 1. Portee et objet de ce document
-
-Ce document s'adresse aux Transfergesellschaften et societes de reclassement professionnel
-qui deploient la solution outplacement-tracker dans leur tenant Microsoft 365.
-
-Il decrit :
-
-- les donnees personnelles traitees par la solution et leurs finalites
-- la base legale de chaque traitement
-- les durees de conservation recommandees
-- les droits des personnes concernees et leur mode d'exercice
-- les mesures techniques et organisationnelles (TOM) applicables
-- la chaine de responsabilite sous le RGPD et le BDSG
-
-Ce document ne constitue pas un avis juridique. Chaque organisation deployant la solution
-doit le completer et l'adapter a sa propre situation, en lien avec son DPD (Datenschutzbeauftragter)
-ou son conseil juridique.
+outplacement-tracker v0.1 - Dokument fuer Organisationen, die diese Loesung einsetzen
 
 ---
 
-## 2. Modele de responsabilite (Verantwortlichkeit)
+## 1. Geltungsbereich und Zweck dieses Dokuments
 
-### 2.1 Chaine de responsabilite
+Dieses Dokument richtet sich an Transfergesellschaften und Outplacement-Anbieter, die
+die Loesung outplacement-tracker in ihrem Microsoft 365-Tenant einsetzen.
+
+Es beschreibt:
+
+- die durch die Loesung verarbeiteten personenbezogenen Daten und die jeweiligen Zwecke
+- die Rechtsgrundlage jeder Verarbeitung
+- die empfohlenen Speicherfristen
+- die Rechte der betroffenen Personen und deren Ausuebung
+- die technischen und organisatorischen Massnahmen (TOM)
+- die Verantwortlichkeitskette gemaess DSGVO und BDSG
+
+Dieses Dokument stellt keine Rechtsberatung dar. Jede Organisation, die die Loesung
+einsetzt, muss es an ihre eigene Situation anpassen - in Abstimmung mit ihrem
+Datenschutzbeauftragten (DSB) oder ihrer Rechtsabteilung.
+
+---
+
+## 2. Verantwortlichkeit und Auftragsverarbeitung
+
+### 2.1 Verantwortlichkeitskette
 
 ```
-[Participant (Teilnehmer)]
+[Teilnehmer]
    |
-   Personne concernee au sens de l'Art. 4(1) DSGVO.
-   Titulaire des droits Art. 15 a 22 DSGVO.
-   |
-   v
-[Societe de reclassement / Transfergesellschaft]
-   |
-   RESPONSABLE DE TRAITEMENT (Verantwortlicher) au sens de l'Art. 4(7) DSGVO.
-   Determine les finalites et les moyens du traitement.
-   Tient le Verzeichnis der Verarbeitungstatigkeiten (Art. 30 DSGVO).
-   Informe les participants (Art. 13 DSGVO).
-   Garantit l'exercice des droits (Art. 15-22 DSGVO).
-   Signe l'AVV avec Microsoft (voir section 8).
+   Betroffene Person im Sinne von Art. 4 Nr. 1 DSGVO.
+   Inhaber der Rechte nach Art. 15 bis 22 DSGVO.
    |
    v
-[Matthieu Riegert - auteur du projet]
+[Transfergesellschaft]
    |
-   N'EST NI RESPONSABLE DE TRAITEMENT NI SOUS-TRAITANT.
-   Livre un kit open source sous licence libre.
-   Ne traite, ne stocke, ne consulte et n'accede a aucune donnee personnelle.
-   N'a aucun acces au tenant Microsoft 365 de l'organisation deployant la solution.
-   Aucun AVV ne doit etre signe avec l'auteur.
+   VERANTWORTLICHER im Sinne von Art. 4 Nr. 7 DSGVO.
+   Bestimmt die Zwecke und Mittel der Verarbeitung.
+   Fuehrt das Verzeichnis der Verarbeitungstaetigkeiten (VVT) gemaess Art. 30 DSGVO.
+   Informiert die Teilnehmer gemaess Art. 13 DSGVO.
+   Gewaehrleistet die Ausuebung der Betroffenenrechte (Art. 15-22 DSGVO).
+   Schliesst den AVV mit Microsoft ab (siehe Abschnitt 8).
+   |
+   v
+[Matthieu Riegert - Urheber des Projekts]
+   |
+   WEDER VERANTWORTLICHER NOCH AUFTRAGSVERARBEITER.
+   Stellt ein Open-Source-Kit unter freier Lizenz bereit.
+   Verarbeitet, speichert, liest und greift auf keine personenbezogenen Daten zu.
+   Hat keinen Zugriff auf den Microsoft 365-Tenant der einsetzenden Organisation.
+   Es ist kein AVV mit dem Urheber abzuschliessen.
    |
    v
 [Microsoft Corporation]
    |
-   SOUS-TRAITANT (Auftragsverarbeiter) au sens de l'Art. 4(8) et Art. 28 DSGVO.
-   Le Data Processing Agreement (DPA) Microsoft Online Services constitue l'AVV
-   au sens de l'Art. 28 DSGVO. Ce DPA est accepte par l'organisation lors de la
-   souscription aux services Microsoft 365.
-   Microsoft heberge les donnees dans le tenant de l'organisation.
-   L'EU Data Boundary Microsoft garantit la residence des donnees en Europe
-   (voir section 9).
+   AUFTRAGSVERARBEITER im Sinne von Art. 4 Nr. 8 und Art. 28 DSGVO.
+   Der Microsoft Online Services Data Processing Agreement (DPA) stellt den AVV
+   im Sinne von Art. 28 DSGVO dar. Dieser DPA wird von der Organisation bei
+   der Buchung von Microsoft 365 akzeptiert.
+   Microsoft speichert die Daten im Tenant der Organisation.
+   Die EU Data Boundary von Microsoft gewaehrleistet den Datenverbleib in Europa
+   (siehe Abschnitt 9).
 ```
 
-### 2.2 Consequence pratique
+### 2.2 Praktische Konsequenz
 
-L'organisation deployant outplacement-tracker est seule responsable de traitement.
-Elle assume integralement :
+Die Organisation, die outplacement-tracker einsetzt, ist alleinige Verantwortliche.
+Sie tragt die vollstaendige Verantwortung fuer:
 
-- la tenue du registre des activites de traitement (Art. 30 DSGVO)
-- l'information des participants avant leur entree dans la solution (Art. 13 DSGVO)
-- la reponse aux demandes d'exercice de droits des participants (Art. 15-22 DSGVO)
-- la mise en oeuvre des mesures de securite appropriees (Art. 32 DSGVO)
-- la notification d'une violation de donnees a l'autorite de controle (Art. 33 DSGVO),
-  en Allemagne le Bundesbeauftragter fuer den Datenschutz und die Informationsfreiheit
-  (BfDI) ou l'autorite de Land competente selon le siege de l'organisation
+- die Fuehrung des Verzeichnisses der Verarbeitungstaetigkeiten (Art. 30 DSGVO)
+- die Information der Teilnehmer vor ihrer Aufnahme in die Loesung (Art. 13 DSGVO)
+- die Bearbeitung von Anfragen zur Ausuebung von Betroffenenrechten (Art. 15-22 DSGVO)
+- die Umsetzung angemessener Sicherheitsmassnahmen (Art. 32 DSGVO)
+- die Meldung einer Datenpanne an die zustaendige Aufsichtsbehoerde (Art. 33 DSGVO),
+  in Deutschland den Bundesbeauftragten fuer den Datenschutz und die Informationsfreiheit
+  (BfDI) oder die zustaendige Landesbehoerde entsprechend dem Sitz der Organisation
 
-L'auteur du projet ne signe aucun AVV, n'est pas notifie en cas de violation,
-et ne peut pas etre tenu responsable d'un incident survenu dans le tenant client.
-
----
-
-## 3. Donnees personnelles traitees
-
-La solution traite exclusivement des donnees personnelles ordinaires au sens de l'Art. 4(1) DSGVO.
-Aucune categorie speciale de donnees au sens de l'Art. 9 DSGVO n'est collectee
-(pas de donnees de sante, d'origine raciale ou ethnique, d'opinions politiques, etc.).
-
-### 3.1 Liste "Participants"
-
-| Champ | Type | Obligatoire | Finalite | Base legale |
-|---|---|---|---|---|
-| nom | Texte | Oui | Identification du participant, generation du PDF | Art. 6(1)(b) DSGVO |
-| prenom | Texte | Oui | Identification du participant, generation du PDF | Art. 6(1)(b) DSGVO |
-| email | Texte | Oui | Envoi de l'invitation mensuelle automatique | Art. 6(1)(b) DSGVO |
-| langue | Choix (DE/EN) | Oui | Adaptation linguistique des communications | Art. 6(1)(b) DSGVO |
-| id_conseillere | Email M365 | Oui | Routage du PDF vers la conseillere concernee | Art. 6(1)(b) DSGVO |
-| date_debut_parcours | Date | Oui | Calcul de la duree du parcours, page de garde PDF | Art. 6(1)(b) DSGVO |
-| date_prochain_rdv | Date | Oui | Declenchement automatique de l'invitation J-5 | Art. 6(1)(b) DSGVO |
-| statut | Choix | Oui | Filtrage des participants actifs dans les Flows | Art. 6(1)(b) DSGVO |
-
-Note : le champ "Title" de la liste (format "Prenom Nom") est genere automatiquement
-par Power Automate. Il contient des donnees personnelles et est soumis aux memes
-regles de conservation que les autres champs.
-
-### 3.2 Liste "Profils"
-
-| Champ | Type | Obligatoire | Finalite | Base legale |
-|---|---|---|---|---|
-| id_participant | Entier | Oui | Cle etrangere vers Participants | Art. 6(1)(b) DSGVO |
-| plan_a | Texte long | Non | Plan de carriere principal - documente par la conseillere | Art. 6(1)(b) DSGVO |
-| plan_b | Texte long | Non | Plan de carriere alternatif - documente par la conseillere | Art. 6(1)(b) DSGVO |
-| marketingplan | Texte long | Non | Strategie de recherche d'emploi - documente par la conseillere | Art. 6(1)(b) DSGVO |
-| zielmarkt | Texte long | Non | Secteur(s) cible(s) - documente par la conseillere | Art. 6(1)(b) DSGVO |
-| date_creation | Date/heure | Oui | Tracabilite technique | Art. 6(1)(b) DSGVO |
-| date_modification | Date/heure | Non | Tracabilite technique | Art. 6(1)(b) DSGVO |
-
-Note : les quatre champs de contenu (plan_a, plan_b, marketingplan, zielmarkt) sont
-optionnels. Leur remplissage est laisse a l'appreciation de la conseillere et du participant.
-Ils peuvent contenir des informations sensibles sur les projets professionnels du participant.
-
-### 3.3 Liste "BilansMensuels"
-
-| Champ | Type | Obligatoire | Finalite | Base legale |
-|---|---|---|---|---|
-| id_participant | Entier | Oui | Cle etrangere vers Participants | Art. 6(1)(b) DSGVO |
-| date_rdv | Date | Oui | Date du RDV mensuel correspondant | Art. 6(1)(b) DSGVO |
-| date_soumission | Date/heure | Oui | Horodatage de la soumission du formulaire | Art. 6(1)(b) DSGVO |
-| bilan_general | Texte long | Oui | Bilan libre redige par le participant | Art. 6(1)(b) DSGVO |
-| statut_objectifs | Choix | Non | Auto-evaluation du participant sur ses objectifs | Art. 6(1)(b) DSGVO |
-| statut_objectifs_detail | Texte long | Non | Precisions sur le statut des objectifs | Art. 6(1)(b) DSGVO |
-| was_lief_gut | Texte long | Non | Ce qui a bien fonctionne (declaratif libre) | Art. 6(1)(b) DSGVO |
-| wo_brauche_ich_unterstuetzung | Texte long | Non | Besoins de soutien (declaratif libre) | Art. 6(1)(b) DSGVO |
-| themen_naechster_termin | Texte long | Non | Themes proposes pour le prochain RDV | Art. 6(1)(b) DSGVO |
-| sonstige_anmerkungen | Texte long | Non | Remarques libres | Art. 6(1)(b) DSGVO |
-
-Note : sur les 10 champs de cette liste, 7 sont optionnels. Le participant decide
-lui-meme de ce qu'il souhaite partager. La solution ne contient aucun mecanisme de
-tracking de candidatures individuelles, aucune liste de contacts employeurs, aucun
-scoring ou classement de participants.
-
-### 3.4 Fichiers PDF generes
-
-Chaque execution du Flow 2 (Generation PDF) produit un fichier PDF stocke dans la
-bibliotheque de documents SharePoint "TransferMappes". Ce fichier :
-
-- contient les donnees personnelles des trois listes ci-dessus
-- est nomme selon le format : TransferMappe_{Prenom}_{Nom}_{YYYY-MM-DD}.pdf
-- est envoye par email a la conseillere assignee (champ id_conseillere)
-- reste stocke dans le tenant de l'organisation et ne quitte pas celui-ci
-
-Le fichier PDF est un document personnel au sens du RGPD. Il est soumis aux memes
-durees de conservation que les donnees source.
-
-### 3.5 Journaux Power Automate
-
-Les Flows Power Automate genererent des journaux d'execution (run history) accessibles
-dans le portail make.powerautomate.com. Ces journaux peuvent contenir :
-
-- des noms et adresses email de participants (utilises comme parametres des actions)
-- des codes d'erreur et messages techniques
-
-Ces journaux sont conserves par Microsoft selon les parametres de la licence M365 de
-l'organisation (generalement 28 jours pour E3). Ils ne sont pas exportes par la solution
-et ne quittent pas le tenant.
+Der Urheber des Projekts schliesst keinen AVV ab, wird bei einer Datenpanne nicht
+benachrichtigt und kann fuer einen Vorfall im Tenant des Kunden nicht haftbar gemacht werden.
 
 ---
 
-## 4. Base legale du traitement
+## 3. Verarbeitete personenbezogene Daten
 
-### 4.1 Base legale principale : execution d'un contrat (Art. 6(1)(b) DSGVO)
+Die Loesung verarbeitet ausschliesslich gewoehnliche personenbezogene Daten im Sinne von
+Art. 4 Nr. 1 DSGVO. Es werden keine besonderen Kategorien personenbezogener Daten
+im Sinne von Art. 9 DSGVO erfasst (keine Gesundheitsdaten, keine Daten zur ethnischen
+Herkunft, keine politischen Meinungen usw.).
 
-Le traitement est necessaire a l'execution du contrat de transfert entre la
-Transfergesellschaft et le participant, dans le cadre defini par le paragraphe 111 SGB III
+### 3.1 Liste "Participants" (Teilnehmerliste)
+
+| Feld | Typ | Pflichtfeld | Zweck | Rechtsgrundlage |
+|---|---|---|---|---|
+| nom (Nachname) | Text | Ja | Identifikation des Teilnehmers, PDF-Erstellung | Art. 6 Abs. 1 lit. b DSGVO |
+| prenom (Vorname) | Text | Ja | Identifikation des Teilnehmers, PDF-Erstellung | Art. 6 Abs. 1 lit. b DSGVO |
+| email | Text | Ja | Versand der monatlichen automatischen Einladung | Art. 6 Abs. 1 lit. b DSGVO |
+| langue (Sprache) | Auswahl (DE/EN) | Ja | Sprachliche Anpassung der Kommunikation | Art. 6 Abs. 1 lit. b DSGVO |
+| id_conseillere (Beraterin) | M365-E-Mail | Ja | Weiterleitung des PDF an die zustaendige Beraterin | Art. 6 Abs. 1 lit. b DSGVO |
+| date_debut_parcours (Startdatum) | Datum | Ja | Berechnung der Massnahmedauer, PDF-Deckblatt | Art. 6 Abs. 1 lit. b DSGVO |
+| date_prochain_rdv (naechster Termin) | Datum | Ja | Automatischer Versand der Einladung J-5 | Art. 6 Abs. 1 lit. b DSGVO |
+| statut (Status) | Auswahl | Ja | Filterung aktiver Teilnehmer in den Flows | Art. 6 Abs. 1 lit. b DSGVO |
+
+Hinweis: Das Feld "Title" der Liste (Format "Vorname Nachname") wird automatisch durch
+Power Automate generiert. Es enthaelt personenbezogene Daten und unterliegt denselben
+Aufbewahrungsregeln wie die uebrigen Felder.
+
+### 3.2 Liste "Profils" (Profile)
+
+| Feld | Typ | Pflichtfeld | Zweck | Rechtsgrundlage |
+|---|---|---|---|---|
+| id_participant (Teilnehmer-ID) | Ganzzahl | Ja | Fremdschluessel zur Teilnehmerliste | Art. 6 Abs. 1 lit. b DSGVO |
+| plan_a | Langer Text | Nein | Hauptberuflicher Plan - dokumentiert durch die Beraterin | Art. 6 Abs. 1 lit. b DSGVO |
+| plan_b | Langer Text | Nein | Alternativer beruflicher Plan - dokumentiert durch die Beraterin | Art. 6 Abs. 1 lit. b DSGVO |
+| marketingplan | Langer Text | Nein | Strategie zur Stellensuche - dokumentiert durch die Beraterin | Art. 6 Abs. 1 lit. b DSGVO |
+| zielmarkt | Langer Text | Nein | Zielbranche(n) - dokumentiert durch die Beraterin | Art. 6 Abs. 1 lit. b DSGVO |
+| date_creation (Erstellungsdatum) | Datum/Uhrzeit | Ja | Technische Nachverfolgbarkeit | Art. 6 Abs. 1 lit. b DSGVO |
+| date_modification (Aenderungsdatum) | Datum/Uhrzeit | Nein | Technische Nachverfolgbarkeit | Art. 6 Abs. 1 lit. b DSGVO |
+
+Hinweis: Die vier Inhaltsfelder (plan_a, plan_b, marketingplan, zielmarkt) sind optional.
+Ihre Befuellung liegt im Ermessen der Beraterin und des Teilnehmers. Sie koennen sensible
+Informationen zu den beruflichen Vorhaben des Teilnehmers enthalten.
+
+### 3.3 Liste "BilansMensuels" (Monatsberichte)
+
+| Feld | Typ | Pflichtfeld | Zweck | Rechtsgrundlage |
+|---|---|---|---|---|
+| id_participant (Teilnehmer-ID) | Ganzzahl | Ja | Fremdschluessel zur Teilnehmerliste | Art. 6 Abs. 1 lit. b DSGVO |
+| date_rdv (Termindatum) | Datum | Ja | Datum des zugehoerigen Monatstermins | Art. 6 Abs. 1 lit. b DSGVO |
+| date_soumission (Einreichungsdatum) | Datum/Uhrzeit | Ja | Zeitstempel der Formulareinreichung | Art. 6 Abs. 1 lit. b DSGVO |
+| bilan_general (allgemeiner Rueckblick) | Langer Text | Ja | Freier Rueckblick des Teilnehmers | Art. 6 Abs. 1 lit. b DSGVO |
+| statut_objectifs (Zielstatus) | Auswahl | Nein | Selbsteinschaetzung des Teilnehmers zu seinen Zielen | Art. 6 Abs. 1 lit. b DSGVO |
+| statut_objectifs_detail (Zielstatus Detail) | Langer Text | Nein | Naeheres zum Zielstatus | Art. 6 Abs. 1 lit. b DSGVO |
+| was_lief_gut | Langer Text | Nein | Was gut lief (freie Angabe) | Art. 6 Abs. 1 lit. b DSGVO |
+| wo_brauche_ich_unterstuetzung | Langer Text | Nein | Unterstuetzungsbedarf (freie Angabe) | Art. 6 Abs. 1 lit. b DSGVO |
+| themen_naechster_termin | Langer Text | Nein | Vorgeschlagene Themen fuer den naechsten Termin | Art. 6 Abs. 1 lit. b DSGVO |
+| sonstige_anmerkungen | Langer Text | Nein | Sonstige Hinweise | Art. 6 Abs. 1 lit. b DSGVO |
+
+Hinweis: Von den 10 Feldern dieser Liste sind 7 optional. Der Teilnehmer entscheidet
+selbst, was er mitteilen moechte. Die Loesung enthaelt keinerlei Mechanismus zur
+Verfolgung einzelner Bewerbungen, keine Liste von Arbeitgeberkontakten und kein
+Scoring oder Ranking der Teilnehmer.
+
+### 3.4 Generierte PDF-Dokumente
+
+Jede Ausfuehrung von Flow 2 (PDF-Generierung) erzeugt eine PDF-Datei, die in der
+SharePoint-Dokumentenbibliothek "TransferMappes" gespeichert wird. Diese Datei:
+
+- enthaelt die personenbezogenen Daten aus den drei oben genannten Listen
+- wird nach dem Format benannt: TransferMappe_{Vorname}_{Nachname}_{YYYY-MM-DD}.pdf
+- wird per E-Mail an die zugewiesene Beraterin (Feld id_conseillere) uebermittelt
+- verbleibt im Tenant der Organisation und verlaesst diesen nicht
+
+Das PDF-Dokument ist ein personenbezogenes Dokument im Sinne der DSGVO. Es unterliegt
+denselben Aufbewahrungsfristen wie die zugrunde liegenden Daten.
+
+### 3.5 Power Automate-Ausfuehrungsprotokolle
+
+Die Power Automate-Flows erzeugen Ausfuehrungsprotokolle (Run History), die im Portal
+make.powerautomate.com einsehbar sind. Diese Protokolle koennen enthalten:
+
+- Namen und E-Mail-Adressen von Teilnehmern (als Parameter von Aktionen verwendet)
+- Fehlercodes und technische Meldungen
+
+Diese Protokolle werden von Microsoft gemaess den Einstellungen der M365-Lizenz der
+Organisation aufbewahrt (in der Regel 28 Tage bei E3). Sie werden von der Loesung
+nicht exportiert und verlassen den Tenant nicht.
+
+---
+
+## 4. Rechtsgrundlage der Verarbeitung
+
+### 4.1 Hauptrechtsgrundlage: Vertragsdurchfuehrung (Art. 6 Abs. 1 lit. b DSGVO)
+
+Die Verarbeitung ist erforderlich fuer die Durchfuehrung des Transfervertrags zwischen
+der Transfergesellschaft und dem Teilnehmer im Rahmen von § 111 SGB III
 (Sozialgesetzbuch Drittes Buch - Arbeitsfoerderung).
 
-Le suivi mensuel (bilans, profil de carriere, dates de rendez-vous) constitue la
-substance meme de la prestation d'accompagnement a laquelle le participant a consenti
-en integrant la Transfergesellschaft.
+Die monatliche Begleitung (Monatsberichte, Berufsprofil, Termindaten) bildet den
+eigentlichen Kern der Begleitungsleistung, der der Teilnehmer durch seinen Eintritt
+in die Transfergesellschaft zugestimmt hat.
 
-### 4.2 Interet legitime complementaire (Art. 6(1)(f) DSGVO)
+### 4.2 Ergaenzendes berechtigtes Interesse (Art. 6 Abs. 1 lit. f DSGVO)
 
-La generation automatique de documents de suivi (PDF cumulatif, Zielvereinbarungen)
-repond egalement a un interet legitime de l'organisation : disposer d'un suivi
-documentaire conforme aux exigences de l'Agentur fuer Arbeit en cas de controle.
-Cet interet ne prive pas le participant de droits disproportionnes compte tenu du
-caractere strictement professionnel et finalise des donnees collectees.
+Die automatische Erstellung von Begleitdokumenten (kumulatives PDF, Zielvereinbarungen)
+dient auch einem berechtigten Interesse der Organisation: das Vorhandensein
+einer dokumentarischen Begleitung, die den Anforderungen der Agentur fuer Arbeit
+bei einer Pruefung genuegt. Dieses Interesse schraenkt die Rechte des Teilnehmers
+nicht unangemessen ein, da die erhobenen Daten streng beruflich und zweckgebunden sind.
 
-### 4.3 Absence de consentement comme base legale
+### 4.3 Keine Einwilligung als Rechtsgrundlage
 
-La solution ne repose pas sur le consentement (Art. 6(1)(a) DSGVO) comme base legale
-principale. Le consentement ne serait pas adapte dans ce contexte car il creerait
-une asymetrie de pouvoir entre l'organisation et le participant (relation de dependance).
-L'organisation ne doit pas recueillir un "consentement" au sens du RGPD pour l'utilisation
-de cette solution : la base legale contractuelle (Art. 6(1)(b)) est suffisante et plus robuste.
+Die Loesung stuetzt sich nicht auf die Einwilligung (Art. 6 Abs. 1 lit. a DSGVO)
+als Hauptrechtsgrundlage. Die Einwilligung waere in diesem Kontext nicht geeignet, da
+sie ein Machtungleichgewicht zwischen der Organisation und dem Teilnehmer schaffen
+wuerde (Abhaengigkeitsverhaeltnis). Die Organisation darf keine "Einwilligung"
+im Sinne der DSGVO fuer die Nutzung dieser Loesung einholen: die Vertragsrechtsgrundlage
+(Art. 6 Abs. 1 lit. b DSGVO) ist hinreichend und robuster.
 
 ---
 
-## 5. Conservation et suppression des donnees
+## 5. Speicherung und Loeschung personenbezogener Daten
 
-### 5.1 Durees de conservation recommandees
+### 5.1 Empfohlene Speicherfristen
 
-| Donnee | Duree recommandee | Point de depart | Justification |
+| Datenkategorie | Empfohlene Frist | Fristbeginn | Begruendung |
 |---|---|---|---|
-| Donnees Participants (liste) | 12 mois apres fin du parcours | Date statut "termine" | Fin du cadre contractuel SGB III |
-| Profils (liste) | 12 mois apres fin du parcours | Date statut "termine" | Idem |
-| BilansMensuels (liste) | 12 mois apres fin du parcours | Date statut "termine" | Idem |
-| PDFs generes (SharePoint) | 3 ans apres fin du parcours | Date statut "termine" | Documentation Agentur fuer Arbeit |
-| Journaux Power Automate | 28 jours (Microsoft) | Date d'execution | Automatique selon M365 |
+| Teilnehmerdaten (Liste) | 12 Monate nach Massnahmeende | Datum Status "beendet" | Ende des vertraglichen SGB-III-Rahmens |
+| Profile (Liste) | 12 Monate nach Massnahmeende | Datum Status "beendet" | Wie oben |
+| Monatsberichte (Liste) | 12 Monate nach Massnahmeende | Datum Status "beendet" | Wie oben |
+| Generierte PDFs (SharePoint) | 3 Jahre nach Massnahmeende | Datum Status "beendet" | Dokumentationsnachweis Agentur fuer Arbeit |
+| Power Automate-Protokolle | 28 Tage (Microsoft) | Ausfuehrungsdatum | Automatisch gemaess M365 |
 
-Note : la duree de 3 ans pour les PDFs correspond a la prescription generalement
-admise pour les litiges contractuels en droit allemand (§ 195 BGB). L'organisation
-doit adapter ces durees en fonction de ses propres obligations legales, notamment
-les eventuelles exigences de l'Agentur fuer Arbeit pour les preuves de suivi.
+Hinweis: Die Frist von 3 Jahren fuer PDFs entspricht der allgemein anerkannten
+Verjaeehrungsfrist fuer Vertragsstreitigkeiten nach deutschem Recht (§ 195 BGB).
+Die Organisation muss diese Fristen an ihre eigenen gesetzlichen Pflichten anpassen,
+insbesondere etwaige Anforderungen der Agentur fuer Arbeit hinsichtlich des
+Nachweises der Begleitung.
 
-### 5.2 Procedure de suppression
+### 5.2 Loeschverfahren (Loeschkonzept)
 
-La solution ne comporte pas de suppression automatique des donnees. L'organisation
-est responsable de mettre en place une procedure adaptee.
+Die Loesung verfuegt ueber keine automatische Datenloeeschung. Die Organisation ist
+verantwortlich fuer die Einrichtung eines geeigneten Verfahrens.
 
-**Option 1 - Suppression manuelle** :
+**Option 1 - Manuelle Loeeschung:**
 
-Lorsqu'un participant termine son parcours (statut passe a "termine"), l'administrateur :
+Wenn ein Teilnehmer seine Massnahme abschliesst (Status wechselt auf "beendet"),
+fuehrt der Administrator nach Ablauf der Speicherfrist folgende Schritte durch:
 
-1. Supprime l'enregistrement dans la liste "Participants" apres la duree de conservation
-2. Supprime l'enregistrement correspondant dans "Profils" (filtrer par id_participant)
-3. Supprime les enregistrements correspondants dans "BilansMensuels" (filtrer par id_participant)
-4. Supprime ou archive le dossier PDF dans la bibliotheque "TransferMappes"
+1. Loeschung des Eintrags in der Liste "Participants"
+2. Loeschung des zugehoerigen Eintrags in "Profils" (Filterung nach id_participant)
+3. Loeschung aller zugehoerigen Eintraege in "BilansMensuels" (Filterung nach id_participant)
+4. Loeschung oder Archivierung des PDF-Ordners in der Bibliothek "TransferMappes"
 
-**Option 2 - Suppression semi-automatisee (recommandee)** :
+**Option 2 - Halbautomatische Loeeschung (empfohlen):**
 
-Creer un Flow Power Automate planifie hebdomadaire qui :
+Erstellung eines woechentlich geplanten Power Automate-Flows, der:
 
-1. Recupere tous les enregistrements Participants dont le statut est "termine"
-   et dont la date de fin depasse la duree de conservation configuree
-2. Supprime les enregistrements associes dans les trois listes
-3. Envoie un rapport de suppression a l'administrateur
+1. Alle Teilnehmereintraege mit dem Status "beendet" abruft,
+   deren Enddatum die konfigurierte Speicherfrist ueberschreitet
+2. Die zugehoerigen Eintraege in allen drei Listen loescht
+3. Einen Loeeschbericht an den Administrator sendet
 
-Ce Flow complementaire n'est pas fourni dans le kit v0.1. Son developpement est
-prevu dans le BACKLOG.md pour une version ulterieure.
+Dieser ergaenzende Flow ist im Kit v0.1 nicht enthalten. Seine Entwicklung ist
+im BACKLOG.md fuer eine spaeaetere Version vorgesehen.
 
-**Option 3 - Politique de retention SharePoint** :
+**Option 3 - SharePoint-Aufbewahrungsrichtlinie:**
 
-Microsoft 365 propose des politiques de retention configurables via le Centre de
-conformite Microsoft Purview. L'organisation peut configurer une politique de retention
-sur le site SharePoint TransferMappe avec suppression automatique apres la duree choisie.
-Cette option ne necessite pas de developpement supplementaire mais requiert une licence
-Microsoft 365 incluant Microsoft Purview (disponible en E3).
+Microsoft 365 bietet konfigurierbare Aufbewahrungsrichtlinien ueber das
+Microsoft Purview Compliance Center. Die Organisation kann eine Aufbewahrungsrichtlinie
+fuer die SharePoint-Website TransferMappe mit automatischer Loeeschung nach der
+gewaehlten Frist konfigurieren. Diese Option erfordert keine zusaetzliche Entwicklung,
+setzt jedoch eine Microsoft 365-Lizenz mit Microsoft Purview voraus (in E3 verfuegbar).
 
-### 5.3 Droit a l'effacement (Art. 17 DSGVO)
+### 5.3 Recht auf Loeeschung (Art. 17 DSGVO)
 
-En cas de demande d'effacement d'un participant, la procedure manuelle (Option 1) est
-utilisee immediatement, sans attendre l'echeance de conservation. Voir section 6.
-
----
-
-## 6. Droits des personnes concernees
-
-Les participants disposent des droits suivants en vertu des Art. 15 a 22 DSGVO.
-L'organisation est seule responsable de leur mise en oeuvre.
-
-### 6.1 Droit d'acces (Art. 15 DSGVO - Auskunftsrecht)
-
-Le participant peut demander une copie de toutes ses donnees. L'administrateur :
-
-1. Exporte l'enregistrement depuis la liste "Participants" (export CSV depuis SharePoint)
-2. Exporte l'enregistrement depuis la liste "Profils"
-3. Exporte tous les enregistrements depuis "BilansMensuels" correspondant a son id_participant
-4. Fournit le ou les PDFs generes disponibles dans la bibliotheque "TransferMappes"
-
-### 6.2 Droit de rectification (Art. 16 DSGVO - Berichtigungsrecht)
-
-L'administrateur ou la conseillere peuvent modifier directement les enregistrements
-dans les listes SharePoint. La versioning est activee sur les trois listes (parametre
-"versioning: true" dans le schema), ce qui permet de conserver l'historique des modifications.
-
-### 6.3 Droit a l'effacement (Art. 17 DSGVO - Recht auf Loeschung)
-
-Appliquer la procedure de suppression manuelle decrite en section 5.2 (Option 1).
-Conserver une trace de la demande et de l'action effectuee pour demontrer la conformite.
-
-Note : le droit a l'effacement peut etre limite si l'organisation doit conserver
-des preuves de suivi pour l'Agentur fuer Arbeit. Dans ce cas, l'organisation doit
-informer le participant du motif de refus partiel (Art. 17(3) DSGVO).
-
-### 6.4 Droit a la limitation du traitement (Art. 18 DSGVO - Einschraenkungsrecht)
-
-L'administrateur passe le statut du participant a "suspendu" dans la liste "Participants".
-Le Flow d'invitation et le Flow de generation PDF excluent automatiquement les participants
-dont le statut n'est pas "actif". Aucune nouvelle donnee n'est donc generee.
-
-### 6.5 Droit a la portabilite (Art. 20 DSGVO - Datenuebertragbarkeit)
-
-Les listes SharePoint permettent l'export en CSV via l'interface standard.
-Les PDFs generes sont directement portables. L'organisation peut fournir
-l'ensemble des donnees dans ces formats standards a la demande du participant.
-
-### 6.6 Droit d'opposition (Art. 21 DSGVO - Widerspruchsrecht)
-
-Dans le contexte SGB III, le droit d'opposition est limite compte tenu de la base
-legale contractuelle (Art. 6(1)(b)). L'organisation doit consulter son DPD
-pour determiner les cas ou l'opposition est recevable.
-
-### 6.7 Canal de reception des demandes
-
-L'organisation doit definir et communiquer aux participants un canal de reception
-des demandes (email DPD, formulaire en ligne, courrier). Ce canal doit figurer
-dans l'information vie privee fournie aux participants (voir section 11).
+Bei einer Loeeschungsanfrage eines Teilnehmers wird das manuelle Verfahren (Option 1)
+unverzueglich angewendet, ohne Ablauf der Speicherfrist. Siehe Abschnitt 6.
 
 ---
 
-## 7. Mesures techniques et organisationnelles (TOM)
+## 6. Rechte der betroffenen Personen
 
-### 7.1 Mesures integrees a la solution
+Teilnehmer haben gemaess Art. 15 bis 22 DSGVO folgende Rechte. Die Organisation
+traegt die alleinige Verantwortung fuer deren Umsetzung.
 
-Les mesures suivantes sont implementees par construction dans outplacement-tracker :
+### 6.1 Auskunftsrecht (Art. 15 DSGVO)
 
-| Mesure | Implementation | Niveau |
-|---|---|---|
-| Residence des donnees dans le tenant | Aucune donnee ne sort du tenant M365 - pas d'API externe, pas de connecteur tiers | Integre par architecture |
-| Minimisation des donnees | 7 des 10 champs BilansMensuels sont optionnels - pas de tracking de candidatures | Integre par conception |
-| Separation des donnees par organisation | Un tenant = une organisation - pas de mutualisation possible par construction | Integre par architecture |
-| Versioning SharePoint | Historique de toutes les modifications sur les trois listes | Active dans le schema |
-| Acces base sur les roles SharePoint | Les listes sont hebergees dans un site SharePoint dont les permissions sont configurables | A configurer (voir 7.2) |
-| Aucune PII dans les emails d'invitation | L'email participant ne contient que prenom, nom, date RDV et lien Forms - pas d'historique en clair | Integre dans les templates |
-| Journaux d'execution Power Automate | Chaque execution est tracee dans l'historique Power Automate du tenant | Natif M365 |
+Der Teilnehmer kann eine Kopie aller seiner Daten anfordern. Der Administrator:
 
-### 7.2 Mesures que l'organisation doit mettre en place
+1. Exportiert den Eintrag aus der Liste "Participants" (CSV-Export ueber SharePoint)
+2. Exportiert den Eintrag aus der Liste "Profils"
+3. Exportiert alle Eintraege aus "BilansMensuels" fuer die entsprechende id_participant
+4. Stellt das oder die generierten PDFs aus der Bibliothek "TransferMappes" bereit
 
-Ces mesures sont de la responsabilite de l'organisation deployant la solution.
+### 6.2 Recht auf Berichtigung (Art. 16 DSGVO)
 
-**Mesures obligatoires avant mise en production :**
+Der Administrator oder die Beraterin kann Eintraege direkt in den SharePoint-Listen
+aendern. Die Versionierung ist fuer alle drei Listen aktiviert (Parameter
+"versioning: true" im Schema), was eine Aufbewahrung des Aenderungsverlaufs ermoeglicht.
 
-| Mesure | Action requise | Reference |
-|---|---|---|
-| Authentification multi-facteurs (MFA) | Activer l'MFA pour tous les comptes ayant acces au site SharePoint TransferMappe | Microsoft Entra ID - Politique d'acces conditionnel |
-| Permissions SharePoint restrictives | Le site TransferMappe doit etre en acces prive - membres uniquement : conseillers et administrateurs | Administration SharePoint - droits par groupe |
-| Shared mailbox expeditrice | Creer une boite partagee (ex. transfer@domaine.de) - ne pas utiliser l'adresse personnelle d'un employe | Exchange Online - Administration |
-| DLP (Data Loss Prevention) | Configurer une politique DLP empechant le partage externe des listes SharePoint contenant des PII | Microsoft Purview - Politiques DLP |
-| Acces au portail Power Automate | Restreindre l'acces au portail Power Automate aux administrateurs designes | Microsoft Entra ID - Roles |
-| Information des participants (Art. 13) | Remettre une notice d'information vie privee a chaque participant avant son entree dans la solution | Obligation legale DSGVO |
+### 6.3 Recht auf Loeeschung (Art. 17 DSGVO)
 
-**Mesures fortement recommandees :**
+Das unter Abschnitt 5.2 (Option 1) beschriebene manuelle Loeschverfahren ist anzuwenden.
+Die Anfrage und die durchgefuehrte Massnahme sind zur Nachweisfuehrung zu dokumentieren.
 
-| Mesure | Action requise | Reference |
-|---|---|---|
-| Revue periodique des acces | Auditer trimestriellement les membres du groupe SharePoint TransferMappe | Administration M365 - Revues d'acces |
-| Audit Log M365 | Activer et conserver les journaux d'audit M365 (SharePoint, Exchange, Power Automate) | Microsoft Purview - Audit |
-| Sauvegarde SharePoint | Activer la sauvegarde Microsoft 365 Backup ou une solution tierce certifiee | Microsoft 365 Backup |
-| Formation des conseillers | Former les utilisateurs aux bonnes pratiques de traitement des donnees dans SharePoint | Interne |
-| Politique de mot de passe | Appliquer une politique de mot de passe conforme aux recommandations BSI (minimum 12 caracteres) | Microsoft Entra ID |
+Hinweis: Das Recht auf Loeeschung kann eingeschraenkt sein, wenn die Organisation
+Begleitnachweise fuer die Agentur fuer Arbeit aufbewahren muss. In diesem Fall muss
+die Organisation den Teilnehmer ueber den Grund der partiellen Ablehnung informieren
+(Art. 17 Abs. 3 DSGVO).
+
+### 6.4 Recht auf Einschraenkung der Verarbeitung (Art. 18 DSGVO)
+
+Der Administrator setzt den Status des Teilnehmers in der Liste "Participants"
+auf "gesperrt". Der Einladungs-Flow und der PDF-Generierungs-Flow schliessen automatisch
+Teilnehmer aus, deren Status nicht "aktiv" ist. Es werden damit keine neuen Daten erzeugt.
+
+### 6.5 Recht auf Datenuebertragbarkeit (Art. 20 DSGVO)
+
+Die SharePoint-Listen ermoeglichten den Export im CSV-Format ueber die Standard-Oberflaeche.
+Die generierten PDFs sind unmittelbar portierbar. Die Organisation kann dem Teilnehmer
+auf Anfrage saemtliche Daten in diesen Standardformaten bereitstellen.
+
+### 6.6 Widerspruchsrecht (Art. 21 DSGVO)
+
+Im Kontext des SGB III ist das Widerspruchsrecht angesichts der vertraglichen
+Rechtsgrundlage (Art. 6 Abs. 1 lit. b DSGVO) eingeschraenkt. Die Organisation muss
+ihren DSB konsultieren, um zu bestimmen, in welchen Faellen ein Widerspruch zulaessig ist.
+
+### 6.7 Kommunikationskanal fuer Anfragen
+
+Die Organisation muss einen Kommunikationskanal fuer Betroffenenanfragen festlegen
+und den Teilnehmern mitteilen (E-Mail an den DSB, Online-Formular, postalischer Weg).
+Dieser Kanal muss in der Datenschutzinformation an die Teilnehmer enthalten sein
+(siehe Abschnitt 11).
 
 ---
 
-## 8. Sous-traitants (Auftragsverarbeiter)
+## 7. Technische und organisatorische Massnahmen (TOM)
+
+### 7.1 In der Loesung integrierte Massnahmen
+
+Folgende Massnahmen sind durch Konstruktion in outplacement-tracker umgesetzt:
+
+| Massnahme | Umsetzung | Ebene |
+|---|---|---|
+| Datenverbleib im Tenant | Keine Daten verlassen den M365-Tenant - keine externe API, kein Drittanbieter-Connector | Architekturimmanent |
+| Datensparsamkeit | 7 von 10 Feldern in BilansMensuels sind optional - kein Bewerbungs-Tracking | Konstruktionsbedingt |
+| Datentrennung nach Organisation | Ein Tenant = eine Organisation - keine Zusammenfuehrung durch Konstruktion moeglich | Architekturimmanent |
+| SharePoint-Versionierung | Vollstaendiger Aenderungsverlauf aller drei Listen | Im Schema aktiviert |
+| Rollenbasierter SharePoint-Zugriff | Die Listen sind in einer SharePoint-Website mit konfigurierbaren Berechtigungen gehostet | Zu konfigurieren (siehe 7.2) |
+| Keine PII in Einladungs-E-Mails | Die Teilnehmer-E-Mail enthaelt nur Vorname, Nachname, Termindatum und Forms-Link - kein Klartextverlauf | In den Templates umgesetzt |
+| Power Automate-Ausfuehrungsprotokolle | Jede Ausfuehrung wird im Power Automate-Verlauf des Tenants protokolliert | Nativer M365-Standard |
+
+### 7.2 Von der Organisation umzusetzende Massnahmen
+
+Diese Massnahmen liegen in der Verantwortung der einsetzenden Organisation.
+
+**Vor der Inbetriebnahme zwingend erforderlich:**
+
+| Massnahme | Erforderliche Aktion | Referenz |
+|---|---|---|
+| Multi-Faktor-Authentifizierung (MFA) | MFA fuer alle Konten aktivieren, die Zugriff auf die SharePoint-Website TransferMappe haben | Microsoft Entra ID - Richtlinie fuer bedingten Zugriff |
+| Eingeschraenkte SharePoint-Berechtigungen | Die Website TransferMappe muss privat sein - nur Beraterinnen und Administratoren als Mitglieder | SharePoint-Administration - Gruppenrechte |
+| Freigegebenes Postfach als Absender | Freigegebenes Postfach anlegen (z.B. transfer@domain.de) - keine persoenliche Mitarbeiteradresse verwenden | Exchange Online - Administration |
+| DLP (Data Loss Prevention) | DLP-Richtlinie konfigurieren, die die externe Weitergabe der SharePoint-Listen mit PII verhindert | Microsoft Purview - DLP-Richtlinien |
+| Zugriff auf das Power Automate-Portal | Zugriff auf das Power Automate-Portal auf benannte Administratoren beschraenken | Microsoft Entra ID - Rollen |
+| Information der Teilnehmer (Art. 13 DSGVO) | Datenschutzinformation an jeden Teilnehmer vor seiner Aufnahme in die Loesung aushaaendigen | DSGVO-Rechtspflicht |
+
+**Dringend empfohlen:**
+
+| Massnahme | Erforderliche Aktion | Referenz |
+|---|---|---|
+| Regelmaessige Zugriffsueberprueefung | Vierteljaehrliche Pruefung der Mitglieder der SharePoint-Gruppe TransferMappe | M365-Administration - Zugriffsueberprueefungen |
+| M365-Auditprotokoll | M365-Auditprotokolle aktivieren und aufbewahren (SharePoint, Exchange, Power Automate) | Microsoft Purview - Audit |
+| SharePoint-Sicherung | Microsoft 365 Backup oder eine zertifizierte Drittloesung aktivieren | Microsoft 365 Backup |
+| Schulung der Beraterinnen | Nutzer in den bewaaehrten Praktiken der Datenverarbeitung in SharePoint schulen | Intern |
+| Passwortrichtlinie | Eine Passwortrichtlinie gemaess BSI-Empfehlungen anwenden (mindestens 12 Zeichen) | Microsoft Entra ID |
+
+---
+
+## 8. Auftragsverarbeiter
 
 ### 8.1 Microsoft Corporation
 
-Microsoft est le seul sous-traitant dans le cadre de cette solution.
+Microsoft ist der einzige Auftragsverarbeiter im Rahmen dieser Loesung.
 
 | Element | Detail |
 |---|---|
-| Denomination | Microsoft Corporation |
-| Role DSGVO | Sous-traitant (Auftragsverarbeiter) - Art. 4(8) et Art. 28 DSGVO |
-| Base de l'AVV | Data Processing Agreement (DPA) Microsoft Online Services, accepte lors de la souscription M365 |
-| Prestations concernees | SharePoint Online, Power Automate, Microsoft Forms, Exchange Online, Word Online |
-| Acces aux donnees | Microsoft n'accede pas au contenu des donnees sauf instruction de l'organisation ou obligation legale |
-| Certifications | ISO 27001, ISO 27018, SOC 1/2/3, certifications specifiques au secteur disponibles |
+| Bezeichnung | Microsoft Corporation |
+| DSGVO-Rolle | Auftragsverarbeiter - Art. 4 Nr. 8 und Art. 28 DSGVO |
+| Grundlage des AVV | Microsoft Online Services Data Processing Agreement (DPA), akzeptiert bei der M365-Buchung |
+| Betroffene Dienste | SharePoint Online, Power Automate, Microsoft Forms, Exchange Online, Word Online |
+| Datenzugriff | Microsoft greift nicht auf Inhalte zu, ausser auf Weisung der Organisation oder aufgrund gesetzlicher Verpflichtung |
+| Zertifizierungen | ISO 27001, ISO 27018, SOC 1/2/3, branchenspezifische Zertifizierungen verfuegbar |
 
-L'organisation n'a pas a signer d'AVV supplementaire avec Microsoft : le DPA Microsoft
-Online Services est accepte lors de la souscription M365 et couvre l'ensemble des
-services utilises par cette solution.
+Die Organisation muss keinen zusaetzlichen AVV mit Microsoft abschliessen: Der Microsoft
+Online Services DPA wird bei der M365-Buchung akzeptiert und deckt alle von dieser
+Loesung genutzten Dienste ab.
 
-Le DPA Microsoft Online Services est disponible a l'adresse :
+Der Microsoft Online Services DPA ist verfuegbar unter:
 https://www.microsoft.com/en-us/licensing/docs/view/Microsoft-Products-and-Services-Data-Protection-Addendum-DPA
 
-### 8.2 Aucun autre sous-traitant
+### 8.2 Keine weiteren Auftragsverarbeiter
 
-outplacement-tracker n'utilise :
+outplacement-tracker nutzt:
 
-- aucune API externe tierce (analytics, monitoring, IA, traduction, etc.)
-- aucun connecteur Power Automate Premium impliquant un service tiers
-- aucune infrastructure d'hebergement distincte du tenant M365 de l'organisation
-- aucun service de l'auteur du projet
+- keine externen Dritt-APIs (Analytics, Monitoring, KI, Uebersetzung usw.)
+- keine Premium-Power-Automate-Connectoren, die Drittdienste einbinden
+- keine von dem M365-Tenant der Organisation getrennte Hosting-Infrastruktur
+- keine Dienste des Projektautors
 
-Toute evolution de la solution introduisant un nouveau service tiers devra faire
-l'objet d'une evaluation DPIA (Art. 35 DSGVO) si les donnees traitees sont concernees.
-
----
-
-## 9. Transferts de donnees hors Union europeenne
-
-### 9.1 Residence des donnees Microsoft 365
-
-Par defaut, les tenants Microsoft 365 dont la region est configuree en Europe stockent
-les donnees au repos (data at rest) dans les datacenters europeens de Microsoft
-(principalement Pays-Bas et Irlande, avec centres secondaires en Finlande et Autriche).
-
-Microsoft a deploye l'EU Data Boundary, qui garantit que les donnees de la majorite
-des services M365 (dont SharePoint, Exchange, Power Automate) restent en Europe y compris
-pour les operations et les diagnostics. Ce perimetre s'applique aux licences M365 E3
-avec region configuree sur l'Union europeenne lors de la creation du tenant.
-
-Pour verifier la region du tenant : portail d'administration M365 > Parametres > Profil
-de l'organisation > Pays ou region des donnees.
-
-### 9.2 Absence de transfert par la solution
-
-outplacement-tracker ne procede a aucun transfert de donnees en dehors du tenant
-Microsoft 365 de l'organisation. La solution ne contacte aucun service externe.
-
-### 9.3 En cas de doute sur la residence des donnees
-
-Si l'organisation ne peut pas confirmer que son tenant est configure en region UE,
-elle doit le verifier et le corriger avant le deploiement. En l'absence de garantie
-sur la residence, un transfert hors UE pourrait avoir lieu sans base legale adequat
-(Art. 44-49 DSGVO), ce qui constituerait une violation.
+Jede Weiterentwicklung der Loesung, die einen neuen Drittdienst einfuehrt, muss
+einer Datenschutz-Folgenabschaetzung (DSFA, Art. 35 DSGVO) unterzogen werden, sofern
+die betroffenen personenbezogenen Daten betroffen sind.
 
 ---
 
-## 10. Designation d'un DPD (Datenschutzbeauftragter)
+## 9. Datenuebermittlungen ausserhalb der Europaeischen Union
 
-### 10.1 Obligation probable pour les Transfergesellschaften
+### 9.1 Datenhaltung bei Microsoft 365
 
-L'Art. 37 DSGVO impose la designation d'un DPD dans plusieurs cas, dont :
+Standardmaessig speichern Microsoft 365-Tenants, deren Region auf Europa konfiguriert ist,
+Daten im Ruhezustand (Data at Rest) in den europaeischen Rechenzentren von Microsoft
+(hauptsaechlich Niederlande und Irland, mit Sekundaerstandorten in Finnland und Oesterreich).
 
-- lorsque le traitement est effectue par un organisme public (Art. 37(1)(a))
-- lorsque le traitement implique un suivi regulier et systematique de personnes
-  a grande echelle (Art. 37(1)(b))
+Microsoft hat die EU Data Boundary eingefuehrt, die gewaehrleistet, dass Daten der
+meisten M365-Dienste (darunter SharePoint, Exchange, Power Automate) in Europa verbleiben -
+einschliesslich Betriebs- und Diagnosevorgaengen. Dieser Perimeter gilt fuer M365-E3-Lizenzen
+mit der Region Europaeische Union bei der Tenant-Erstellung.
 
-Une Transfergesellschaft gerant 1 500 a 2 000 participants simultanement effectue
-vraisemblablement un traitement a grande echelle impliquant un suivi regulier des personnes.
-La designation d'un DPD est donc tres probablement obligatoire.
+Zur Pruefung der Tenant-Region: M365-Verwaltungsportal > Einstellungen >
+Organisationsprofil > Land oder Region der Daten.
 
-Le complement national allemand (§ 38 BDSG) impose egalement la designation d'un DPD
-lorsque l'organisme emploie au moins 20 personnes s'occupant en permanence du traitement
-automatise de donnees personnelles.
+### 9.2 Keine Datenuebermittlung durch die Loesung
 
-### 10.2 Role du DPD dans le deploiement de cette solution
+outplacement-tracker uebermittelt keine Daten ausserhalb des Microsoft 365-Tenants
+der Organisation. Die Loesung kontaktiert keine externen Dienste.
 
-Le DPD de l'organisation doit etre associe :
+### 9.3 Bei Unsicherheit ueber den Datenspeicherort
 
-- a la mise a jour du Verzeichnis der Verarbeitungstatigkeiten (voir section 11)
-- a la redaction de l'information vie privee destinee aux participants (Art. 13 DSGVO)
-- a l'evaluation de la necessite d'une DPIA (Art. 35 DSGVO)
-- aux revues periodiques d'acces et de securite
-
----
-
-## 11. Checklist de mise en conformite avant deploiement
-
-L'organisation doit effectuer les actions suivantes avant la mise en production de la solution.
-
-### 11.1 Actions obligatoires
-
-- [ ] Verifier que la region du tenant M365 est configuree sur l'Union europeenne
-- [ ] Configurer les permissions SharePoint du site TransferMappe en acces prive
-      (groupe membres : conseillers et administrateurs uniquement)
-- [ ] Activer l'MFA pour tous les comptes ayant acces au site SharePoint TransferMappe
-- [ ] Creer la shared mailbox expeditrice (ex. transfer@domaine.de) et supprimer
-      toute adresse personnelle des variables des Flows
-- [ ] Mettre a jour le Verzeichnis der Verarbeitungstatigkeiten de l'organisation
-      (Art. 30 DSGVO) en ajoutant cette activite de traitement
-- [ ] Rediger et remettre une notice d'information vie privee aux participants
-      avant leur entree dans la solution (Art. 13 DSGVO), indiquant notamment :
-      les categories de donnees collectees, les finalites, la base legale,
-      la duree de conservation, les droits et le contact DPD
-- [ ] Definir et documenter la procedure de suppression des donnees en fin de parcours
-- [ ] Associer le DPD de l'organisation a la mise en oeuvre
-
-### 11.2 Actions recommandees
-
-- [ ] Evaluer la necessite d'une DPIA (Datenschutz-Folgenabschatzung, Art. 35 DSGVO)
-      au regard du volume de participants et de la nature du suivi
-- [ ] Configurer une politique DLP dans Microsoft Purview pour le site SharePoint TransferMappe
-- [ ] Activer les journaux d'audit M365 et les conserver selon la politique interne
-- [ ] Planifier une revue des acces SharePoint au moins une fois par an
-- [ ] Documenter la procedure de reponse aux demandes d'exercice de droits (delai 1 mois, Art. 12(3) DSGVO)
-- [ ] Former les conseillers aux bonnes pratiques : pas de copie de donnees participants
-      sur des postes personnels, pas de partage par email non securise, etc.
-
-### 11.3 Adaptation du contenu
-
-- [ ] Remplacer les valeurs de configuration des Flows (varSiteUrl, varSharedMailbox, etc.)
-      par les valeurs reelles de l'organisation avant activation
-- [ ] Adapter les templates email (logo, nom de l'organisation, coordonnees de contact)
-- [ ] Adapter le template Word PDF (logo, identite visuelle) si different de 10 k Beratung
+Wenn die Organisation nicht bestaetigen kann, dass ihr Tenant auf die Region EU
+konfiguriert ist, muss sie dies vor dem Deployment pruefen und korrigieren. Ohne
+Gewaehr fuer den Datenspeicherort koennte eine Uebermittlung in ein Drittland ohne
+angemessene Rechtsgrundlage stattfinden (Art. 44 bis 49 DSGVO), was einen Verstoss
+darstellen wuerde.
 
 ---
 
-## 12. Minimisation des donnees : principes de conception
+## 10. Benennung eines Datenschutzbeauftragten (DSB)
 
-La solution a ete concue dans le respect du principe de minimisation des donnees
-(Art. 5(1)(c) DSGVO - Datensparsamkeit). Les choix de conception suivants en temoignent :
+### 10.1 Wahrscheinliche Pflicht fuer Transfergesellschaften
 
-**Formulaire mensuel (Microsoft Forms) :**
+Art. 37 DSGVO verpflichtet zur Benennung eines DSB in mehreren Faellen, darunter:
 
-- 6 champs au total, dont 5 optionnels
-- Le participant decide librement de ce qu'il souhaite partager
-- Aucun champ de suivi de candidatures individuelles
-- Aucun champ de contacts employeurs
-- Aucun mecanisme de scoring ou d'evaluation des participants
+- wenn die Verarbeitung von einer Behoerde oder oeffentlichen Stelle durchgefuehrt wird
+  (Art. 37 Abs. 1 lit. a DSGVO)
+- wenn die Kerntaetigkeit in der umfangreichen regulaeren und systematischen
+  Ueberwachung betroffener Personen besteht (Art. 37 Abs. 1 lit. b DSGVO)
 
-**Listes SharePoint :**
+Eine Transfergesellschaft, die gleichzeitig 1.500 bis 2.000 Teilnehmer betreut,
+fuehrt mit grosser Wahrscheinlichkeit eine umfangreiche Verarbeitung mit regelmaessiger
+Ueberwachung der betroffenen Personen durch. Die Pflicht zur Benennung eines DSB
+ist damit aller Voraussicht nach gegeben.
 
-- Aucune donnee financiere (salaire, indemnite, montant des allocations)
-- Aucune donnee de sante ou medicale
-- Aucune donnee sur les raisons du licenciement (relation employeur d'origine)
-- Aucune photo, document d'identite ou donnee biometrique
+Die nationale Ergaenzung durch § 38 BDSG verpflichtet ebenfalls zur Benennung eines
+DSB, wenn die Organisation mindestens 20 Personen beschaeftigt, die staendig mit der
+automatisierten Verarbeitung personenbezogener Daten befasst sind.
 
-**Emails automatiques :**
+### 10.2 Rolle des DSB beim Deployment dieser Loesung
 
-- L'email d'invitation ne contient que le prenom, nom, date du RDV et le lien Forms
-- L'email a la conseillere contient le PDF en piece jointe mais pas d'historique
-  de donnees en clair dans le corps du message
-- Aucune adresse email personnelle de l'auteur du projet n'apparait dans les templates
+Der DSB der Organisation muss eingebunden werden:
 
-**PDF genere :**
-
-- Le PDF contient uniquement les donnees saisies dans les formulaires
-- Il ne contient pas de metadonnees personnelles cachees (les metadonnees Word sont
-  a verifier lors de la construction du template .docx)
-- Il n'est transmis qu'a la conseillere concernee, pas a l'ensemble de l'equipe
-
-**Droit de regard du participant :**
-
-- Le participant saisit lui-meme ses bilans mensuels via Microsoft Forms
-- Il peut contacter sa conseillere pour obtenir une copie de ses donnees
-- Il peut exercer son droit de rectification en informant sa conseillere ou l'administrateur
+- bei der Aktualisierung des Verzeichnisses der Verarbeitungstaetigkeiten (VVT, Abschnitt 11)
+- bei der Erstellung der Datenschutzinformation fuer die Teilnehmer (Art. 13 DSGVO)
+- bei der Pruefung der Notwendigkeit einer DSFA (Art. 35 DSGVO)
+- bei regelmaessigen Zugriffs- und Sicherheitsueberpruefungen
 
 ---
 
-## 13. Historique des revisions
+## 11. Compliance-Checkliste vor dem Deployment
 
-| Version | Date | Modifications |
+Die Organisation muss folgende Massnahmen vor der Inbetriebnahme der Loesung durchfuehren.
+
+### 11.1 Zwingend erforderliche Massnahmen
+
+- [ ] Pruefen, dass die Region des M365-Tenants auf die Europaeische Union konfiguriert ist
+- [ ] SharePoint-Berechtigungen der Website TransferMappe auf privaten Zugriff konfigurieren
+      (Mitgliedergruppe: nur Beraterinnen und Administratoren)
+- [ ] MFA fuer alle Konten aktivieren, die Zugriff auf die SharePoint-Website TransferMappe haben
+- [ ] Das freigegebene Absenderpostfach anlegen (z.B. transfer@domain.de) und
+      jede persoenliche Adresse aus den Flow-Variablen entfernen
+- [ ] Das Verzeichnis der Verarbeitungstaetigkeiten der Organisation (Art. 30 DSGVO)
+      aktualisieren und diese Verarbeitungstaetigkeit erhaenzen
+- [ ] Eine Datenschutzinformation fuer die Teilnehmer gemaess Art. 13 DSGVO erstellen
+      und vor ihrer Aufnahme in die Loesung aushaaendigen; sie muss insbesondere enthalten:
+      die erfassten Datenkategorien, die Zwecke, die Rechtsgrundlage,
+      die Speicherfrist, die Betroffenenrechte und den DSB-Kontakt
+- [ ] Das Loeschverfahren fuer Daten am Ende der Massnahme festlegen und dokumentieren
+- [ ] Den DSB der Organisation in die Umsetzung einbeziehen
+- [ ] Word-Template-Metadaten neutralisieren: die .docx-Datei vor dem Upload in SharePoint
+      auf persoenliche Autorenangaben pruefen und bereinigen (Datei > Informationen >
+      Auf Probleme pruefen > Dokument pruefen in Word)
+
+### 11.2 Empfohlene Massnahmen
+
+- [ ] Die Notwendigkeit einer DSFA (Datenschutz-Folgenabschaetzung, Art. 35 DSGVO)
+      angesichts des Teilnehmervolumens und der Art der Begleitung bewerten
+- [ ] Eine DLP-Richtlinie in Microsoft Purview fuer die SharePoint-Website TransferMappe konfigurieren
+- [ ] M365-Auditprotokolle aktivieren und gemaess interner Richtlinie aufbewahren
+- [ ] Eine Zugriffsueberprueefung fuer SharePoint mindestens einmal jaehrlich planen
+- [ ] Das Verfahren zur Bearbeitung von Betroffenenanfragen dokumentieren
+      (Frist 1 Monat, Art. 12 Abs. 3 DSGVO)
+- [ ] Beraterinnen in guten Praktiken schulen: keine Kopie von Teilnehmerdaten
+      auf privaten Geraeten, keine Weitergabe per ungesicherter E-Mail usw.
+
+### 11.3 Anpassung der Konfiguration
+
+- [ ] Konfigurationswerte der Flows (varSiteUrl, varSharedMailbox usw.)
+      durch die tatsaechlichen Werte der Organisation vor der Aktivierung ersetzen
+- [ ] E-Mail-Templates anpassen (Logo, Organisationsname, Kontaktdaten)
+- [ ] Word-PDF-Template anpassen (Logo, Corporate Design), falls abweichend von 10 k Beratung
+
+---
+
+## 12. Datensparsamkeit: Gestaltungsprinzipien
+
+Die Loesung wurde im Einklang mit dem Grundsatz der Datensparsamkeit und Zweckbindung
+(Art. 5 Abs. 1 lit. c und e DSGVO) entwickelt. Folgende Gestaltungsentscheidungen belegen dies:
+
+**Monatliches Formular (Microsoft Forms):**
+
+- 6 Felder insgesamt, davon 5 optional
+- Der Teilnehmer entscheidet frei, was er mitteilen moechte
+- Kein Feld zur Verfolgung einzelner Bewerbungen
+- Kein Feld fuer Arbeitgeberkontakte
+- Kein Scoring oder Bewertungsmechanismus fuer Teilnehmer
+
+**SharePoint-Listen:**
+
+- Keine Finanzdaten (Gehalt, Abfindung, Hoehe der Leistungen)
+- Keine Gesundheits- oder medizinischen Daten
+- Keine Angaben zu den Gruenden der Kuendigung (Verhaeltnis zum frueheren Arbeitgeber)
+- Kein Foto, kein Ausweisdokument, keine biometrischen Daten
+
+**Automatische E-Mails:**
+
+- Die Einladungs-E-Mail enthaelt nur Vorname, Nachname, Termindatum und den Forms-Link
+- Die E-Mail an die Beraterin enthaelt das PDF als Anlage, jedoch keinen Datenverlauf
+  im Klartext im Nachrichtenkoerper
+- Keine persoenliche E-Mail-Adresse des Projektautors erscheint in den Templates
+
+**Generiertes PDF:**
+
+- Das PDF enthaelt ausschliesslich die in den Formularen eingegebenen Daten
+- Es enthaelt keine versteckten persoenlichen Metadaten (die Word-Metadaten der .docx-Vorlage
+  sind vom Administrator vor dem Upload zu pruefen und zu bereinigen)
+- Es wird nur an die zustaendige Beraterin uebermittelt, nicht an das gesamte Team
+
+**Einsichtnahme durch den Teilnehmer:**
+
+- Der Teilnehmer gibt seine Monatsberichte selbst ueber Microsoft Forms ein
+- Er kann sich an seine Beraterin wenden, um eine Kopie seiner Daten zu erhalten
+- Er kann sein Recht auf Berichtigung durch Information an seine Beraterin oder den Administrator ausueben
+
+---
+
+## 13. Revisionshistorie
+
+| Version | Datum | Aenderungen |
 |---|---|---|
-| 1.0 | 2026-05-05 | Creation initiale |
+| 1.0 | 2026-05-05 | Erstfassung (franzoesisch) |
+| 1.1 | 2026-05-06 | Vollstaendige Neufassung auf Deutsch (ADR-007) |

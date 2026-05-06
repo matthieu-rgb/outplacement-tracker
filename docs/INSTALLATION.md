@@ -1,39 +1,39 @@
-# Guide d'installation - outplacement-tracker v0.1
+# Installationsanleitung - outplacement-tracker v0.1
 
-Guide de deploiement pas-a-pas pour un administrateur Microsoft 365.
-Duree estimee : 1 a 2 heures.
+Schritt-fur-Schritt-Anleitung zur Bereitstellung fur einen Microsoft 365-Administrator.
+Geschatzte Dauer: 1 bis 2 Stunden.
 
 ---
 
-## Prerequis
+## Voraussetzungen
 
-### Tenant et licences
+### Tenant und Lizenzen
 
-- Tenant Microsoft 365 avec plan **E3 ou superieur**
-  - Requis pour : Word Online (Business), Power Automate inclus, Exchange Online
-  - Aucun connecteur Power Automate Premium n'est utilise
-- Au moins un compte avec les roles suivants :
-  - SharePoint Administrator (pour creer le site et les listes)
-  - Exchange Administrator (pour configurer la shared mailbox)
-  - Compte de service dedie pour les Flows Power Automate (recommande : compte non nominatif, ex. `service-transfermappe@{domaine}`)
+- Microsoft 365-Tenant mit **E3-Plan oder hoher**
+  - Erforderlich fur: Word Online (Business), Power Automate (im Lieferumfang enthalten), Exchange Online
+  - Es werden keine Premium-Connectoren fur Power Automate verwendet
+- Mindestens ein Konto mit den folgenden Rollen:
+  - SharePoint-Administrator (zum Erstellen der Website und der Listen)
+  - Exchange-Administrator (zum Konfigurieren des freigegebenen Postfachs)
+  - Dediziertes Dienstkonto fur Power Automate-Flows (empfohlen: nicht-nominatives Konto, z. B. `service-transfermappe@{domain}`)
 
-### Outils requis sur la machine de l'administrateur
+### Erforderliche Tools auf dem Administratorrechner
 
-- **PowerShell 7+** : [https://github.com/PowerShell/PowerShell/releases](https://github.com/PowerShell/PowerShell/releases)
-- **Module PnP.PowerShell** (installation unique) :
+- **PowerShell 7+**: [https://github.com/PowerShell/PowerShell/releases](https://github.com/PowerShell/PowerShell/releases)
+- **Modul PnP.PowerShell** (einmalige Installation):
 
 ```powershell
 Install-Module PnP.PowerShell -Force -Scope CurrentUser
 ```
 
-- Navigateur moderne avec acces a `https://admin.microsoft.com`, `https://make.powerautomate.com`, `https://forms.microsoft.com`
+- Moderner Browser mit Zugriff auf `https://admin.microsoft.com`, `https://make.powerautomate.com`, `https://forms.microsoft.com`
 
-### Repertoire de travail
+### Arbeitsverzeichnis
 
-Cloner ou telecharger le kit sur la machine de l'administrateur :
+Kit auf dem Administratorrechner klonen oder herunterladen:
 
 ```
-/chemin/vers/outplacement-tracker/
+/pfad/zum/outplacement-tracker/
   sharepoint/
     setup_lists.ps1
     lists_schema.json
@@ -49,433 +49,433 @@ Cloner ou telecharger le kit sur la machine de l'administrateur :
 
 ---
 
-## Etape 1 - Creer le site SharePoint
+## Schritt 1 - SharePoint-Website erstellen
 
-### 1.1 Creer le site
+### 1.1 Website erstellen
 
-1. Aller sur `https://{tenant}-admin.sharepoint.com` (SharePoint Admin Center)
-2. Cliquer sur **Sites actifs** > **Creer** > **Site d'equipe** (Team Site)
-3. Renseigner :
-   - Nom du site : `TransferMappe`
-   - Adresse du site : `transfermappe` (URL resultante : `https://{tenant}.sharepoint.com/sites/transfermappe`)
-   - Propriétaires du site : le compte administrateur et le compte de service Power Automate
-   - Langue : selon preference (n'affecte pas les donnees)
-   - Parametres de confidentialite : **Prive** (les participants n'ont aucun acces)
-4. Cliquer sur **Terminer**
+1. `https://{tenant}-admin.sharepoint.com` aufrufen (SharePoint Admin Center)
+2. Auf **Aktive Websites** > **Erstellen** > **Teamwebsite** klicken
+3. Folgende Angaben ausfullen:
+   - Websitename: `TransferMappe`
+   - Websiteadresse: `transfermappe` (resultierende URL: `https://{tenant}.sharepoint.com/sites/transfermappe`)
+   - Websitebesitzer: das Administratorkonto und das Power Automate-Dienstkonto
+   - Sprache: nach Bedarf (hat keinen Einfluss auf die Daten)
+   - Datenschutzeinstellungen: **Privat** (Teilnehmer haben keinen Zugriff)
+4. Auf **Fertig stellen** klicken
 
-L'URL du site (appelee `SiteUrl` dans la suite) est : `https://{tenant}.sharepoint.com/sites/transfermappe`
+Die URL der Website (im Folgenden `SiteUrl` genannt) lautet: `https://{tenant}.sharepoint.com/sites/transfermappe`
 
-### 1.2 Configurer les permissions
+### 1.2 Berechtigungen konfigurieren
 
-Dans le site cree, aller dans **Parametres** > **Autorisations du site** :
+Auf der erstellten Website zu **Einstellungen** > **Websiteberechtigungen** navigieren:
 
-| Compte | Role SharePoint |
+| Konto | SharePoint-Rolle |
 |---|---|
-| Administrateur deploiement | Proprietaire (Site Collection Admin) |
-| Compte de service Power Automate | Membre (lecture + ecriture listes et bibliotheques) |
-| Conseilleres | Membre (lecture des listes, reception des PDF) |
-| Participants | Aucun acces au site |
+| Bereitstellungsadministrator | Besitzer (Site Collection Admin) |
+| Power Automate-Dienstkonto | Mitglied (Lesen + Schreiben auf Listen und Bibliotheken) |
+| Beraterinnen | Mitglied (Lesen der Listen, Empfang der PDFs) |
+| Teilnehmer | Kein Zugriff auf die Website |
 
 ---
 
-## Etape 2 - Provisioning des listes SharePoint
+## Schritt 2 - Bereitstellung der SharePoint-Listen
 
-### 2.1 Ouvrir PowerShell 7 et se connecter
+### 2.1 PowerShell 7 offnen und verbinden
 
 ```powershell
 Connect-PnPOnline -Url "https://{tenant}.sharepoint.com/sites/transfermappe" -Interactive
 ```
 
-Une fenetre de login s'ouvre. Utiliser le compte administrateur M365. Accepter les permissions demandees par PnP.PowerShell (premiere connexion uniquement).
+Ein Anmeldefenster offnet sich. Das M365-Administratorkonto verwenden. Die von PnP.PowerShell angeforderten Berechtigungen bestatigen (nur bei der ersten Verbindung).
 
-### 2.2 Executer le script de provisioning
+### 2.2 Bereitstellungsskript ausfuhren
 
 ```powershell
-# Depuis le repertoire du kit
+# Aus dem Kit-Verzeichnis
 .\sharepoint\setup_lists.ps1 -SiteUrl "https://{tenant}.sharepoint.com/sites/transfermappe"
 ```
 
-Le script est **idempotent** : il peut etre rejoue sans erreur si les listes existent deja. Il affiche dans la console ce qu'il cree et ce qu'il ignore.
+Das Skript ist **idempotent**: Es kann ohne Fehler erneut ausgefuhrt werden, auch wenn die Listen bereits vorhanden sind. Die Konsole zeigt an, was erstellt und was ubersprungen wird.
 
-### 2.3 Verifier le resultat
+### 2.3 Ergebnis pruefen
 
-En sortie du script, la console doit afficher :
+Nach Abschluss des Skripts muss die Konsole folgendes ausgeben:
 
 ```
-[OK] Participants - N colonnes visibles
-[OK] Profils - N colonnes visibles
-[OK] BilansMensuels - N colonnes visibles
+[OK] Participants - N Spalten sichtbar
+[OK] Profils - N Spalten sichtbar
+[OK] BilansMensuels - N Spalten sichtbar
 ```
 
-Dans le navigateur, aller sur `https://{tenant}.sharepoint.com/sites/transfermappe` > **Contenu du site** et verifier que les 3 listes sont presentes.
+Im Browser `https://{tenant}.sharepoint.com/sites/transfermappe` aufrufen > **Websiteinhalt** und prufen, ob die 3 Listen vorhanden sind.
 
-### 2.4 Structure des listes creees
+### 2.4 Struktur der erstellten Listen
 
-**Liste Participants** (table centrale, une ligne par participant) :
+**Liste Participants** (zentrale Tabelle, eine Zeile pro Teilnehmer):
 
-| Colonne | Type | Requis | Note |
+| Spalte | Typ | Erforderlich | Hinweis |
 |---|---|---|---|
-| Title | Text | Oui | Format : `{prenom} {nom}` |
-| nom | Text | Oui | |
-| prenom | Text | Oui | |
-| email | Text | Oui | Email du participant |
-| langue | Choice | Oui | DE ou EN, defaut : DE |
-| id_conseillere | Text | Oui | Email M365 de la conseillere |
-| date_debut_parcours | DateTime (DateOnly) | Oui | |
-| date_prochain_rdv | DateTime (DateOnly) | Oui | Mis a jour apres chaque RDV |
-| statut | Choice | Oui | actif / suspendu / termine |
+| Title | Text | Ja | Format: `{Vorname} {Nachname}` |
+| nom | Text | Ja | |
+| prenom | Text | Ja | |
+| email | Text | Ja | E-Mail des Teilnehmers |
+| langue | Choice | Ja | DE oder EN, Standard: DE |
+| id_conseillere | Text | Ja | M365-E-Mail der Beraterin |
+| date_debut_parcours | DateTime (DateOnly) | Ja | |
+| date_prochain_rdv | DateTime (DateOnly) | Ja | Nach jedem Termin aktualisiert |
+| statut | Choice | Ja | actif / suspendu / termine |
 
-**Liste Profils** (profil de carriere optionnel, zero ou une ligne par participant) :
+**Liste Profils** (optionales Karriereprofil, null oder eine Zeile pro Teilnehmer):
 
-| Colonne | Type | Requis |
+| Spalte | Typ | Erforderlich |
 |---|---|---|
-| id_participant | Number | Oui |
-| plan_a | Note (multiline) | Non |
-| plan_b | Note (multiline) | Non |
-| marketingplan | Note (multiline) | Non |
-| zielmarkt | Note (multiline) | Non |
-| date_creation | DateTime | Oui |
-| date_modification | DateTime | Non |
+| id_participant | Number | Ja |
+| plan_a | Note (multiline) | Nein |
+| plan_b | Note (multiline) | Nein |
+| marketingplan | Note (multiline) | Nein |
+| zielmarkt | Note (multiline) | Nein |
+| date_creation | DateTime | Ja |
+| date_modification | DateTime | Nein |
 
-**Liste BilansMensuels** (zero a douze bilans par participant) :
+**Liste BilansMensuels** (null bis zwolf Monatsberichte pro Teilnehmer):
 
-| Colonne | Type | Requis |
+| Spalte | Typ | Erforderlich |
 |---|---|---|
-| id_participant | Number | Oui |
-| date_rdv | DateTime (DateOnly) | Oui |
-| date_soumission | DateTime | Oui |
-| bilan_general | Note (multiline) | Oui |
-| statut_objectifs | Choice | Non |
-| statut_objectifs_detail | Note (multiline) | Non |
-| was_lief_gut | Note (multiline) | Non |
-| wo_brauche_ich_unterstuetzung | Note (multiline) | Non |
-| themen_naechster_termin | Note (multiline) | Non |
-| sonstige_anmerkungen | Note (multiline) | Non |
+| id_participant | Number | Ja |
+| date_rdv | DateTime (DateOnly) | Ja |
+| date_soumission | DateTime | Ja |
+| bilan_general | Note (multiline) | Ja |
+| statut_objectifs | Choice | Nein |
+| statut_objectifs_detail | Note (multiline) | Nein |
+| was_lief_gut | Note (multiline) | Nein |
+| wo_brauche_ich_unterstuetzung | Note (multiline) | Nein |
+| themen_naechster_termin | Note (multiline) | Nein |
+| sonstige_anmerkungen | Note (multiline) | Nein |
 
 ---
 
-## Etape 3 - Creer la bibliotheque de documents
+## Schritt 3 - Dokumentbibliothek erstellen
 
-La bibliotheque stocke les PDFs generes et les templates Word.
+Die Bibliothek speichert die generierten PDFs und die Word-Vorlagen.
 
-1. Sur le site SharePoint, cliquer **Nouveau** > **Bibliotheque de documents**
-2. Nom : `TransferMappes`
-3. Cliquer sur **Creer**
-4. Dans la bibliotheque `TransferMappes`, cliquer **Nouveau** > **Dossier**
-5. Nom du dossier : `Templates`
+1. Auf der SharePoint-Website auf **Neu** > **Dokumentbibliothek** klicken
+2. Name: `TransferMappes`
+3. Auf **Erstellen** klicken
+4. In der Bibliothek `TransferMappes` auf **Neu** > **Ordner** klicken
+5. Ordnername: `Templates`
 
-Structure attendue dans SharePoint :
+Erwartete Struktur in SharePoint:
 
 ```
 /sites/transfermappe/TransferMappes/
-  Templates/       <- templates Word
-  Nom_Prenom/      <- cree automatiquement par le Flow lors de la premiere generation
+  Templates/       <- Word-Vorlagen
+  Nachname_Vorname/  <- wird automatisch vom Flow bei der ersten Generierung erstellt
 ```
 
 ---
 
-## Etape 4 - Deposer les templates Word
+## Schritt 4 - Word-Vorlagen hochladen
 
-1. Dans la bibliotheque SharePoint, naviguer vers `TransferMappes/Templates/`
-2. Cliquer **Charger** > **Fichiers**
-3. Selectionner les deux fichiers depuis le kit :
+1. In der SharePoint-Bibliothek zu `TransferMappes/Templates/` navigieren
+2. Auf **Hochladen** > **Dateien** klicken
+3. Die beiden Dateien aus dem Kit auswahlen:
    - `templates/word/transfer_mappe_template_de.docx`
    - `templates/word/transfer_mappe_template_en.docx`
-4. Verifier que les deux fichiers sont visibles dans le dossier `Templates`
+4. Prufen, ob beide Dateien im Ordner `Templates` sichtbar sind
 
-Chemins SharePoint resultants (a utiliser dans le Flow 2) :
+Resultierende SharePoint-Pfade (werden in Flow 2 verwendet):
 
 ```
 /sites/transfermappe/TransferMappes/Templates/transfer_mappe_template_de.docx
 /sites/transfermappe/TransferMappes/Templates/transfer_mappe_template_en.docx
 ```
 
-Verifier que le compte de service Power Automate peut ouvrir ces fichiers (Acces membre sur la bibliotheque).
+Prufen, ob das Power Automate-Dienstkonto diese Dateien offnen kann (Mitgliedszugriff auf die Bibliothek).
 
 ---
 
-## Etape 5 - Creer les formulaires Microsoft Forms
+## Schritt 5 - Microsoft Forms-Formulare erstellen
 
-Suivre le guide detaille : `forms/forms_construction_guide.md`
+Die detaillierte Anleitung befolgen: `forms/forms_construction_guide.md`
 
-Les 4 formulaires sont crees sur le compte de service (ou la boite partagee), pas sur un compte nominatif.
+Die 4 Formulare werden auf dem Dienstkonto (oder dem freigegebenen Postfach) erstellt, nicht auf einem nominativen Konto.
 
-### 5.1 Se connecter a Microsoft Forms
+### 5.1 Bei Microsoft Forms anmelden
 
-Aller sur `https://forms.microsoft.com` avec le compte de service.
+`https://forms.microsoft.com` mit dem Dienstkonto aufrufen.
 
-### 5.2 Creer les 4 formulaires dans l'ordre
+### 5.2 Die 4 Formulare in der angegebenen Reihenfolge erstellen
 
-| # | Titre | Langue | Usage |
+| # | Titel | Sprache | Verwendung |
 |---|---|---|---|
-| 1 | Ihr Karriereprofil - Transfer Mappe | DE | Onboarding (une fois) |
-| 2 | Your Career Profile - Transfer Mappe | EN | Onboarding (une fois) |
-| 3 | Ihr monatlicher Bericht - Transfer Mappe | DE | Bilan mensuel |
-| 4 | Your Monthly Update - Transfer Mappe | EN | Bilan mensuel |
+| 1 | Ihr Karriereprofil - Transfer Mappe | DE | Onboarding (einmalig) |
+| 2 | Your Career Profile - Transfer Mappe | EN | Onboarding (einmalig) |
+| 3 | Ihr monatlicher Bericht - Transfer Mappe | DE | Monatsbericht |
+| 4 | Your Monthly Update - Transfer Mappe | EN | Monatsbericht |
 
-Pour chaque formulaire, suivre la procedure detaillee dans `forms/forms_construction_guide.md` (structure des questions, textes exacts, messages de confirmation).
+Fur jedes Formular die detaillierte Vorgehensweise in `forms/forms_construction_guide.md` befolgen (Fragenstruktur, genaue Texte, Bestatitigungsmeldungen).
 
-### 5.3 Configuration post-creation (applicable aux 4 formulaires)
+### 5.3 Konfiguration nach der Erstellung (gilt fur alle 4 Formulare)
 
-Dans les **Parametres** de chaque formulaire :
+In den **Einstellungen** jedes Formulars:
 
-- **Partage** : choisir "Jeder mit dem Link kann antworten" / "Anyone with the link can respond". Ne pas restreindre aux comptes M365 (les participants n'ont pas de compte M365).
-- **Enregistrement du nom** : desactiver "Record name" (minimisation des donnees DSGVO).
-- **Reponses multiples** : ne pas cocher "Une reponse par personne" (le Flow envoie un lien a chaque RDV).
+- **Teilen**: "Jeder mit dem Link kann antworten" auswahlen. Nicht auf M365-Konten einschranken (Teilnehmer haben kein M365-Konto).
+- **Namensaufzeichnung**: "Record name" deaktivieren (Datensparsamkeit gemass DSGVO).
+- **Mehrfachantworten**: "Eine Antwort pro Person" nicht aktivieren (der Flow sendet bei jedem Termin einen Link).
 
-### 5.4 Recuperer les URLs des formulaires 3 et 4
+### 5.4 URLs der Formulare 3 und 4 abrufen
 
-Pour les Forms 3 et 4 (bilans mensuels uniquement) :
+Nur fur Formulare 3 und 4 (Monatsberichte):
 
-1. Ouvrir le formulaire
-2. Cliquer **Partager** > **Copier le lien**
-3. Conserver ces deux URLs : elles seront utilisees dans les variables des Flows
+1. Das Formular offnen
+2. Auf **Teilen** > **Link kopieren** klicken
+3. Diese beiden URLs aufbewahren: Sie werden in den Flow-Variablen verwendet
 
-Exemple de format d'URL Forms :
+Beispiel fur das URL-Format von Forms:
 ```
 https://forms.office.com/r/XXXXXXXXXX
 ```
 
-Les formulaires 1 et 2 (onboarding) ne sont pas utilises par les Flows. Leur lien est communique manuellement par la conseillere en debut de parcours.
+Die Formulare 1 und 2 (Onboarding) werden nicht von den Flows verwendet. Ihr Link wird zu Beginn des Beratungsprozesses manuell von der Beraterin mitgeteilt.
 
 ---
 
-## Etape 6 - Creer le Flow J-5 (invitation)
+## Schritt 6 - Einladungsflow J-5 erstellen
 
-Suivre le guide detaille : `power_automate/Flow_1_Invitation_J-5.md`
+Die detaillierte Anleitung befolgen: `power_automate/Flow_1_Invitation_J-5.md`
 
-### 6.1 Prerequis avant de creer le Flow
+### 6.1 Voraussetzungen vor der Erstellung des Flows
 
-- La shared mailbox expeditrice doit etre configuree (voir Etape 8)
-- Les URLs des Forms 3 et 4 doivent etre disponibles (voir Etape 5.4)
+- Das sendende freigegebene Postfach muss konfiguriert sein (siehe Schritt 8)
+- Die URLs der Formulare 3 und 4 mussen verfugbar sein (siehe Schritt 5.4)
 
-### 6.2 Creer le Flow
+### 6.2 Flow erstellen
 
-1. Aller sur `https://make.powerautomate.com` avec le compte de service
-2. Cliquer **Creer** > **Flux planifie**
-3. Nom : `TransferMappe - Invitation J-5`
-4. Heure de debut : `07:00`, Repeter toutes les : `1 jour`
-5. Construire les actions dans l'ordre defini dans `Flow_1_Invitation_J-5.md`
+1. `https://make.powerautomate.com` mit dem Dienstkonto aufrufen
+2. Auf **Erstellen** > **Geplanter Flow** klicken
+3. Name: `TransferMappe - Invitation J-5`
+4. Startzeit: `07:00`, Wiederholen alle: `1 Tag`
+5. Die Aktionen in der in `Flow_1_Invitation_J-5.md` definierten Reihenfolge erstellen
 
-### 6.3 Variables a renseigner obligatoirement
+### 6.3 Pflichtangaben fur Variablen
 
-Dans les actions "Initialiser une variable" en debut de Flow :
+In den Aktionen "Variable initialisieren" am Anfang des Flows:
 
-| Variable | Valeur a renseigner |
+| Variable | Einzutragender Wert |
 |---|---|
 | `varSiteUrl` | `https://{tenant}.sharepoint.com/sites/transfermappe` |
-| `varSharedMailbox` | Adresse de la shared mailbox (ex. `transfer@{domaine}.de`) |
-| `varFormUrlDE` | URL du Form 3 (bilan mensuel DE) |
-| `varFormUrlEN` | URL du Form 4 (bilan mensuel EN) |
+| `varSharedMailbox` | Adresse des freigegebenen Postfachs (z. B. `transfer@{domain}.de`) |
+| `varFormUrlDE` | URL von Formular 3 (Monatsbericht DE) |
+| `varFormUrlEN` | URL von Formular 4 (Monatsbericht EN) |
 
-### 6.4 Configurer la gestion d'erreurs
+### 6.4 Fehlerbehandlung konfigurieren
 
-Ajouter l'action `Notifier_erreur` hors de la boucle, avec **Run after : a echoue**.
-Renseigner l'adresse email de l'administrateur en destinataire.
+Die Aktion `Notifier_erreur` ausserhalb der Schleife hinzufugen, mit **Ausfuhren nach: Fehler**.
+Die E-Mail-Adresse des Administrators als Empfanger eintragen.
 
-### 6.5 Sauvegarder et activer le Flow
+### 6.5 Flow speichern und aktivieren
 
-Cliquer **Enregistrer** puis verifier que le Flow est en statut **Actif**.
+Auf **Speichern** klicken und prufen, ob der Flow den Status **Aktiv** hat.
 
 ---
 
-## Etape 7 - Creer le Flow PDF (generation)
+## Schritt 7 - PDF-Generierungsflow erstellen
 
-Suivre le guide detaille : `power_automate/Flow_2_Generation_PDF.md`
+Die detaillierte Anleitung befolgen: `power_automate/Flow_2_Generation_PDF.md`
 
-### 7.1 Prerequis avant de creer le Flow
+### 7.1 Voraussetzungen vor der Erstellung des Flows
 
-- Les templates Word doivent etre deposes dans SharePoint (voir Etape 4)
-- La bibliotheque `TransferMappes` doit exister (voir Etape 3)
+- Die Word-Vorlagen mussen in SharePoint hochgeladen worden sein (siehe Schritt 4)
+- Die Bibliothek `TransferMappes` muss vorhanden sein (siehe Schritt 3)
 
-### 7.2 Creer le Flow
+### 7.2 Flow erstellen
 
-1. Sur `https://make.powerautomate.com`
-2. Cliquer **Creer** > **Flux planifie**
-3. Nom : `TransferMappe - Generation PDF`
-4. Heure de debut : `06:00`, Repeter toutes les : `1 jour`
-5. Construire les actions dans l'ordre defini dans `Flow_2_Generation_PDF.md`
+1. `https://make.powerautomate.com` aufrufen
+2. Auf **Erstellen** > **Geplanter Flow** klicken
+3. Name: `TransferMappe - Generation PDF`
+4. Startzeit: `06:00`, Wiederholen alle: `1 Tag`
+5. Die Aktionen in der in `Flow_2_Generation_PDF.md` definierten Reihenfolge erstellen
 
-Le Flow PDF se declenche a 06h00, une heure avant le Flow Invitation (07h00), pour eviter toute collision.
+Der PDF-Generierungsflow wird um 06:00 Uhr ausgefuhrt, eine Stunde vor dem Einladungsflow (07:00 Uhr), um Kollisionen zu vermeiden.
 
-### 7.3 Variables a renseigner obligatoirement
+### 7.3 Pflichtangaben fur Variablen
 
-| Variable | Valeur a renseigner |
+| Variable | Einzutragender Wert |
 |---|---|
 | `varSiteUrl` | `https://{tenant}.sharepoint.com/sites/transfermappe` |
-| `varSharedMailbox` | Adresse de la shared mailbox |
+| `varSharedMailbox` | Adresse des freigegebenen Postfachs |
 | `varTemplatePathDE` | `/sites/transfermappe/TransferMappes/Templates/transfer_mappe_template_de.docx` |
 | `varTemplatePathEN` | `/sites/transfermappe/TransferMappes/Templates/transfer_mappe_template_en.docx` |
 
-### 7.4 Renseigner les 118 Content Controls
+### 7.4 Die 118 Content Controls befulllen
 
-L'action "Remplir un modele Microsoft Word" requiert le mapping complet des 118 Content Controls. Voir le tableau exhaustif dans `power_automate/Flow_2_Generation_PDF.md`, section "Mapping des Content Controls".
+Die Aktion "Vorlage in Microsoft Word auffulllen" erfordert die vollstandige Zuordnung aller 118 Content Controls. Die vollstandige Tabelle befindet sich in `power_automate/Flow_2_Generation_PDF.md`, Abschnitt "Mapping des Content Controls".
 
-Ne jamais laisser un champ vide dans cette action : injecter `""` pour les bilans inexistants.
+Kein Feld in dieser Aktion leer lassen: fur nicht vorhandene Monatsberichte `""` einsetzen.
 
-### 7.5 Sauvegarder et activer le Flow
+### 7.5 Flow speichern und aktivieren
 
-Cliquer **Enregistrer** puis verifier que le Flow est en statut **Actif**.
-
----
-
-## Etape 8 - Configurer la shared mailbox
-
-### 8.1 Creer la shared mailbox (si elle n'existe pas)
-
-1. Aller sur `https://admin.microsoft.com` > **Exchange** > **Destinataires** > **Boites aux lettres partagees**
-2. Cliquer **Ajouter une boite aux lettres partagee**
-3. Nom d'affichage : `Transfer Mappe`
-4. Adresse email : `transfer@{domaine}.de` (ou selon convention interne)
-5. Cliquer **Enregistrer**
-
-### 8.2 Accorder la permission "Send As" au compte de service
-
-1. Dans Exchange Admin Center, ouvrir la shared mailbox `transfer@{domaine}.de`
-2. Cliquer sur l'onglet **Delegation**
-3. Sous **Envoyer en tant que (Send As)**, cliquer **Modifier**
-4. Ajouter le compte de service Power Automate
-5. Enregistrer
-
-Attendre 5 a 15 minutes que la permission se propage avant de tester.
-
-### 8.3 Verifier
-
-Sur `https://outlook.office.com` avec le compte de service, verifier que la shared mailbox apparait dans la liste des boites. Sinon, l'ajouter manuellement : **Parametres** > **Ouvrir une autre boite aux lettres**.
+Auf **Speichern** klicken und prufen, ob der Flow den Status **Aktiv** hat.
 
 ---
 
-## Etape 9 - Test avec un participant fictif
+## Schritt 8 - Freigegebenes Postfach konfigurieren
 
-Cette etape valide le bon fonctionnement bout-en-bout avant la mise en production.
+### 8.1 Freigegebenes Postfach erstellen (sofern noch nicht vorhanden)
 
-### 9.1 Creer le participant de test
+1. `https://admin.microsoft.com` aufrufen > **Exchange** > **Empfanger** > **Freigegebene Postfacher**
+2. Auf **Freigegebenes Postfach hinzufugen** klicken
+3. Anzeigename: `Transfer Mappe`
+4. E-Mail-Adresse: `transfer@{domain}.de` (oder gemas interner Konvention)
+5. Auf **Speichern** klicken
 
-Dans la liste SharePoint `Participants`, cliquer **Nouveau** et renseigner :
+### 8.2 Dem Dienstkonto die Berechtigung "Senden als" erteilen
 
-| Colonne | Valeur |
+1. Im Exchange Admin Center das freigegebene Postfach `transfer@{domain}.de` offnen
+2. Auf die Registerkarte **Delegierung** klicken
+3. Unter **Senden als (Send As)** auf **Bearbeiten** klicken
+4. Das Power Automate-Dienstkonto hinzufugen
+5. Speichern
+
+5 bis 15 Minuten warten, bis die Berechtigung ubernommen wurde, bevor der Test durchgefuhrt wird.
+
+### 8.3 Prufen
+
+Auf `https://outlook.office.com` mit dem Dienstkonto prufen, ob das freigegebene Postfach in der Postfachliste erscheint. Andernfalls manuell hinzufugen: **Einstellungen** > **Weiteres Postfach offnen**.
+
+---
+
+## Schritt 9 - Test mit einem fiktiven Teilnehmer
+
+Dieser Schritt validiert das vollstandige Funktionieren von Anfang bis Ende vor der Inbetriebnahme.
+
+### 9.1 Testteilnehmer erstellen
+
+In der SharePoint-Liste `Participants` auf **Neues Element** klicken und folgendes ausfulllen:
+
+| Spalte | Wert |
 |---|---|
 | Title | `Test Testperson` |
 | nom | `Testperson` |
 | prenom | `Test` |
-| email | votre adresse email personnelle (pour recevoir le mail de test) |
+| email | Ihre personliche E-Mail-Adresse (um die Test-E-Mail zu empfangen) |
 | langue | `DE` |
-| id_conseillere | votre adresse email (pour recevoir le PDF) |
-| date_debut_parcours | date d'aujourd'hui - 1 mois |
-| date_prochain_rdv | date d'aujourd'hui + 5 jours |
+| id_conseillere | Ihre E-Mail-Adresse (um das PDF zu empfangen) |
+| date_debut_parcours | Heutiges Datum minus 1 Monat |
+| date_prochain_rdv | Heutiges Datum plus 5 Tage |
 | statut | `actif` |
 
-### 9.2 Tester le Flow J-5
+### 9.2 Einladungsflow J-5 testen
 
-1. Dans Power Automate, ouvrir `TransferMappe - Invitation J-5`
-2. Cliquer **Executer** (execution manuelle)
-3. Verifier dans la boite de reception que l'email d'invitation est recu
-4. Cliquer le lien dans l'email pour confirmer qu'il ouvre le bon formulaire Forms
+1. In Power Automate `TransferMappe - Invitation J-5` offnen
+2. Auf **Ausfuhren** (manuelle Ausfuhrung) klicken
+3. Im Posteingang prufen, ob die Einladungs-E-Mail empfangen wurde
+4. Auf den Link in der E-Mail klicken, um zu bestatigen, dass das richtige Forms-Formular geoffnet wird
 
-### 9.3 Creer un bilan de test
+### 9.3 Testmonatsbericht erstellen
 
-Dans la liste SharePoint `BilansMensuels`, cliquer **Nouveau** et renseigner :
+In der SharePoint-Liste `BilansMensuels` auf **Neues Element** klicken und folgendes ausfulllen:
 
-| Colonne | Valeur |
+| Spalte | Wert |
 |---|---|
 | Title | `2026-05-01 - Test Testperson` |
-| id_participant | `{ID SharePoint du participant de test}` |
-| date_rdv | date d'aujourd'hui |
-| date_soumission | date d'aujourd'hui |
-| bilan_general | `Bilan de test - a supprimer` |
+| id_participant | `{SharePoint-ID des Testteilnehmers}` |
+| date_rdv | Heutiges Datum |
+| date_soumission | Heutiges Datum |
+| bilan_general | `Testbericht - zu loschen` |
 
-L'ID SharePoint du participant est visible dans l'URL lors de l'edition de l'element (parametre `ID=...`).
+Die SharePoint-ID des Teilnehmers ist in der URL beim Bearbeiten des Elements sichtbar (Parameter `ID=...`).
 
-### 9.4 Modifier la date du RDV et tester le Flow PDF
+### 9.4 Termindatum anpassen und PDF-Generierungsflow testen
 
-1. Dans la liste Participants, modifier le participant de test : `date_prochain_rdv` = aujourd'hui
-2. Dans Power Automate, ouvrir `TransferMappe - Generation PDF`
-3. Cliquer **Executer** (execution manuelle)
-4. Verifier :
-   - L'email avec le PDF en piece jointe est recu par la conseillere de test
-   - Le PDF est sauvegarde dans `TransferMappes/Testperson_Test/`
-   - Le PDF est lisible et contient les donnees du bilan de test
+1. In der Liste Participants den Testteilnehmer bearbeiten: `date_prochain_rdv` = heute
+2. In Power Automate `TransferMappe - Generation PDF` offnen
+3. Auf **Ausfuhren** (manuelle Ausfuhrung) klicken
+4. Folgendes prufen:
+   - Die E-Mail mit dem PDF als Anhang wird von der Testberaterin empfangen
+   - Das PDF wird in `TransferMappes/Testperson_Test/` gespeichert
+   - Das PDF ist lesbar und enthalt die Daten des Testberichts
 
-### 9.5 Verifier les journaux d'execution
+### 9.5 Ausfuhrungsprotokolle prufen
 
-Dans Power Automate, ouvrir chaque Flow et consulter **Historique des executions** (28 derniers jours). Une execution reussie affiche le statut "Reussi" en vert. En cas d'echec, cliquer sur l'execution pour voir le detail de l'action en erreur.
+In Power Automate jeden Flow offnen und den **Ausfuhrungsverlauf** aufrufen (letzte 28 Tage). Eine erfolgreiche Ausfuhrung zeigt den Status "Erfolgreich" in Grun. Bei einem Fehler auf die Ausfuhrung klicken, um die Details der fehlerhaften Aktion anzuzeigen.
 
-### 9.6 Nettoyer apres le test
+### 9.6 Nach dem Test bereinigen
 
-Supprimer dans SharePoint :
-- L'element de la liste `Participants` (participant de test)
-- L'element de la liste `BilansMensuels` (bilan de test)
-- Le dossier `TransferMappes/Testperson_Test/` et son contenu
-
----
-
-## Etape 10 - Nettoyage et mise en production
-
-### 10.1 Verifications finales avant ouverture
-
-- [ ] Les deux Flows sont en statut "Actif"
-- [ ] La shared mailbox envoie correctement (test reussi a l'etape 9)
-- [ ] Les templates Word sont accessibles par le compte de service
-- [ ] Les 4 formulaires Forms sont en acces public (lien sans compte requis)
-- [ ] Les donnees de test sont supprimees des 3 listes SharePoint
-
-### 10.2 Creer les vrais participants
-
-Dans la liste SharePoint `Participants`, creer un enregistrement par participant.
-Le champ `date_prochain_rdv` doit etre renseigne pour que les Flows s'activent.
-
-### 10.3 Distribuer les liens des formulaires d'onboarding
-
-Les conseilleres communiquent manuellement le lien du Form 1 (DE) ou Form 2 (EN) aux participants en debut de parcours. Ces formulaires ne sont pas envoyes automatiquement par les Flows.
-
-### 10.4 Surveiller les premiers jours de production
-
-Consulter les **Historiques d'execution** des deux Flows dans Power Automate les 3 premiers jours ouvres. En cas d'echec, une notification email est envoyee automatiquement a l'administrateur (action `Notifier_erreur` configuree a l'etape 6.4 et 7.5).
+In SharePoint folgendes loschen:
+- Den Eintrag aus der Liste `Participants` (Testteilnehmer)
+- Den Eintrag aus der Liste `BilansMensuels` (Testbericht)
+- Den Ordner `TransferMappes/Testperson_Test/` und seinen Inhalt
 
 ---
 
-## Variables de configuration
+## Schritt 10 - Bereinigung und Inbetriebnahme
 
-Recapitulatif de toutes les valeurs a ajuster. A conserver dans un document interne securise.
+### 10.1 Abschlusspruefungen vor der Freigabe
 
-| Variable | Valeur a renseigner | Utilisation |
+- [ ] Beide Flows haben den Status "Aktiv"
+- [ ] Das freigegebene Postfach sendet korrekt (Test in Schritt 9 erfolgreich)
+- [ ] Die Word-Vorlagen sind fur das Dienstkonto zuganglich
+- [ ] Die 4 Forms-Formulare sind offentlich zuganglich (Link ohne erforderliches Konto)
+- [ ] Die Testdaten wurden aus den 3 SharePoint-Listen geloscht
+
+### 10.2 Echte Teilnehmer anlegen
+
+In der SharePoint-Liste `Participants` einen Datensatz pro Teilnehmer erstellen.
+Das Feld `date_prochain_rdv` muss ausgefullt sein, damit die Flows ausgefuhrt werden.
+
+### 10.3 Links der Onboarding-Formulare verteilen
+
+Die Beraterinnen teilen den Teilnehmern zu Beginn des Beratungsprozesses manuell den Link zu Formular 1 (DE) oder Formular 2 (EN) mit. Diese Formulare werden nicht automatisch von den Flows versendet.
+
+### 10.4 Die ersten Produktionstage uberwachen
+
+Den **Ausfuhrungsverlauf** beider Flows in Power Automate an den ersten 3 Werktagen prufen. Bei einem Fehler wird automatisch eine Benachrichtigungs-E-Mail an den Administrator gesendet (Aktion `Notifier_erreur`, konfiguriert in Schritt 6.4 und 7.5).
+
+---
+
+## Konfigurationsvariablen
+
+Zusammenfassung aller anzupassenden Werte. In einem internen, sicheren Dokument aufbewahren.
+
+| Variable | Einzutragender Wert | Verwendung |
 |---|---|---|
-| `{tenant}` | Identifiant du tenant M365 (ex. `contoso`) | Toutes les URLs SharePoint et admin |
-| `{domaine}` | Domaine email de l'organisation (ex. `contoso.de`) | Adresses email, shared mailbox |
-| `SiteUrl` | URL complete du site (ex. `https://contoso.sharepoint.com/sites/transfermappe`) | Script PowerShell, variables Flow |
-| `varSharedMailbox` | Adresse expeditrice (ex. `transfer@contoso.de`) | Flow 1 et Flow 2 |
-| `varFormUrlDE` | URL du Form 3 - bilan mensuel DE | Flow 1 |
-| `varFormUrlEN` | URL du Form 4 - bilan mensuel EN | Flow 1 |
+| `{tenant}` | Bezeichner des M365-Tenants (z. B. `contoso`) | Alle SharePoint- und Admin-URLs |
+| `{domain}` | E-Mail-Domain der Organisation (z. B. `contoso.de`) | E-Mail-Adressen, freigegebenes Postfach |
+| `SiteUrl` | Vollstandige URL der Website (z. B. `https://contoso.sharepoint.com/sites/transfermappe`) | PowerShell-Skript, Flow-Variablen |
+| `varSharedMailbox` | Absenderadresse (z. B. `transfer@contoso.de`) | Flow 1 und Flow 2 |
+| `varFormUrlDE` | URL von Formular 3 - Monatsbericht DE | Flow 1 |
+| `varFormUrlEN` | URL von Formular 4 - Monatsbericht EN | Flow 1 |
 | `varTemplatePathDE` | `/sites/transfermappe/TransferMappes/Templates/transfer_mappe_template_de.docx` | Flow 2 |
 | `varTemplatePathEN` | `/sites/transfermappe/TransferMappes/Templates/transfer_mappe_template_en.docx` | Flow 2 |
-| Adresse admin erreurs | Email de l'administrateur (destinataire des alertes) | Flow 1 et Flow 2 |
-| Compte de service | Email du compte service Power Automate | Connexions Power Automate, Send As |
+| Fehlerbenachrichtigungsadresse | E-Mail des Administrators (Empfanger der Warnmeldungen) | Flow 1 und Flow 2 |
+| Dienstkonto | E-Mail des Power Automate-Dienstkontos | Power Automate-Verbindungen, Senden als |
 
 ---
 
-## Troubleshooting
+## Fehlerbehebung
 
-### Le script PnP echoue avec "Access Denied"
+### Das PnP-Skript schlagt mit "Access Denied" fehl
 
-**Cause** : le compte PowerShell n'est pas Site Collection Administrator sur le site.
+**Ursache**: Das PowerShell-Konto ist kein Site Collection Administrator auf der Website.
 
-**Solution** : dans le SharePoint Admin Center, aller sur **Sites actifs** > selectionner le site TransferMappe > **Appartenance** > ajouter le compte comme proprietaire.
-
----
-
-### Le script PnP echoue avec "The remote server returned an error: (403)"
-
-**Cause** : le module PnP.PowerShell utilise une version d'authentification incompatible avec les parametres du tenant (MFA, Conditional Access).
-
-**Solution** : s'assurer d'utiliser `-Interactive` comme methode de connexion. Verifier que les politiques de Conditional Access du tenant autorisent les applications tierces sur le poste de l'administrateur.
+**Losung**: Im SharePoint Admin Center zu **Aktive Websites** navigieren > die TransferMappe-Website auswahlen > **Mitgliedschaft** > das Konto als Besitzer hinzufugen.
 
 ---
 
-### Le Flow J-5 ne trouve aucun participant alors que la date correspond
+### Das PnP-Skript schlagt mit "The remote server returned an error: (403)" fehl
 
-**Cause** : le filtre OData sur `date_prochain_rdv` peut echouer si la colonne stocke une valeur DateTime avec heure (meme `T00:00:00Z`).
+**Ursache**: Das Modul PnP.PowerShell verwendet eine mit den Tenant-Einstellungen inkompatible Authentifizierungsversion (MFA, Conditional Access).
 
-**Solution** : dans l'action `Get_participants_J5`, remplacer le filtre OData par :
+**Losung**: Sicherstellen, dass `-Interactive` als Verbindungsmethode verwendet wird. Prufen, ob die Conditional Access-Richtlinien des Tenants Drittanbieteranwendungen auf dem Administratorrechner erlauben.
+
+---
+
+### Der Einladungsflow J-5 findet keinen Teilnehmer, obwohl das Datum ubereinstimmt
+
+**Ursache**: Der OData-Filter auf `date_prochain_rdv` kann fehlschlagen, wenn die Spalte einen DateTime-Wert mit Uhrzeit speichert (auch `T00:00:00Z`).
+
+**Losung**: In der Aktion `Get_participants_J5` den OData-Filter ersetzen durch:
 
 ```
 statut eq 'actif' and date_prochain_rdv ge '@{outputs('Calculer_date_cible')}T00:00:00Z' and date_prochain_rdv lt '@{outputs('Calculer_date_cible')}T23:59:59Z'
@@ -483,52 +483,52 @@ statut eq 'actif' and date_prochain_rdv ge '@{outputs('Calculer_date_cible')}T00
 
 ---
 
-### Le Flow PDF echoue sur l'action "Remplir un modele Microsoft Word"
+### Der PDF-Generierungsflow schlagt bei der Aktion "Vorlage in Microsoft Word auffulllen" fehl
 
-**Causes possibles et solutions** :
+**Mogliche Ursachen und Losungen**:
 
-1. **Fichier template introuvable** : verifier le chemin exact dans `varTemplatePathDE` / `varTemplatePathEN`. Le chemin est sensible a la casse et ne doit pas inclure l'URL du site en prefixe.
+1. **Vorlagendatei nicht gefunden**: Den genauen Pfad in `varTemplatePathDE` / `varTemplatePathEN` prufen. Der Pfad ist Gross-/Kleinschreibung-sensitiv und darf nicht die Website-URL als Prafix enthalten.
 
-2. **Fichier ouvert par un autre utilisateur** : l'action echoue si le .docx est en cours d'edition dans Word Online. S'assurer que personne ne modifie le fichier pendant l'execution du Flow.
+2. **Datei von einem anderen Benutzer geoffnet**: Die Aktion schlagt fehl, wenn die .docx-Datei gerade in Word Online bearbeitet wird. Sicherstellen, dass niemand die Datei wahrend der Flow-Ausfuhrung bearbeitet.
 
-3. **Content Control manquant** : si un Tag value dans le .docx ne correspond pas exactement au champ renseigne dans l'action Power Automate, le Flow echoue. Verifier la correspondance exacte des Tag values (liste exhaustive dans `specs/word_template_structure.md`).
+3. **Content Control fehlt**: Wenn ein Tag-Wert in der .docx-Datei nicht genau dem in der Power Automate-Aktion eingetragenen Feld entspricht, schlagt der Flow fehl. Die genaue Ubereinstimmung der Tag-Werte prufen (vollstandige Liste in `specs/word_template_structure.md`).
 
-4. **Champ vide dans l'action** : tous les 118 champs doivent etre renseignes. Injecter `""` pour les bilans inexistants plutot que de laisser le champ vide.
-
----
-
-### La shared mailbox ne peut pas envoyer (erreur "Send As" refusee)
-
-**Cause** : la permission "Send As" n'est pas encore propagee, ou le compte de service n'est pas dans la liste.
-
-**Solution** :
-1. Dans Exchange Admin Center, verifier que le compte de service est bien dans la delegation "Send As" de la shared mailbox
-2. Attendre 15 minutes pour la propagation
-3. Si le probleme persiste, supprimer et re-ajouter la permission
+4. **Leeres Feld in der Aktion**: Alle 118 Felder mussen ausgefullt sein. Fur nicht vorhandene Monatsberichte `""` einsetzen, anstatt das Feld leer zu lassen.
 
 ---
 
-### Le PDF est genere mais vide ou avec des champs non remplis
+### Das freigegebene Postfach kann nicht senden (Fehler "Senden als" verweigert)
 
-**Cause** : des Content Controls dans le template .docx ont des Tag values qui ne correspondent pas exactement aux expressions Power Automate.
+**Ursache**: Die Berechtigung "Senden als" wurde noch nicht ubernommen, oder das Dienstkonto befindet sich nicht in der Liste.
 
-**Solution** : ouvrir le .docx dans Word, activer l'affichage des Content Controls (Developer > Design Mode), et verifier les Tag values de chaque Content Control. Les comparer avec la liste dans `specs/word_template_structure.md`.
-
----
-
-### Le Flow depasse le delai d'execution pour un grand volume de participants
-
-**Contexte** : Power Automate traite par defaut les elements d'une boucle "Apply to each" sequentiellement. Pour 100 participants, le Flow PDF peut prendre 20 a 30 minutes.
-
-**Solution** : activer la concurrence sur la boucle principale :
-1. Dans la boucle "Pour_chaque_participant_rdv", cliquer les trois points > **Parametres**
-2. Activer **Controle de concurrence**, regler sur 10 a 20 (ne pas depasser 50)
-3. Attention : avec la concurrence activee, utiliser des variables locales a la boucle et non des variables globales
+**Losung**:
+1. Im Exchange Admin Center prufen, ob das Dienstkonto korrekt in der Delegierung "Senden als" des freigegebenen Postfachs eingetragen ist
+2. 15 Minuten fur die Ubernahme warten
+3. Falls das Problem weiterhin besteht, die Berechtigung loschen und erneut hinzufugen
 
 ---
 
-### Un participant recoit l'invitation mais pas en bonne langue
+### Das PDF wird generiert, ist aber leer oder enthalt nicht ausgefullte Felder
 
-**Cause** : la colonne `langue` de cet enregistrement dans Participants n'est pas correctement renseignee.
+**Ursache**: Content Controls in der .docx-Vorlage haben Tag-Werte, die nicht genau mit den Power Automate-Ausdrucken ubereinstimmen.
 
-**Solution** : dans la liste SharePoint `Participants`, verifier la valeur de la colonne `langue` pour ce participant. La valeur doit etre exactement `DE` ou `EN` (majuscules, sans espace).
+**Losung**: Die .docx-Datei in Word offnen, die Anzeige der Content Controls aktivieren (Entwickler > Entwurfsmodus) und die Tag-Werte jedes Content Controls prufen. Mit der Liste in `specs/word_template_structure.md` vergleichen.
+
+---
+
+### Der Flow uberschreitet die Ausfuhrungszeitgrenze bei einer grossen Anzahl von Teilnehmern
+
+**Kontext**: Power Automate verarbeitet Elemente in einer "Apply to each"-Schleife standardmasig sequenziell. Bei 100 Teilnehmern kann der PDF-Generierungsflow 20 bis 30 Minuten dauern.
+
+**Losung**: Parallelverarbeitung fur die Hauptschleife aktivieren:
+1. In der Schleife "Pour_chaque_participant_rdv" auf die drei Punkte > **Einstellungen** klicken
+2. **Parallelitatssteuerung** aktivieren, auf 10 bis 20 einstellen (50 nicht uberschreiten)
+3. Achtung: Bei aktivierter Parallelitat schleifenlokale Variablen verwenden, keine globalen Variablen
+
+---
+
+### Ein Teilnehmer erhalt die Einladung in der falschen Sprache
+
+**Ursache**: Die Spalte `langue` dieses Datensatzes in der Liste Participants ist nicht korrekt ausgefullt.
+
+**Losung**: In der SharePoint-Liste `Participants` den Wert der Spalte `langue` fur diesen Teilnehmer prufen. Der Wert muss genau `DE` oder `EN` lauten (Grossbuchstaben, kein Leerzeichen).

@@ -1,63 +1,63 @@
 # outplacement-tracker
 
-> Solution cle-en-main basee sur Microsoft 365 pour digitaliser le suivi mensuel des participants en Transfergesellschaft, en preservant la dimension humaine de la relation participant-conseiller.
+> A Microsoft 365-native solution for digitalising the monthly progress tracking of participants in a Transfergesellschaft, while preserving the human dimension of the participant-Beraterin relationship.
 
-## Le contexte
+## Context
 
-Les societes de reclassement allemandes (Transfergesellschaften) accompagnent les participants pendant 6 a 12 mois via des rendez-vous mensuels avec un conseiller. Le suivi se fait souvent dans une "Transfer Mappe" papier ou un PDF a remplir manuellement, peu adaptee au flux numerique d'aujourd'hui.
+German Transfergesellschaften (outplacement companies operating under §111 SGB III) support participants over 6 to 12 months through monthly appointments with a Beraterin. Tracking is typically done via a paper-based "Transfer Mappe" or a manually completed PDF, neither of which fits a digital workflow.
 
-Cette solution propose une alternative legere : un formulaire mensuel envoye 5 jours avant chaque RDV, un PDF cumulatif genere automatiquement le matin du rendez-vous, le tout sans flicage et sans saisie obligatoire de chaque action.
+This solution provides a lightweight alternative: a monthly form sent five days before each appointment, a cumulative PDF generated automatically on the morning of the appointment, with no surveillance and no mandatory entry for every individual action.
 
-## Le principe
+## How it works
 
 ```
-J-5 avant RDV    -> le participant recoit un mail avec un lien Forms
-                    et y resume librement son mois
+J-5 before appointment  -> the participant receives an email with a Forms link
+                           and freely summarises their month
 
-Jour J du RDV    -> la conseillere recoit un PDF cumulatif avec
-                    l'historique complet du participant et le
-                    bilan du mois ecoule
+Day of appointment      -> the Beraterin receives a cumulative PDF containing
+                           the participant's full history and the current
+                           monthly summary
 ```
 
-Six champs dans le formulaire mensuel, un seul obligatoire. Le participant decide de ce qu'il partage. La conseillere arrive preparee. Le PDF appartient au participant.
+Six fields in the monthly form, one mandatory. The participant decides what to share. The Beraterin arrives prepared. The PDF belongs to the participant.
 
-## Stack technique
+## Technical stack
 
-- **Microsoft Forms** pour les formulaires (DE et EN)
-- **SharePoint** pour la base de donnees et les listes
-- **Power Automate** pour l'orchestration (envoi J-5 + generation PDF)
-- **Word template** pour le rendu du PDF cumulatif
-- **Outlook** pour l'envoi des notifications
+- **Microsoft Forms** for forms (DE and EN)
+- **SharePoint** for the database and lists
+- **Power Automate** for orchestration (J-5 invitation + PDF generation)
+- **Word template** for the cumulative PDF output
+- **Outlook** for notification delivery
 
-Tout reste dans le tenant Microsoft 365 du client. Aucune donnee ne sort. Compatible plan E3 standard, sans connecteur premium.
+All data remains within the client's Microsoft 365 tenant. No data leaves the tenant. Compatible with a standard E3 plan, no premium connectors required.
 
-## Pour deployer
+## Deployment
 
-Voir `docs/INSTALLATION.md` (genere au sprint 3).
+See `docs/INSTALLATION.md` (produced in sprint 3).
 
-Resume :
-1. Importer le schema SharePoint via le script PowerShell PnP
-2. Importer les deux Microsoft Forms
-3. Importer les deux Power Automate Flows
-4. Deposer le template Word dans SharePoint
-5. Ajuster les variables (boite mail expediteur, conseillere par defaut)
+Summary:
+1. Import the SharePoint schema via the PnP PowerShell script
+2. Import the two Microsoft Forms
+3. Import the two Power Automate Flows
+4. Upload the Word template to SharePoint
+5. Adjust variables (sender mailbox, default Beraterin)
 
-Temps de deploiement estime : 1 a 2 heures pour un administrateur Microsoft 365.
+Estimated deployment time: 1 to 2 hours for a Microsoft 365 administrator.
 
-## Statut
+## Status
 
-| Sprint | Objectif | Statut |
-|--------|----------|--------|
-| 1 | Fondations metier (schemas, templates, contenus) | Termine |
-| 2 | Automatisation (Power Automate, scripts setup) | Termine |
-| 3 | Documentation et livrables (PITCH.pdf, INSTALLATION.md) | Termine - release v0.1.0 |
+| Sprint | Objective | Status |
+|--------|-----------|--------|
+| 1 | Business foundations (schemas, templates, content) | Done |
+| 2 | Automation (Power Automate, setup scripts) | Done |
+| 3 | Documentation and deliverables (PITCH.pdf, INSTALLATION.md) | Done - release v0.1.0 |
 
 ## Licence
 
-MIT. Libre d'utilisation, modification et redistribution.
+MIT. Free to use, modify and redistribute.
 
-## Auteur
+## Author
 
 Matthieu Riegert ([@matthieu-rgb](https://github.com/matthieu-rgb)) - 2026
 
-Projet personnel, livre sans garantie ni engagement de support.
+Personal project, delivered without warranty or support commitment.

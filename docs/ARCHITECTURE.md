@@ -1,385 +1,385 @@
-# Architecture technique - outplacement-tracker v0.1
+# Technical architecture - outplacement-tracker v0.1
 
-Document de reference pour un architecte technique ou un decideur IT evaluant la solution.
+Reference document for a technical architect or IT decision-maker evaluating the solution.
 
 ---
 
-## Vue d'ensemble
+## Overview
 
-### Objectif de la solution
+### Purpose of the solution
 
-outplacement-tracker digitalise le suivi mensuel de participants en Transfergesellschaft (structure allemande de reclassement professionnel, cadre § 111 SGB III). La solution automatise deux processus :
+outplacement-tracker digitalises the monthly progress tracking of participants in a Transfergesellschaft (German outplacement company under §111 SGB III). The solution automates two processes:
 
-1. **J-5** : envoi d'un formulaire de bilan mensuel au participant cinq jours avant son rendez-vous
-2. **Jour J** : generation d'un PDF cumulatif (Transfer Mappe) remis a la conseillere avant le rendez-vous
+1. **J-5** : sending a monthly review form to the participant five days before their appointment
+2. **Day of appointment** : generating a cumulative PDF (Transfer Mappe) delivered to the Beraterin before the appointment
 
-Toutes les donnees restent dans le tenant Microsoft 365 du client. Aucun service tiers n'est implique.
+All data remains within the client's Microsoft 365 tenant. No third-party service is involved.
 
-### Diagramme d'architecture
+### Architecture diagram
 
 ```
-PARTICIPANT                 TENANT M365 CLIENT                    CONSEILLERE
------------                 --------------------------            -----------
+PARTICIPANT                 CLIENT M365 TENANT                        BERATERIN
+-----------                 --------------------------                ---------
 
                             SharePoint Online
                             +-----------------+
                             | Participants    |
                             | Profils         |
                             | BilansMensuels  |
-                            | TransferMappes/ | (bibliotheque docs)
+                            | TransferMappes/ | (document library)
                             +-----------------+
                                     |
-[Formulaire    ]  --reponse-->  Microsoft Forms
-[onboarding    ]               (Forms 1/2)
-[DE ou EN      ]               Pas de Flow associe
-                               Saisie manuelle dans SP
+[Onboarding    ]  --response-->  Microsoft Forms
+[form          ]               (Forms 1/2)
+[DE or EN      ]               No associated Flow
+                               Manual entry into SP
 
-[Formulaire    ]  <--email J-5--  Power Automate
-[bilan mensuel ]                  Flow 1 : Invitation J-5
-[DE ou EN      ]                  Declencheur : Planifie 07h00
-                                  - Lit Participants (statut=actif, date=J+5)
-                                  - Envoie email via shared mailbox
-                                  - Lien vers Form 3 ou Form 4
-                  --reponse-->  Microsoft Forms
+[Monthly review]  <--J-5 email--  Power Automate
+[form          ]                  Flow 1 : J-5 Invitation
+[DE or EN      ]                  Trigger: Scheduled 07:00
+                                  - Reads Participants (status=active, date=J+5)
+                                  - Sends email via shared mailbox
+                                  - Link to Form 3 or Form 4
+                  --response-->  Microsoft Forms
                                (Forms 3/4)
-                               Saisie dans BilansMensuels
+                               Entry into BilansMensuels
                                   |
                                   v
                                Power Automate
-                               Flow 2 : Generation PDF
-                               Declencheur : Planifie 06h00
-                               - Lit Participants (statut=actif, date=J)
-                               - Lit Profils (id_participant)
-                               - Lit BilansMensuels (id_participant, tri ASC)
-                               - Populate Word template (118 Content Controls)
-                               - Convertit Word -> PDF (natif E3)
-                               - Sauvegarde PDF dans SharePoint
-                               - Envoie PDF par email          --PDF-->  [Conseillere]
+                               Flow 2 : PDF Generation
+                               Trigger: Scheduled 06:00
+                               - Reads Participants (status=active, date=J)
+                               - Reads Profils (id_participant)
+                               - Reads BilansMensuels (id_participant, ASC sort)
+                               - Populates Word template (118 Content Controls)
+                               - Converts Word -> PDF (native E3)
+                               - Saves PDF to SharePoint
+                               - Sends PDF by email          --PDF-->  [Beraterin]
 
-ADMIN M365
+M365 ADMIN
 ----------
-PnP.PowerShell (setup unique)
-  -> Cree les 3 listes SharePoint
-  -> Script idempotent, rejoue sans erreur
+PnP.PowerShell (one-time setup)
+  -> Creates the 3 SharePoint lists
+  -> Idempotent script, safe to re-run
 ```
 
-### Flux de donnees
+### Data flow
 
 ```
-Formulaire Forms
+Forms form
     |
-    v (reponse stockee dans Forms)
-    |-- > Traitement manuel ou par Flow -> SharePoint Liste BilansMensuels ou Profils
-    
-SharePoint Participants (source de verite)
-    |
-    +-- > Flow 1 : lit date_prochain_rdv, envoie email
-    +-- > Flow 2 : lit participant + profil + bilans, genere PDF
+    v (response stored in Forms)
+    |--> Manual processing or Flow -> SharePoint list BilansMensuels or Profils
 
-PDF genere
+SharePoint Participants (source of truth)
     |
-    +-- > Email Outlook (piece jointe) -> conseillere
-    +-- > Fichier SharePoint (archivage) -> TransferMappes/{Nom_Prenom}/
+    +--> Flow 1 : reads date_prochain_rdv, sends email
+    +--> Flow 2 : reads participant + profile + reviews, generates PDF
+
+Generated PDF
+    |
+    +--> Outlook email (attachment) -> Beraterin
+    +--> SharePoint file (archival) -> TransferMappes/{Nom_Prenom}/
 ```
 
 ---
 
-## Composants
+## Components
 
 ### Microsoft Forms
 
-**Role** : collecte des reponses des participants (onboarding et bilans mensuels) via un lien URL distribue par email ou manuellement. Aucun compte M365 requis pour le repondant.
+**Role** : collects participant responses (onboarding and monthly reviews) via a URL link distributed by email or manually. No M365 account required for the respondent.
 
-**Pourquoi ce choix** :
-- Natif M365 E3, aucun cout additionnel
-- Interface responsive sur mobile et desktop sans installation
-- Le lien de partage public permet l'acces sans compte M365, ce qui couvre les participants qui n'en ont pas
-- Le connecteur "Microsoft Forms" dans Power Automate permet de lire les reponses directement
+**Rationale** :
+- Native M365 E3, no additional cost
+- Responsive interface on mobile and desktop, no installation required
+- The public sharing link allows access without an M365 account, covering participants who do not have one
+- The "Microsoft Forms" connector in Power Automate reads responses directly
 
-**Alternatives rejetees** :
+**Rejected alternatives** :
 
-| Alternative | Raison du rejet |
+| Alternative | Reason for rejection |
 |---|---|
-| Formulaire web custom (React, Vue) | Necessite un hebergement, maintenance, authentification : hors perimetre d'un kit M365 |
-| Typeform / Google Forms | Donnees hors tenant, non conformes DSGVO pour un contexte d'emploi allemand |
-| PowerApps canvas app | Necessite une licence PowerApps (hors plan E3 standard) |
-| SharePoint list form | Interface peu adaptee aux participants (non informaticiens), pas de lien de partage public simple |
+| Custom web form (React, Vue) | Requires hosting, maintenance, authentication: outside the scope of an M365 kit |
+| Typeform / Google Forms | Data outside the tenant, not DSGVO-compliant for a German employment context |
+| PowerApps canvas app | Requires a PowerApps licence (not included in standard E3) |
+| SharePoint list form | Interface poorly suited to participants (non-technical users), no simple public sharing link |
 
-**Limites connues** :
-- Pas de branchement conditionnel complexe (acceptable : les formulaires ont au maximum 7 questions lineaires)
-- Pas de logique de pre-remplissage des reponses precedentes (hors scope v0.1)
-- Limite de 200 questions par formulaire et 50 000 reponses par formulaire (largement suffisant pour le volume cible)
+**Known limitations** :
+- No complex conditional branching (acceptable: forms have at most 7 linear questions)
+- No pre-population of previous responses (out of scope for v0.1)
+- Limit of 200 questions per form and 50,000 responses per form (well above the target volume)
 
 ---
 
-### SharePoint Online (listes)
+### SharePoint Online (lists)
 
-**Role** : base de donnees operationnelle de la solution. Trois listes stockent les participants, les profils de carriere et les bilans mensuels. Une bibliotheque de documents stocke les PDFs generes et les templates Word.
+**Role** : operational database for the solution. Three lists store participants, career profiles and monthly reviews. A document library stores generated PDFs and Word templates.
 
-**Pourquoi ce choix** :
-- Natif M365 E3, integre nativement dans Power Automate sans connecteur premium
-- Le connecteur SharePoint dans Power Automate est standard et supporte les filtres OData, le tri, la pagination
-- Gestion des permissions native (les participants n'ont aucun acces au site)
-- Versioning des elements active (5 versions conservees par element)
-- Compatible avec PnP.PowerShell pour un provisioning reproductible et idempotent
+**Rationale** :
+- Native M365 E3, natively integrated in Power Automate without a premium connector
+- The SharePoint connector in Power Automate is standard and supports OData filters, sorting and pagination
+- Native permission management (participants have no access to the site)
+- Item versioning enabled (5 versions retained per item)
+- Compatible with PnP.PowerShell for reproducible and idempotent provisioning
 
-**Alternatives rejetees** :
+**Rejected alternatives** :
 
-| Alternative | Raison du rejet |
+| Alternative | Reason for rejection |
 |---|---|
-| Excel Online (fichier .xlsx) | Pas de transactions, conflits d'ecriture simultanee, pas de filtre OData dans Power Automate |
-| Dataverse | Necessite une licence Power Platform premium (hors E3 standard) |
-| SQL Azure / Azure SQL | Necessite un abonnement Azure, un connecteur premium, une gestion reseau |
-| Access (Access App) | Retire du service par Microsoft depuis 2018 |
+| Excel Online (.xlsx file) | No transactions, concurrent write conflicts, no OData filter support in Power Automate |
+| Dataverse | Requires a premium Power Platform licence (not included in standard E3) |
+| Azure SQL / SQL Azure | Requires an Azure subscription, a premium connector, network management |
+| Access (Access App) | Retired by Microsoft since 2018 |
 
-**Limites connues** :
-- Les listes SharePoint ne supportent pas les vraies cles etrangeres avec contraintes d'integrite referentielle. La relation `id_participant` (Number) dans Profils et BilansMensuels est une convention applicative, non enforced par SharePoint.
-- Limite standard SharePoint : 30 millions d'elements par liste (sans impact au volume cible de 2 000 participants x 12 bilans = 24 000 elements)
-- Le filtre OData sur les colonnes `DateTime` en mode DateOnly peut produire des comportements inattendus selon la timezone du tenant (voir troubleshooting dans INSTALLATION.md)
+**Known limitations** :
+- SharePoint lists do not support true foreign keys with referential integrity constraints. The `id_participant` (Number) relationship in Profils and BilansMensuels is an application-level convention, not enforced by SharePoint.
+- Standard SharePoint limit: 30 million items per list (no impact at the target volume of 2,000 participants x 12 reviews = 24,000 items)
+- OData filtering on `DateTime` columns in DateOnly mode can produce unexpected behaviour depending on the tenant timezone (see troubleshooting in INSTALLATION.md)
 
 ---
 
-### Power Automate (Flows cloud)
+### Power Automate (cloud Flows)
 
-**Role** : orchestration des deux processus automatises. Flow 1 (Invitation J-5) envoie les emails d'invitation. Flow 2 (Generation PDF) produit et distribue le PDF cumulatif.
+**Role** : orchestration of the two automated processes. Flow 1 (J-5 Invitation) sends invitation emails. Flow 2 (PDF Generation) produces and distributes the cumulative PDF.
 
-**Pourquoi ce choix** :
-- Inclus dans M365 E3, sans license Power Automate premium separee
-- Les connecteurs SharePoint, Office 365 Outlook et Word Online (Business) sont des connecteurs standard disponibles en E3
-- L'action "Remplir un modele Microsoft Word" (Populate a Microsoft Word template) et "Convertir en PDF" sont disponibles dans le connecteur Word Online (Business), inclus E3
-- La planification (Schedule trigger) est disponible en E3
-- Interface graphique de debug (historique d'executions, detail action par action)
+**Rationale** :
+- Included in M365 E3, no separate premium Power Automate licence
+- The SharePoint, Office 365 Outlook and Word Online (Business) connectors are standard connectors available in E3
+- The "Populate a Microsoft Word template" and "Convert to PDF" actions are available in the Word Online (Business) connector, included in E3
+- Scheduled triggers are available in E3
+- Graphical debugging interface (execution history, action-by-action detail)
 
-**Alternatives rejetees** :
+**Rejected alternatives** :
 
-| Alternative | Raison du rejet |
+| Alternative | Reason for rejection |
 |---|---|
-| Azure Logic Apps | Necessite un abonnement Azure, facturation a l'execution |
-| n8n self-hosted | Necessite un serveur, maintenance, hors ecosysteme M365 du client |
-| Azure Functions (Node.js/Python) | Meme problematique Azure, plus la complexite de developpement |
-| Scripts PowerShell planifies | Pas de gestion d'erreurs native, pas d'interface de monitoring, fragile en production |
-| Power Automate Desktop | Necessite une licence Power Automate premium avec agent desktop |
+| Azure Logic Apps | Requires an Azure subscription, per-execution billing |
+| n8n self-hosted | Requires a server, maintenance, outside the client's M365 ecosystem |
+| Azure Functions (Node.js/Python) | Same Azure dependency, plus development complexity |
+| Scheduled PowerShell scripts | No native error handling, no monitoring interface, fragile in production |
+| Power Automate Desktop | Requires a premium Power Automate licence with a desktop agent |
 
-**Limites connues** :
-- Les Flows cloud en E3 ont une limite d'execution de 30 jours par execution (sans impact ici)
-- La boucle "Apply to each" est sequentielle par defaut : pour 100 participants, le Flow PDF peut durer 20 a 30 minutes. La concurrence peut etre activee (voir INSTALLATION.md)
-- Pas d'export JSON des Flows possible sans tenant (ADR-006) : les Flows sont documentes sous forme de blueprints Markdown, pas de fichiers importables directs en v0.1
-- Limite du connecteur SharePoint "Get items" : 5 000 elements par appel. Pour le volume cible (2 000 participants), configurer le seuil a 2 000 dans l'action ou utiliser la pagination
+**Known limitations** :
+- Cloud Flows in E3 have a maximum execution duration of 30 days (no impact here)
+- The "Apply to each" loop is sequential by default: for 100 participants, the PDF Flow can take 20 to 30 minutes. Concurrency can be enabled (see INSTALLATION.md)
+- No JSON export of Flows without a tenant (ADR-006): Flows are documented as Markdown blueprints, not directly importable files in v0.1
+- SharePoint "Get items" connector limit: 5,000 items per call. For the target volume (2,000 participants), set the threshold to 2,000 in the action or enable pagination
 
 ---
 
-### Templates Word avec Content Controls
+### Word templates with Content Controls
 
-**Role** : modeles de document (.docx) contenant 118 Content Controls de type Plain Text, chacun identifie par un Tag value unique. Power Automate injecte les donnees des listes SharePoint dans ces Content Controls via l'action "Populate a Microsoft Word template", puis convertit le document rempli en PDF.
+**Role** : document templates (.docx) containing 118 Plain Text Content Controls, each identified by a unique Tag value. Power Automate injects data from SharePoint lists into these Content Controls via the "Populate a Microsoft Word template" action, then converts the populated document to PDF.
 
-**Pourquoi ce choix** :
-- L'action "Populate a Microsoft Word template" du connecteur Word Online (Business) est disponible en E3 et supporte les Content Controls Plain Text avec Tag values
-- Les Content Controls permettent un rendu Word fidelement structure (mise en page, polices, logo) impossible a reproduire avec une generation PDF programmatique basique
-- Le format .docx reste modifiable par le client (mise en page, logo, couleurs) sans toucher aux Flows
+**Rationale** :
+- The "Populate a Microsoft Word template" action from the Word Online (Business) connector is available in E3 and supports Plain Text Content Controls with Tag values
+- Content Controls allow a faithfully structured Word output (layout, fonts, logo) that cannot be reproduced with basic programmatic PDF generation
+- The .docx format remains editable by the client (layout, logo, colours) without touching the Flows
 
-**Alternatives rejetees** :
+**Rejected alternatives** :
 
-| Alternative | Raison du rejet |
+| Alternative | Reason for rejection |
 |---|---|
-| Balises Mail Merge (`<<champ>>`) | Non supportees par l'action "Populate" de Power Automate |
-| Balises `{{champ}}` (style Handlebars) | Non supportees nativement par Word ni par Power Automate |
-| Generation PDF via HTML + WeasyPrint / Puppeteer | Necessite un runtime externe, hors ecosysteme M365 |
-| PDF generation via Adobe PDF Services | Connecteur premium, cout additionnel |
-| LaTeX / Pandoc | Hors ecosysteme M365, necessite un serveur |
+| Mail Merge tags (`<<field>>`) | Not supported by the Power Automate "Populate" action |
+| `{{field}}` tags (Handlebars style) | Not natively supported by Word or Power Automate |
+| PDF generation via HTML + WeasyPrint / Puppeteer | Requires an external runtime, outside the M365 ecosystem |
+| PDF generation via Adobe PDF Services | Premium connector, additional cost |
+| LaTeX / Pandoc | Outside the M365 ecosystem, requires a server |
 
-**Limites connues** :
-- Les Content Controls "Repeating Section" (pour les boucles) ne sont pas supportes par l'action "Populate" de Power Automate. La solution retenue est de creer statiquement 12 sections bilan dans le template (une par mois possible), et d'injecter une chaine vide pour les bilans inexistants. Cela implique que le template a une structure fixe a 12 sections, avec du blanc visible en fin de document si le participant a moins de 12 bilans.
-- La construction du .docx avec Content Controls corrects necessite un acces a Microsoft Word (les Content Controls ne peuvent pas etre crees correctement par python-docx ni par un agent sans runtime Word). Les templates du kit sont construits par script Python avec python-docx et valides par assertion programmatique.
-- Modifier un Tag value dans le .docx apres mise en production necessite de mettre a jour le Flow correspondant.
+**Known limitations** :
+- "Repeating Section" Content Controls (for loops) are not supported by the Power Automate "Populate" action. The approach used is to statically create 12 monthly review sections in the template (one per possible month), and inject an empty string for non-existent reviews. This means the template has a fixed 12-section structure, with visible blank space at the end of the document if the participant has fewer than 12 reviews.
+- Building a .docx with correct Content Controls requires access to Microsoft Word (Content Controls cannot be created correctly by python-docx or by an agent without a Word runtime). The kit templates are built by Python script with python-docx and validated by programmatic assertion.
+- Modifying a Tag value in the .docx after going live requires updating the corresponding Flow.
 
 ---
 
 ### Outlook / Shared mailbox
 
-**Role** : envoi des emails au participant (invitation J-5) et a la conseillere (PDF le jour du RDV), depuis une adresse generique de l'organisation.
+**Role** : sending emails to the participant (J-5 invitation) and to the Beraterin (PDF on the day of the appointment), from a generic organisational address.
 
-**Pourquoi ce choix** :
-- Le connecteur Office 365 Outlook est standard en E3
-- L'action "Envoyer un e-mail (V2)" supporte l'envoi "De" (From) depuis une shared mailbox si le compte de service dispose de la permission "Send As"
-- L'adresse expeditrice generique (`transfer@{domaine}.de`) evite les reponses accidentelles vers un compte nomme
-- La shared mailbox est native M365, sans cout additionnel pour un tenant E3
+**Rationale** :
+- The Office 365 Outlook connector is standard in E3
+- The "Send an email (V2)" action supports sending "From" a shared mailbox if the service account has the "Send As" permission
+- The generic sender address (`transfer@{domain}.de`) avoids accidental replies to a named account
+- The shared mailbox is native M365, no additional cost for an E3 tenant
 
-**Alternatives rejetees** :
+**Rejected alternatives** :
 
-| Alternative | Raison du rejet |
+| Alternative | Reason for rejection |
 |---|---|
-| SendGrid / Mailgun | Service tiers, donnees potentiellement hors tenant, connecteur premium requis dans Power Automate |
-| SMTP relay via Azure | Necessite un abonnement Azure, configuration complexe |
-| Compte M365 nominatif comme expediteur | Probleme de gouvernance si le compte change ou est desactive |
-| Microsoft Graph API | Necessite une Azure App registration et un connecteur custom (hors E3 standard) |
+| SendGrid / Mailgun | Third-party service, data potentially outside the tenant, premium connector required in Power Automate |
+| SMTP relay via Azure | Requires an Azure subscription, complex configuration |
+| Named M365 account as sender | Governance issue if the account changes or is disabled |
+| Microsoft Graph API | Requires an Azure App registration and a custom connector (not standard E3) |
 
-**Limites connues** :
-- Limite Exchange Online E3 : 10 000 destinataires par jour pour l'envoi externe (largement au-dessus du volume cible de ~100 envois/jour)
-- Les emails sont envoyés en HTML. Si le participant a desactive le HTML dans son client email, le bouton de lien sera rendu en texte brut (comportement correct : le lien reste cliquable).
-
----
-
-## Decisions structurantes
-
-Synthese des Architecture Decision Records du projet. Document complet : `docs/DECISIONS.md`.
-
-### ADR-001 : Stack Microsoft 365 uniquement
-
-La solution s'appuie exclusivement sur des services Microsoft 365 E3 (Forms, SharePoint, Power Automate, Word, Outlook). Aucune dependance externe.
-
-Raisons principales : le contexte Transfergesellschaft allemand utilise quasi-universellement M365, la conformite DSGVO est acquise par construction (donnees dans le tenant client), et le cout marginal est nul (licences deja payees).
-
-Les alternatives evaluees (Google Workspace, n8n self-hosted, Node.js custom) ont ete rejetees pour des raisons de compliance DSGVO, de cout de maintenance ou d'inadaptation au contexte client.
-
-### ADR-002 : Signatures manuscrites preservees sur les Zielvereinbarungen
-
-Les emplacements de signature dans le PDF cumulatif sont laisses vides. Le document est imprime au RDV, signe physiquement, et scanne si l'organisation souhaite conserver une copie numerique.
-
-Raison : les solutions de signature electronique conforme eIDAS (DocuSign, Microsoft eSign, Adobe Sign) impliquent soit une licence premium, soit un service tiers. Les signatures manuscrites sont legalement suffisantes pour les Zielvereinbarungen au sens du § 111 SGB III.
-
-L'integration d'un module eSign est documentee dans le backlog pour une v0.2.
-
-### ADR-003 : Bilan mensuel declaratif libre
-
-Six champs dans le formulaire mensuel, un seul obligatoire (bilan general). Le participant decide de ce qu'il partage.
-
-Raison : la Transfer Mappe est un outil de la relation participant-conseillere, pas un outil de surveillance. Un formulaire trop contraignant reduirait le taux de reponse et n'est pas coherent avec l'esprit du dispositif. La minimisation des donnees collectees renforce egalement la conformite DSGVO.
-
-### ADR-004 : Limite de 12 mois de parcours
-
-Le template Word inclut 12 sections mensuelles. Cette limite est conforme au plafond legal du § 111 SGB III (duree maximale d'une Transfergesellschaft : 12 mois).
-
-### ADR-005 : Templates Word specifies avant d'etre construits
-
-Les specifications des templates Word (structure des 118 Content Controls, Tag values, mapping Power Automate) ont ete livrees en Sprint 1 sous forme de fichiers Markdown. La construction des .docx reels est une tache separee necessitant un acces a Microsoft Word ou a python-docx.
-
-### ADR-006 : Livraison Sprint 2 en mode blueprint
-
-En l'absence de tenant Microsoft 365 Developer Program disponible au moment du Sprint 2, les Flows Power Automate et Microsoft Forms ne sont pas exportes en JSON importable mais documentes sous forme de guides d'implementation Markdown (action par action, expressions exactes).
-
-Consequence pratique : le deploiement prend 1 a 2 heures plutot que 30 minutes (si les JSON etaient importables). La qualite fonctionnelle n'est pas affectee.
+**Known limitations** :
+- Exchange Online E3 limit: 10,000 recipients per day for external sending (well above the target volume of ~100 sends per day)
+- Emails are sent in HTML. If the participant has disabled HTML in their email client, the link button will render as plain text (correct behaviour: the link remains clickable).
 
 ---
 
-## Securite et DSGVO
+## Structural decisions
 
-### Perimetre des donnees
+Summary of the project's Architecture Decision Records. Full document: `docs/DECISIONS.md`.
 
-Toutes les donnees traitees restent dans le tenant Microsoft 365 du client :
-- Reponses des formulaires : stockees dans Microsoft Forms (tenant client)
-- Donnees participants et bilans : listes SharePoint (tenant client)
-- PDFs generes : bibliotheque SharePoint (tenant client)
-- Emails envoyes : Exchange Online du tenant client
+### ADR-001 : Microsoft 365-only stack
 
-Aucune donnee ne transite par un service tiers. Aucun webhook externe. Aucune connexion a une API externe.
+The solution relies exclusively on Microsoft 365 E3 services (Forms, SharePoint, Power Automate, Word, Outlook). No external dependencies.
 
-### Minimisation des donnees (DSGVO Art. 5.1.c)
+Main reasons: the German Transfergesellschaft context uses M365 near-universally, DSGVO compliance is achieved by design (data stays in the client tenant), and the marginal cost is zero (licences already paid).
 
-La solution collecte uniquement les donnees necessaires au processus de suivi :
-- Cote participant : nom, prenom, email, langue, date debut, date RDV, statut
-- Cote profil : donnees de carriere saisies voluntairement, toutes optionnelles
-- Cote bilans : bilan mensuel (seul champ obligatoire), cinq champs optionnels
+Evaluated alternatives (Google Workspace, self-hosted n8n, custom Node.js) were rejected on grounds of DSGVO compliance, maintenance cost or mismatch with the client context.
 
-Les formulaires Microsoft Forms sont configures en mode anonyme (desactivation du "Record name") : la reponse n'est pas liee a un compte M365.
+### ADR-002 : Handwritten signatures preserved on Zielvereinbarungen
 
-### Acces aux donnees
+Signature fields in the cumulative PDF are left blank. The document is printed at the appointment, physically signed, and scanned if the organisation wishes to retain a digital copy.
 
-| Acteur | Acces |
+Rationale: eIDAS-compliant electronic signature solutions (DocuSign, Microsoft eSign, Adobe Sign) involve either a premium licence or a third-party service. Handwritten signatures are legally sufficient for Zielvereinbarungen within the meaning of §111 SGB III.
+
+Integration of an eSign module is documented in the backlog for v0.2.
+
+### ADR-003 : Declarative, open monthly review
+
+Six fields in the monthly form, one mandatory (general review). The participant decides what to share.
+
+Rationale: the Transfer Mappe is a tool for the participant-Beraterin relationship, not a surveillance tool. An overly prescriptive form would reduce the response rate and is inconsistent with the spirit of the programme. Minimising the data collected also strengthens DSGVO compliance.
+
+### ADR-004 : 12-month journey limit
+
+The Word template includes 12 monthly sections. This limit is consistent with the legal ceiling of §111 SGB III (maximum duration of a Transfergesellschaft: 12 months).
+
+### ADR-005 : Word templates specified before being built
+
+Word template specifications (structure of the 118 Content Controls, Tag values, Power Automate mapping) were delivered in Sprint 1 as Markdown files. Building the actual .docx files is a separate task requiring access to Microsoft Word or python-docx.
+
+### ADR-006 : Sprint 2 delivered in blueprint mode
+
+In the absence of a Microsoft 365 Developer Program tenant during Sprint 2, Power Automate Flows and Microsoft Forms are not exported as importable JSON but documented as Markdown implementation guides (action by action, exact expressions).
+
+Practical consequence: deployment takes 1 to 2 hours rather than 30 minutes (if JSON files were importable). Functional quality is not affected.
+
+---
+
+## Security and DSGVO
+
+### Data perimeter
+
+All processed data remains within the client's Microsoft 365 tenant:
+- Form responses: stored in Microsoft Forms (client tenant)
+- Participant data and reviews: SharePoint lists (client tenant)
+- Generated PDFs: SharePoint document library (client tenant)
+- Sent emails: Exchange Online of the client tenant
+
+No data transits through a third-party service. No external webhooks. No connections to external APIs.
+
+### Data minimisation (DSGVO Art. 5.1.c)
+
+The solution collects only the data necessary for the tracking process:
+- Participant side: first name, last name, email, language, start date, appointment date, status
+- Profile side: career data entered voluntarily, all optional
+- Review side: monthly review (the only mandatory field), five optional fields
+
+Microsoft Forms are configured in anonymous mode (disable "Record name"): responses are not linked to an M365 account.
+
+### Data access
+
+| Actor | Access |
 |---|---|
-| Participants | Aucun acces au site SharePoint. Acces uniquement a leurs formulaires Forms publics |
-| Conseilleres | Membres du site SharePoint. Lecture des listes, reception des PDFs par email |
-| Administrateur | Proprietaire du site. Acces complet |
-| Compte de service Power Automate | Membre du site. Lecture/ecriture listes et bibliotheques |
+| Participants | No access to the SharePoint site. Access only to their public Forms |
+| Beraterinnen | Members of the SharePoint site. Read access to lists, receive PDFs by email |
+| Administrator | Site owner. Full access |
+| Power Automate service account | Site member. Read/write access to lists and libraries |
 
-Les participants n'ont aucun acces aux donnees des autres participants. Les listes SharePoint ne sont pas exposees publiquement.
+Participants have no access to other participants' data. SharePoint lists are not publicly exposed.
 
-### Responsabilite de traitement
+### Processing responsibility
 
-Le kit est un outil, pas un service. L'auteur ne traite aucune donnee personnelle de participants. La societe de reclassement qui deploie le kit est responsable de traitement au sens du DSGVO, dans les limites du tenant M365 qu'elle administre.
+The kit is a tool, not a service. The author processes no personal data of participants. The outplacement company deploying the kit is the data controller under DSGVO, within the limits of the M365 tenant it administers.
 
-L'organisation deploieuse est responsable de la conclusion d'un Auftragsverarbeitungsvertrag (AVV) avec Microsoft pour le traitement des donnees personnelles via M365, conformement au DSGVO Art. 28. Microsoft propose des termes contractuels standard dans le cadre de leur Data Processing Agreement M365.
+The deploying organisation is responsible for concluding an Auftragsverarbeitungsvertrag (AVV - data processing agreement) with Microsoft for the processing of personal data via M365, in accordance with DSGVO Art. 28. Microsoft provides standard contractual terms under their M365 Data Processing Agreement.
 
-### Retention des donnees
+### Data retention
 
-Aucune politique de retention automatique n'est implementee en v0.1. L'organisation deploieuse est responsable de definir et appliquer sa propre politique de conservation et suppression des donnees (recommandation : supprimer les enregistrements SharePoint et les PDFs au terme du parcours, apres les delais de conservation legaux applicables).
+No automatic retention policy is implemented in v0.1. The deploying organisation is responsible for defining and applying its own data retention and deletion policy (recommendation: delete SharePoint records and PDFs at the end of the participant's journey, after any applicable statutory retention periods).
 
 ---
 
-## Scalabilite
+## Scalability
 
-### Volumes cibles et limites
+### Target volumes and limits
 
-| Composant | Volume cible | Limite du service | Marge |
+| Component | Target volume | Service limit | Headroom |
 |---|---|---|---|
-| Participants simultanes | 2 000 | 30 millions d'elements par liste SharePoint | Tres large |
-| Bilans mensuels total | 24 000 (2 000 x 12) | 30 millions d'elements par liste | Tres large |
-| Envois email par jour | ~100 (ouvres) | 10 000 destinataires/jour Exchange Online E3 | Large |
-| PDFs generes par jour | ~100 | Limite Power Automate : duree execution, pas volume | Acceptable |
-| Formulaires Forms | 4 formulaires | 200 questions / 50 000 reponses par formulaire | Large |
-| Concurrence Flow | Sequentiel par defaut | 50 en parallele (Apply to each) | Ajustable |
+| Simultaneous participants | 2,000 | 30 million items per SharePoint list | Very large |
+| Total monthly reviews | 24,000 (2,000 x 12) | 30 million items per list | Very large |
+| Emails sent per day | ~100 (working days) | 10,000 recipients/day Exchange Online E3 | Large |
+| PDFs generated per day | ~100 | Power Automate limit: execution duration, not volume | Acceptable |
+| Forms forms | 4 forms | 200 questions / 50,000 responses per form | Large |
+| Flow concurrency | Sequential by default | 50 in parallel (Apply to each) | Adjustable |
 
-### Temps d'execution des Flows
+### Flow execution times
 
-**Flow 1 - Invitation J-5** : environ 1 a 2 secondes par participant (appel SharePoint + envoi email). Pour 100 participants par jour : 2 a 3 minutes.
+**Flow 1 - J-5 Invitation** : approximately 1 to 2 seconds per participant (SharePoint call + email send). For 100 participants per day: 2 to 3 minutes.
 
-**Flow 2 - Generation PDF** : environ 15 a 20 secondes par participant (lecture profil + bilans + populate Word + conversion PDF + sauvegarde SharePoint + envoi email). Pour 100 participants : 25 a 30 minutes en mode sequentiel. En activant la concurrence (20 en parallele) : environ 5 a 8 minutes.
+**Flow 2 - PDF Generation** : approximately 15 to 20 seconds per participant (read profile + reviews + populate Word + convert PDF + save to SharePoint + send email). For 100 participants: 25 to 30 minutes in sequential mode. With concurrency enabled (20 in parallel): approximately 5 to 8 minutes.
 
-### Passage a l'echelle
+### Scaling up
 
-Pour des volumes superieurs a 2 000 participants simultanes ou 100 PDFs par jour :
-- Activer la concurrence sur les boucles "Apply to each" (jusqu'a 50 en parallele)
-- Augmenter le "Nombre maximal d'elements" dans les actions "Get items" (defaut : 100, max : 5 000 par appel)
-- Pour des volumes superieurs a 5 000 participants, implementer la pagination dans les actions SharePoint (propriete `odata-skiptoken`)
-- Les limites Exchange Online (10 000 emails/jour) ne sont pas un facteur limitant pour le volume cible
-
----
-
-## Limites connues et evolutions prevues
-
-### Limites de la v0.1
-
-**Sections bilan fixes dans le PDF** : le template Word contient exactement 12 sections mensuelles. Les sections non utilisees apparaissent vides en fin de document. Power Automate ne supporte pas les Content Controls "Repeating Section" pour une generation dynamique du nombre de sections.
-
-**Pas d'import JSON des Flows** : en raison de l'absence de tenant Dev pendant le Sprint 2 (ADR-006), les Flows sont livres sous forme de blueprints Markdown et non de fichiers JSON importables. L'export JSON sera produit lors du premier deploiement reel.
-
-**Relations sans contrainte d'integrite** : la jointure entre `BilansMensuels.id_participant` et `Participants.ID` est une convention applicative. SharePoint ne garantit pas l'integrite referentielle. Une suppression manuelle d'un participant sans supprimer ses bilans cree des enregistrements orphelins.
-
-**Pas de deduplication des bilans** : si un participant soumet deux fois le formulaire mensuel avant le meme RDV, deux enregistrements BilansMensuels sont crees. La conseillere verra deux bilans pour la meme periode dans le PDF. La gestion de ce cas est a la charge de l'administrateur (suppression manuelle du doublon).
-
-### Evolutions prevues (backlog)
-
-**v0.2 - Module eSign** (ADR-002) : integration d'un module de signature electronique optionnel pour les Zielvereinbarungen, via Microsoft eSign ou un connecteur compatible eIDAS. Conditionnel a l'existence d'une licence appropriee chez le client.
-
-**v0.2 - Tracker personnel opt-in** (ADR-003) : module optionnel permettant au participant de saisir ses candidatures et contacts au fil de l'eau, avec agregation dans le PDF cumulatif. Architecture envisagee : deux listes SharePoint supplementaires (Candidatures, Contacts) et un Flow de consolidation.
-
-**v0.1.1 - Export JSON des Flows** : une fois deploye sur un tenant reel, exporter les Flows en JSON pour faciliter les deploiements ultérieurs.
+For volumes above 2,000 simultaneous participants or 100 PDFs per day:
+- Enable concurrency on "Apply to each" loops (up to 50 in parallel)
+- Increase "Maximum number of items" in "Get items" actions (default: 100, max: 5,000 per call)
+- For volumes above 5,000 participants, implement pagination in SharePoint actions (property `odata-skiptoken`)
+- Exchange Online limits (10,000 emails/day) are not a limiting factor for the target volume
 
 ---
 
-## Dependances
+## Known limitations and planned improvements
 
-### Licences requises
+### Limitations of v0.1
 
-| Service | Licence minimum | Inclus dans E3 |
+**Fixed review sections in the PDF** : the Word template contains exactly 12 monthly sections. Unused sections appear blank at the end of the document. Power Automate does not support "Repeating Section" Content Controls for dynamic section count generation.
+
+**No JSON import of Flows** : due to the absence of a Dev tenant during Sprint 2 (ADR-006), Flows are delivered as Markdown blueprints rather than importable JSON files. JSON export will be produced at the time of the first real deployment.
+
+**Relationships without referential integrity** : the join between `BilansMensuels.id_participant` and `Participants.ID` is an application-level convention. SharePoint does not enforce referential integrity. Manually deleting a participant without deleting their reviews creates orphaned records.
+
+**No review deduplication** : if a participant submits the monthly form twice before the same appointment, two BilansMensuels records are created. The Beraterin will see two reviews for the same period in the PDF. Handling this case is the administrator's responsibility (manual deletion of the duplicate).
+
+### Planned improvements (backlog)
+
+**v0.2 - eSign module** (ADR-002) : integration of an optional electronic signature module for Zielvereinbarungen, via Microsoft eSign or an eIDAS-compatible connector. Conditional on the existence of an appropriate licence at the client.
+
+**v0.2 - Opt-in personal tracker** (ADR-003) : optional module allowing the participant to log their applications and contacts on an ongoing basis, with aggregation in the cumulative PDF. Envisaged architecture: two additional SharePoint lists (Candidatures, Contacts) and a consolidation Flow.
+
+**v0.1.1 - JSON export of Flows** : once deployed on a real tenant, export Flows as JSON to facilitate subsequent deployments.
+
+---
+
+## Dependencies
+
+### Required licences
+
+| Service | Minimum licence | Included in E3 |
 |---|---|---|
-| Microsoft Forms | M365 E1 | Oui |
-| SharePoint Online | M365 E1 | Oui |
-| Power Automate (connecteurs standard) | M365 E3 | Oui |
-| Word Online (Business) - connecteur Power Automate | M365 E3 | Oui |
-| Office 365 Outlook - connecteur Power Automate | M365 E1 | Oui |
-| Exchange Online (shared mailbox) | M365 E1 | Oui |
+| Microsoft Forms | M365 E1 | Yes |
+| SharePoint Online | M365 E1 | Yes |
+| Power Automate (standard connectors) | M365 E3 | Yes |
+| Word Online (Business) - Power Automate connector | M365 E3 | Yes |
+| Office 365 Outlook - Power Automate connector | M365 E1 | Yes |
+| Exchange Online (shared mailbox) | M365 E1 | Yes |
 
-Aucun connecteur Power Automate Premium n'est utilise. La solution est integralement compatible avec un plan M365 E3 standard.
+No premium Power Automate connectors are used. The solution is fully compatible with a standard M365 E3 plan.
 
-### Outils de deploiement (setup uniquement)
+### Deployment tools (setup only)
 
-| Outil | Version | Usage |
+| Tool | Version | Usage |
 |---|---|---|
-| PowerShell | 7.x | Execution du script de provisioning SharePoint |
-| PnP.PowerShell | Derniere version stable | Provisioning des listes SharePoint (setup unique) |
+| PowerShell | 7.x | Running the SharePoint provisioning script |
+| PnP.PowerShell | Latest stable | SharePoint list provisioning (one-time setup) |
 
-PnP.PowerShell n'est requis que pour le deploiement initial. Il n'est pas utilise en production.
+PnP.PowerShell is required only for the initial deployment. It is not used in production.
 
-### Dependances de runtime
+### Runtime dependencies
 
-Aucune dependance externe de runtime. La solution fonctionne exclusivement avec les services Microsoft 365 du tenant client. Aucun serveur externe, aucune cle API tierce, aucun service d'hebergement supplementaire.
+No external runtime dependencies. The solution operates exclusively with the Microsoft 365 services of the client tenant. No external server, no third-party API keys, no additional hosting service.
