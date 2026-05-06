@@ -48,9 +48,9 @@ Temps de deploiement estime : 1 a 2 heures pour un administrateur Microsoft 365.
 
 | Sprint | Objectif | Statut |
 |--------|----------|--------|
-| 1 | Fondations metier (schemas, templates, contenus) | A demarrer |
-| 2 | Automatisation (Power Automate, scripts setup) | A venir |
-| 3 | Documentation et livrables (PITCH.pdf, INSTALLATION.md) | A venir |
+| 1 | Fondations metier (schemas, templates, contenus) | Termine |
+| 2 | Automatisation (Power Automate, scripts setup) | Termine |
+| 3 | Documentation et livrables (PITCH.pdf, INSTALLATION.md) | Termine - release v0.1.0 |
 
 ## Licence
 

@@ -84,14 +84,14 @@ Deploiement reel par l'admin M365 du client en suivant les guides : 2 a 4 heures
 
 **Livrables**
 
-- [ ] `docs/INSTALLATION.md` : guide pas-a-pas avec screenshots pour l'administrateur M365
-- [ ] `docs/ARCHITECTURE.md` : justification des choix techniques
-- [ ] `docs/PRIVACY.md` : note DSGVO/BDSG, modele de responsabilite, donnees collectees, retention
-- [ ] `docs/FAQ.md` : reponses aux questions previsibles cote conseillere et cote IT
-- [ ] `docs/PITCH.pdf` : 6 a 8 pages, pitch decisionnel pour la societe de reclassement
-- [ ] `docs/images/` : screenshots, schema d'architecture, demo gif si possible
-- [ ] `CHANGELOG.md` : entree v0.1.0
-- [ ] Tag git `v0.1.0`
+- [x] `docs/INSTALLATION.md` : guide pas-a-pas avec screenshots pour l'administrateur M365
+- [x] `docs/ARCHITECTURE.md` : justification des choix techniques
+- [x] `docs/PRIVACY.md` : note DSGVO/BDSG, modele de responsabilite, donnees collectees, retention
+- [x] `docs/FAQ.md` : reponses aux questions previsibles cote conseillere et cote IT
+- [x] `docs/PITCH.pdf` : 6 a 8 pages, pitch decisionnel pour la societe de reclassement
+- [ ] `docs/images/` : screenshots, schema d'architecture, demo gif si possible (non livre en v0.1.0 - reporte BACKLOG v0.2)
+- [x] `CHANGELOG.md` : entree v0.1.0
+- [x] Tag git `v0.1.0`
 
 **Domaines mobilises**
 
