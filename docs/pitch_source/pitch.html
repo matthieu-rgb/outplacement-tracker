@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>outplacement-tracker - Pitch v0.1.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* =========================================================
+     RESET ET BASE
+  ========================================================= */
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  :root {
+    --blue-main:   #3D81B0;
+    --blue-deep:   #2A5A7A;
+    --gray-dark:   #333333;
+    --gray-mid:    #6B6B6B;
+    --gray-light:  #E5E5E5;
+    --gray-rule:   #9CA3AF;
+    --white:       #FFFFFF;
+    --page-w:      210mm;
+    --page-h:      297mm;
+    --margin-v:    18mm;
+    --margin-h:    20mm;
+  }
+
+  html {
+    font-size: 11pt;
+    color: var(--gray-dark);
+    background: #F0F0F0;
+  }
+
+  body {
+    font-family: 'Inter', 'Source Sans Pro', Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    line-height: 1.65;
+    background: #F0F0F0;
+  }
+
+  /* =========================================================
+     PAGE
+  ========================================================= */
+  .page {
+    width: var(--page-w);
+    min-height: var(--page-h);
+    background: var(--white);
+    margin: 0 auto 12mm;
+    padding: var(--margin-v) var(--margin-h);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* =========================================================
+     TYPOGRAPHIE
+  ========================================================= */
+  h1, h2, h3 {
+    font-family: 'EB Garamond', Garamond, 'Times New Roman', serif;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--blue-deep);
+  }
+
+  h1 {
+    font-size: 28pt;
+    letter-spacing: -0.3px;
+  }
+
+  h2.section-title {
+    font-size: 18pt;
+    color: var(--blue-deep);
+    border-bottom: 1.5px solid var(--blue-main);
+    padding-bottom: 6px;
+    margin-bottom: 22px;
+  }
+
+  h3 {
+    font-size: 12pt;
+    color: var(--blue-main);
+    margin-bottom: 6px;
+    margin-top: 18px;
+  }
+
+  p {
+    margin-bottom: 11px;
+    font-size: 11pt;
+    color: var(--gray-dark);
+  }
+
+  .lead {
+    font-size: 13pt;
+    font-family: 'EB Garamond', Garamond, serif;
+    font-weight: 400;
+    color: var(--blue-deep);
+    line-height: 1.5;
+    margin-bottom: 22px;
+  }
+
+  strong {
+    font-weight: 600;
+    color: var(--gray-dark);
+  }
+
+  /* =========================================================
+     PAGE 1 - COUVERTURE
+  ========================================================= */
+  .page-cover {
+    background: var(--blue-deep);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--margin-v) var(--margin-h);
+  }
+
+  .cover-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .cover-badge {
+    font-family: 'Inter', Helvetica, sans-serif;
+    font-size: 9pt;
+    font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+
+  .cover-logo {
+    font-family: 'EB Garamond', Garamond, serif;
+    font-size: 11pt;
+    font-weight: 600;
+    color: rgba(255,255,255,0.40);
+    letter-spacing: 0.5px;
+  }
+
+  .cover-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 30mm 0 20mm;
+  }
+
+  .cover-body h1 {
+    color: var(--white);
+    font-size: 38pt;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+    font-family: 'EB Garamond', Garamond, serif;
+    font-weight: 700;
+  }
+
+  .cover-subtitle {
+    font-family: 'EB Garamond', Garamond, serif;
+    font-size: 15pt;
+    color: rgba(255,255,255,0.75);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.4;
+    margin-bottom: 40px;
+    max-width: 140mm;
+  }
+
+  .cover-rule {
+    width: 40mm;
+    height: 2px;
+    background: var(--blue-main);
+    margin-bottom: 30px;
+    opacity: 0.8;
+  }
+
+  .cover-meta {
+    font-family: 'Inter', Helvetica, sans-serif;
+    font-size: 10pt;
+    color: rgba(255,255,255,0.60);
+    line-height: 1.9;
+  }
+
+  .cover-meta strong {
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+  }
+
+  .cover-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .cover-github {
+    font-family: 'Inter', Helvetica, sans-serif;
+    font-size: 9pt;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.3px;
+  }
+
+  .cover-version {
+    font-family: 'Inter', Helvetica, sans-serif;
+    font-size: 9pt;
+    font-weight: 500;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* =========================================================
+     PAGE STANDARD
+  ========================================================= */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--gray-light);
+  }
+
+  .page-header-label {
+    font-family: 'Inter', Helvetica, sans-serif;
+    font-size: 8.5pt;
+    font-weight: 500;
+    color: var(--gray-rule);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+
+  .page-num {
+    font-family: 'Inter', Helvetica, sans-serif;
+    font-size: 8.5pt;
+    color: var(--gray-rule);
+  }
+
+  /* =========================================================
+     PAGE FOOTER
+  ========================================================= */
+  .page-footer {
+    position: absolute;
+    bottom: 12mm;
+    left: var(--margin-h);
+    right: var(--margin-h);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--gray-light);
+    padding-top: 6px;
+  }
+
+  .footer-label {
+    font-size: 8pt;
+    color: var(--gray-rule);
+    font-family: 'Inter', Helvetica, sans-serif;
+  }
+
+  /* =========================================================
+     COMPOSANTS REUSABLES
+  ========================================================= */
+
+  /* Bloc note */
+  .note-block {
+    background: #F7FAFC;
+    border-left: 3px solid var(--blue-main);
+    padding: 12px 16px;
+    margin: 18px 0;
+    font-size: 10.5pt;
+    color: var(--gray-mid);
+    line-height: 1.55;
+  }
+
+  /* Piliers (3 colonnes) */
+  .pillars {
+    display: flex;
+    gap: 14px;
+    margin: 20px 0;
+  }
+
+  .pillar {
+    flex: 1;
+    border: 1px solid var(--gray-light);
+    border-top: 3px solid var(--blue-main);
+    padding: 16px 14px;
+  }
+
+  .pillar-num {
+    font-family: 'EB Garamond', Garamond, serif;
+    font-size: 22pt;
+    color: var(--blue-main);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 8px;
+    opacity: 0.5;
+  }
+
+  .pillar h3 {
+    font-size: 10.5pt;
+    font-family: 'EB Garamond', Garamond, serif;
+    font-weight: 700;
+    color: var(--blue-deep);
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+
+  .pillar p {
+    font-size: 9.5pt;
+    color: var(--gray-mid);
+    margin-bottom: 0;
+    line-height: 1.5;
+  }
+
+  /* Stack technique */
+  .stack-row {
+    display: flex;
+    gap: 8px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+
+  .stack-item {
+    border: 1px solid var(--gray-light);
+    padding: 7px 14px;
+    font-family: 'Inter', Helvetica, sans-serif;
+    font-size: 9.5pt;
+    font-weight: 500;
+    color: var(--blue-deep);
+    background: #F7FAFC;
+  }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    margin: 24px 0;
+    padding-left: 28px;
+  }
+
+  .timeline-line {
+    position: absolute;
+    left: 9px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: var(--blue-main);
+    opacity: 0.25;
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 24px;
+  }
+
+  .timeline-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    left: -24px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--blue-main);
+    border: 2px solid var(--white);
+    box-shadow: 0 0 0 1.5px var(--blue-main);
+  }
+
+  .timeline-label {
+    font-family: 'Inter', Helvetica, sans-serif;
+    font-size: 8.5pt;
+    font-weight: 600;
+    color: var(--blue-main);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .timeline-item h3 {
+    font-size: 11pt;
+    color: var(--blue-deep);
+    margin-top: 0;
+    margin-bottom: 6px;
+  }
+
+  .timeline-item p {
+    font-size: 10pt;
+    color: var(--gray-mid);
+    margin-bottom: 0;
+    line-height: 1.5;
+  }
+
+  /* Schema architecture */
+  .arch-schema {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 8.5pt;
+    line-height: 1.6;
+    color: var(--gray-dark);
+    background: #F7FAFC;
+    border: 1px solid var(--gray-light);
+    padding: 16px 20px;
+    margin: 18px 0;
+    white-space: pre;
+    overflow: hidden;
+  }
+
+  .arch-comment {
+    color: var(--blue-main);
+    font-style: normal;
+  }
+
+  /* Liste numerotee */
+  .steps-list {
+    list-style: none;
+    counter-reset: steps;
+    margin: 16px 0;
+  }
+
+  .steps-list li {
+    counter-increment: steps;
+    display: flex;
+    gap: 14px;
+    margin-bottom: 14px;
+    align-items: flex-start;
+  }
+
+  .steps-list li::before {
+    content: counter(steps);
+    font-family: 'EB Garamond', Garamond, serif;
+    font-size: 16pt;
+    font-weight: 700;
+    color: var(--blue-main);
+    opacity: 0.45;
+    min-width: 20px;
+    line-height: 1.2;
+  }
+
+  .steps-list li .step-content {
+    flex: 1;
+  }
+
+  .steps-list li .step-title {
+    font-weight: 600;
+    color: var(--gray-dark);
+    display: block;
+    margin-bottom: 2px;
+    font-size: 10.5pt;
+  }
+
+  .steps-list li .step-desc {
+    font-size: 9.5pt;
+    color: var(--gray-mid);
+    line-height: 1.5;
+  }
+
+  /* Liste hypotheses */
+  .assumptions-list {
+    list-style: none;
+    margin: 10px 0;
+  }
+
+  .assumption-item {
+    display: flex;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--gray-light);
+    align-items: flex-start;
+  }
+
+  .assumption-item:last-child {
+    border-bottom: none;
+  }
+
+  .assumption-tag {
+    font-family: 'Inter', Helvetica, sans-serif;
+    font-size: 8pt;
+    font-weight: 600;
+    color: var(--blue-main);
+    background: #EBF4FB;
+    padding: 3px 8px;
+    min-width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+    letter-spacing: 0.3px;
+  }
+
+  .assumption-text strong {
+    font-size: 10pt;
+    font-weight: 600;
+    color: var(--gray-dark);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .assumption-text span {
+    font-size: 9.5pt;
+    color: var(--gray-mid);
+    line-height: 1.45;
+  }
+
+  /* Tableau licences */
+  .license-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9.5pt;
+    margin: 16px 0;
+  }
+
+  .license-table th {
+    background: #F0F6FB;
+    color: var(--blue-deep);
+    font-family: 'Inter', Helvetica, sans-serif;
+    font-weight: 600;
+    font-size: 8.5pt;
+    text-align: left;
+    padding: 8px 12px;
+    letter-spacing: 0.3px;
+    border-bottom: 1.5px solid var(--blue-main);
+  }
+
+  .license-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--gray-light);
+    color: var(--gray-dark);
+    vertical-align: middle;
+  }
+
+  .license-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .tag-yes {
+    display: inline-block;
+    background: #E8F5E9;
+    color: #2E7D32;
+    font-size: 8pt;
+    font-weight: 600;
+    padding: 2px 8px;
+    font-family: 'Inter', Helvetica, sans-serif;
+    letter-spacing: 0.3px;
+  }
+
+  /* Page finale */
+  .page-final {
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .final-statement {
+    font-family: 'EB Garamond', Garamond, serif;
+    font-size: 16pt;
+    color: var(--blue-deep);
+    line-height: 1.45;
+    margin: 30px 0 24px;
+    max-width: 140mm;
+    font-style: italic;
+  }
+
+  .final-links {
+    margin: 20px 0;
+  }
+
+  .final-link-item {
+    display: flex;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray-light);
+    align-items: center;
+    font-size: 10pt;
+  }
+
+  .final-link-item:last-child {
+    border-bottom: none;
+  }
+
+  .final-link-label {
+    font-family: 'Inter', Helvetica, sans-serif;
+    font-size: 8pt;
+    font-weight: 600;
+    color: var(--gray-rule);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    min-width: 30mm;
+    flex-shrink: 0;
+  }
+
+  .final-link-value {
+    font-family: 'Inter', Helvetica, sans-serif;
+    font-size: 10pt;
+    color: var(--blue-main);
+    font-weight: 400;
+  }
+
+  .disclaimer {
+    font-size: 8.5pt;
+    color: var(--gray-rule);
+    line-height: 1.55;
+    margin-top: 30px;
+    padding-top: 14px;
+    border-top: 1px solid var(--gray-light);
+    max-width: 140mm;
+  }
+
+  /* =========================================================
+     PRINT
+  ========================================================= */
+  @media print {
+    html {
+      background: white;
+      font-size: 11pt;
+    }
+
+    body {
+      background: white;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      height: 297mm;
+      margin: 0;
+      padding: var(--margin-v) var(--margin-h);
+      page-break-after: always;
+      break-after: page;
+      overflow: hidden;
+    }
+
+    .page:last-child {
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+  }
+
+  @media screen {
+    .page-cover {
+      min-height: 297mm;
+    }
+    .page {
+      min-height: 297mm;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- =====================================================
+     PAGE 1 - COUVERTURE
+===================================================== -->
+<div class="page page-cover">
+  <div class="cover-header">
+    <span class="cover-badge">Document de presentation</span>
+    <span class="cover-logo">10 k Beratung</span>
+  </div>
+
+  <div class="cover-body">
+    <h1>outplacement&#8209;tracker</h1>
+    <p class="cover-subtitle">Suivi mensuel des participants Transfergesellschaft sur Microsoft 365</p>
+    <div class="cover-rule"></div>
+    <div class="cover-meta">
+      <strong>Auteur</strong> &nbsp; Matthieu Riegert<br>
+      <strong>Date</strong> &nbsp;&nbsp;&nbsp; Mai 2026<br>
+      <strong>Version</strong> &nbsp; v0.1.0
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <span class="cover-github">github.com/matthieu-rgb/outplacement-tracker</span>
+    <span class="cover-version">Licence MIT</span>
+  </div>
+</div>
+
+<!-- =====================================================
+     PAGE 2 - LE CONTEXTE
+===================================================== -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-label">outplacement-tracker &mdash; v0.1.0</span>
+    <span class="page-num">2 / 8</span>
+  </div>
+
+  <h2 class="section-title">Le contexte</h2>
+
+  <p class="lead">Les Transfergesellschaften accompagnent des salaries en reconversion pendant 6 a 12 mois. Le suivi se fait souvent sur papier. Les outils numeriques manquent, ou ne sont pas adaptes.</p>
+
+  <h3>La situation actuelle</h3>
+  <p>La grande majorite des societes de reclassement s'appuient encore sur une "Transfer Mappe" papier ou un PDF rempli manuellement session apres session. Le conseiller arrive parfois sans historique complet. Le participant doit se souvenir oralement de son activite du mois ecoule.</p>
+  <p>Les solutions disponibles sur le marche sont soit trop generiques (CRM classique, pas adapte au cadre SGB III), soit trop couteuses, soit dependantes de services exterieurs incompatibles avec les exigences DSGVO d'un employeur allemand.</p>
+
+  <h3>Le cadre legal</h3>
+  <div class="note-block">
+    <strong>§ 111 SGB III &mdash; Transfergesellschaft</strong><br>
+    Duree maximale de prise en charge : 12 mois. Structure dediee aux salaries licencies dans le cadre d'une restructuration. La participation est volontaire. Le participant conserve le controle de son parcours.
+  </div>
+
+  <h3>Le volume concerne</h3>
+  <p>Une societe de reclassement de taille moyenne suit simultanement entre 1 500 et 2 000 participants actifs. Cela represente environ 75 a 100 rendez-vous mensuels par jour ouvre, et autant de PDF a produire.</p>
+
+  <h3>Ce que la solution respecte</h3>
+  <p>La relation participant-conseiller repose sur la confiance. Le participant decide ce qu'il partage. Le PDF cumulatif lui appartient. La solution ne surveille pas, elle prepare.</p>
+
+  <div class="page-footer">
+    <span class="footer-label">outplacement-tracker - Pitch v0.1.0 - Mai 2026</span>
+    <span class="footer-label">MIT - github.com/matthieu-rgb/outplacement-tracker</span>
+  </div>
+</div>
+
+<!-- =====================================================
+     PAGE 3 - LA PROPOSITION
+===================================================== -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-label">outplacement-tracker &mdash; v0.1.0</span>
+    <span class="page-num">3 / 8</span>
+  </div>
+
+  <h2 class="section-title">La proposition</h2>
+
+  <p class="lead">Un formulaire mensuel, un PDF cumulatif, zero saisie obligatoire.</p>
+
+  <p>outplacement-tracker est un kit cle-en-main base sur Microsoft 365. Il automatise deux processus : l'envoi du formulaire de bilan 5 jours avant chaque rendez-vous, et la generation du PDF cumulatif le matin du rendez-vous. Tout reste dans le tenant du client.</p>
+
+  <div class="pillars">
+    <div class="pillar">
+      <div class="pillar-num">01</div>
+      <h3>Respect de la personne</h3>
+      <p>6 champs, 1 seul obligatoire. Le participant resume librement son mois. Aucun tracker de candidatures impose.</p>
+    </div>
+    <div class="pillar">
+      <div class="pillar-num">02</div>
+      <h3>Preparation du conseiller</h3>
+      <p>Le PDF cumulatif avec l'historique complet du participant est livre par email le matin du rendez-vous.</p>
+    </div>
+    <div class="pillar">
+      <div class="pillar-num">03</div>
+      <h3>Souverainete des donnees</h3>
+      <p>Tout reste dans le tenant Microsoft 365 du client. Aucune donnee ne sort. Aucun service tiers.</p>
+    </div>
+  </div>
+
+  <h3>Stack technique</h3>
+  <div class="stack-row">
+    <div class="stack-item">Microsoft Forms</div>
+    <div class="stack-item">SharePoint Online</div>
+    <div class="stack-item">Power Automate</div>
+    <div class="stack-item">Word Template</div>
+    <div class="stack-item">Outlook</div>
+  </div>
+
+  <table class="license-table" style="margin-top:18px;">
+    <thead>
+      <tr>
+        <th>Service</th>
+        <th>Licence minimum</th>
+        <th>Inclus dans E3</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Microsoft Forms</td><td>M365 E1</td><td><span class="tag-yes">Oui</span></td></tr>
+      <tr><td>SharePoint Online</td><td>M365 E1</td><td><span class="tag-yes">Oui</span></td></tr>
+      <tr><td>Power Automate (connecteurs standard)</td><td>M365 E3</td><td><span class="tag-yes">Oui</span></td></tr>
+      <tr><td>Word Online (Business) - connecteur Power Automate</td><td>M365 E3</td><td><span class="tag-yes">Oui</span></td></tr>
+      <tr><td>Exchange Online (shared mailbox)</td><td>M365 E1</td><td><span class="tag-yes">Oui</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="page-footer">
+    <span class="footer-label">outplacement-tracker - Pitch v0.1.0 - Mai 2026</span>
+    <span class="footer-label">MIT - github.com/matthieu-rgb/outplacement-tracker</span>
+  </div>
+</div>
+
+<!-- =====================================================
+     PAGE 4 - LE PARCOURS UTILISATEUR
+===================================================== -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-label">outplacement-tracker &mdash; v0.1.0</span>
+    <span class="page-num">4 / 8</span>
+  </div>
+
+  <h2 class="section-title">Le parcours utilisateur</h2>
+
+  <p style="color: var(--gray-mid); font-size: 10.5pt; margin-bottom: 26px;">Trois evenements automatises par cycle mensuel, un seul par acteur.</p>
+
+  <div class="timeline">
+    <div class="timeline-line"></div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-label">J &minus; 5</div>
+      <h3>Invitation au bilan mensuel</h3>
+      <p><strong>Acteur : le participant.</strong> Un email automatique est envoye avec un lien vers le formulaire Microsoft Forms. Six champs au total, cinq sont optionnels. Le participant resume librement son activite du mois : entretiens passes, formation suivie, etat d'avancement, objectifs revus. Temps de remplissage estime : 5 minutes. Aucun compte Microsoft 365 requis pour repondre.</p>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-label">J &minus; 1</div>
+      <h3>Notification de disponibilite</h3>
+      <p><strong>Acteur : la conseillere.</strong> Une notification automatique l'informe que le formulaire du participant est disponible et que le PDF sera genere le lendemain matin. Elle peut anticiper la consultation de l'historique SharePoint si necessaire.</p>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-label">J &mdash; Matin du RDV</div>
+      <h3>Reception du PDF cumulatif</h3>
+      <p><strong>Acteur : la conseillere.</strong> Le PDF cumulatif est genere automatiquement a 06h00 et livre par email avant le rendez-vous. Il contient l'historique complet du parcours, mois apres mois, dans la mise en page de la Transfer Mappe : identite, profil de carriere, Zielvereinbarung, et les bilans mensuels empiles jusqu'a 12 entrees. Les emplacements de signature sont vides, prets pour le RDV.</p>
+    </div>
+  </div>
+
+  <div class="note-block" style="margin-top: 18px;">
+    <strong>Le PDF cumulatif.</strong> Le document livre a la conseillere est la version numerique de la Transfer Mappe. Il porte la mise en page sobre et lisible du template Word : serif pour les titres, sans-serif pour le corps, hierarchie claire. Il est imprimable. Il appartient au participant.
+  </div>
+
+  <div class="page-footer">
+    <span class="footer-label">outplacement-tracker - Pitch v0.1.0 - Mai 2026</span>
+    <span class="footer-label">MIT - github.com/matthieu-rgb/outplacement-tracker</span>
+  </div>
+</div>
+
+<!-- =====================================================
+     PAGE 5 - L'ARCHITECTURE
+===================================================== -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-label">outplacement-tracker &mdash; v0.1.0</span>
+    <span class="page-num">5 / 8</span>
+  </div>
+
+  <h2 class="section-title">L'architecture</h2>
+
+  <p style="color: var(--gray-mid); font-size: 10.5pt; margin-bottom: 16px;">Tous les composants sont natifs Microsoft 365 E3. Aucun connecteur Premium. Aucune dependance externe.</p>
+
+  <div class="arch-schema"><span class="arch-comment">PARTICIPANT              TENANT M365 CLIENT                  CONSEILLERE</span>
+-----------              --------------------------          -----------
+
+                         SharePoint Online
+                         +--------------------------+
+                         | Liste : Participants     |
+                         | Liste : Profils          |
+                         | Liste : BilansMensuels   |
+                         | Bibl. : TransferMappes/  |
+                         +-----------+--------------+
+                                     |
+                                     |  lit / ecrit
+                                     v
+[Formulaire bilan]                Power Automate
+[Microsoft Forms  ] --reponse-->  +--------------------------------+
+[lien public, DE  ]               | Flow 1 : Invitation J-5        |
+[ou EN            ]               |   Declencheur : planifie 07h00 |
+                                  |   Condition   : date_rdv = J+5 |
+                  <--email J-5-- [|   Action      : envoyer email  |]
+                                  +--------------------------------+
+                                  | Flow 2 : Generation PDF        |
+                                  |   Declencheur : planifie 06h00 |
+                                  |   Condition   : date_rdv = J   |
+                                  |   Actions :                    |
+                                  |     lire Profils + BilansMens. |
+                                  |     populate Word template     |
+                                  |     convertir Word -> PDF      |
+                                  |     sauvegarder dans SharePt.  |
+                                  |     envoyer email PDF          |
+                                  +--------------------------------+
+                                              |
+                                              +--PDF par email---> [Conseillere]
+                                              +--PDF archive-----> [SharePoint ]</div>
+
+  <h3>Points cles de l'architecture</h3>
+  <p style="font-size:10pt; color:var(--gray-mid); margin-bottom:6px;"><strong style="color:var(--gray-dark);">Aucune donnee ne quitte le tenant.</strong> Les reponses Forms, les listes SharePoint, les PDFs generes et les emails envoyes restent integralement dans l'environnement Microsoft 365 du client. Aucun webhook externe. Aucune API tierce.</p>
+  <p style="font-size:10pt; color:var(--gray-mid); margin-bottom:6px;"><strong style="color:var(--gray-dark);">Aucun connecteur Premium.</strong> SharePoint, Word Online (Business), Office 365 Outlook sont des connecteurs standard inclus dans le plan E3. Le connecteur Microsoft Forms est standard. Aucun abonnement Power Automate premium requis.</p>
+  <p style="font-size:10pt; color:var(--gray-mid);">L<strong style="color:var(--gray-dark);">e template Word contient 118 Content Controls.</strong> Power Automate injecte les donnees SharePoint dans ces balises, convertit le document en PDF, et le livre. Le template est librement personnalisable (logo, couleurs, mise en page) sans toucher aux Flows.</p>
+
+  <div class="page-footer">
+    <span class="footer-label">outplacement-tracker - Pitch v0.1.0 - Mai 2026</span>
+    <span class="footer-label">MIT - github.com/matthieu-rgb/outplacement-tracker</span>
+  </div>
+</div>
+
+<!-- =====================================================
+     PAGE 6 - MISE EN PLACE
+===================================================== -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-label">outplacement-tracker &mdash; v0.1.0</span>
+    <span class="page-num">6 / 8</span>
+  </div>
+
+  <h2 class="section-title">Mise en place</h2>
+
+  <div class="note-block" style="margin-bottom: 22px;">
+    <strong>Effort de deploiement : 1 a 2 heures</strong> pour un administrateur Microsoft 365 competent, en suivant le guide pas-a-pas fourni dans <code style="font-size:9pt; color:var(--blue-deep);">docs/INSTALLATION.md</code>.
+  </div>
+
+  <ul class="steps-list">
+    <li>
+      <div class="step-content">
+        <span class="step-title">Executer le script PowerShell PnP</span>
+        <span class="step-desc">Le script <code style="font-size:9pt;">sharepoint/setup_lists.ps1</code> provisionne les trois listes SharePoint (Participants, Profils, BilansMensuels) et la bibliotheque de documents. Le script est idempotent : il peut etre rejoue sans erreur en cas d'interruption.</span>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <span class="step-title">Creer les 4 Microsoft Forms</span>
+        <span class="step-desc">Deux formulaires d'onboarding (DE et EN) et deux formulaires de bilan mensuel (DE et EN). Le guide de construction question par question est fourni dans <code style="font-size:9pt;">forms/forms_construction_guide.md</code>.</span>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <span class="step-title">Deposer les templates Word dans SharePoint</span>
+        <span class="step-desc">Les templates <code style="font-size:9pt;">transfer_mappe_template_de.docx</code> et <code style="font-size:9pt;">transfer_mappe_template_en.docx</code> sont a placer dans la bibliotheque SharePoint. Ils contiennent les 118 Content Controls deja configures.</span>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <span class="step-title">Creer les 2 Power Automate Flows</span>
+        <span class="step-desc">Flow 1 (Invitation J-5) et Flow 2 (Generation PDF). Chaque Flow est documente action par action avec les expressions exactes. Guide : <code style="font-size:9pt;">power_automate/Flow_1_Invitation_J-5.md</code> et <code style="font-size:9pt;">power_automate/Flow_2_Generation_PDF.md</code>.</span>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <span class="step-title">Configurer les variables d'environnement</span>
+        <span class="step-desc">Adresse de la boite mail expeditrice (<code style="font-size:9pt;">transfer@{domaine}.de</code>), adresse de la conseillere par defaut, URL du site SharePoint. Ces valeurs sont a renseigner dans les variables de chaque Flow.</span>
+      </div>
+    </li>
+  </ul>
+
+  <div class="note-block" style="margin-top: 20px;">
+    <strong>Pas besoin d'un tenant de test pour evaluer le kit.</strong> Tout le contenu &mdash; schemas, guides, templates, expressions Power Automate &mdash; est lisible dans le repertoire du projet. L'evaluation est possible sans deploiement.
+  </div>
+
+  <div class="page-footer">
+    <span class="footer-label">outplacement-tracker - Pitch v0.1.0 - Mai 2026</span>
+    <span class="footer-label">MIT - github.com/matthieu-rgb/outplacement-tracker</span>
+  </div>
+</div>
+
+<!-- =====================================================
+     PAGE 7 - HYPOTHESES
+===================================================== -->
+<div class="page">
+  <div class="page-header">
+    <span class="page-header-label">outplacement-tracker &mdash; v0.1.0</span>
+    <span class="page-num">7 / 8</span>
+  </div>
+
+  <h2 class="section-title">Hypotheses et points a valider</h2>
+
+  <p style="color: var(--gray-mid); font-size: 10.5pt; margin-bottom: 20px;">Ces hypotheses ont ete prises sur la base de la Transfer Mappe 10 k Beratung GmbH v2026 et du cadre legal §111 SGB III. Elles sont toutes ajustables. Le document complet est dans <code style="font-size:9pt; color:var(--blue-deep);">docs/ASSUMPTIONS.md</code>.</p>
+
+  <ul class="assumptions-list">
+    <li class="assumption-item">
+      <span class="assumption-tag">A1</span>
+      <div class="assumption-text">
+        <strong>Duree maximale : 12 mois</strong>
+        <span>Plafond legal §111 SGB III. Le template Word et les Flows sont dimensionnes pour 12 bilans mensuels. Ajustable.</span>
+      </div>
+    </li>
+    <li class="assumption-item">
+      <span class="assumption-tag">A2</span>
+      <div class="assumption-text">
+        <strong>Frequence : 1 rendez-vous par mois</strong>
+        <span>Pratique standard observee dans le secteur. Le declencheur du Flow d'invitation est mensuel. Ajustable.</span>
+      </div>
+    </li>
+    <li class="assumption-item">
+      <span class="assumption-tag">A3</span>
+      <div class="assumption-text">
+        <strong>Suivi declaratif libre</strong>
+        <span>5 champs optionnels sur 6. Le participant decide de ce qu'il partage. Aucun tracker de candidatures impose.</span>
+      </div>
+    </li>
+    <li class="assumption-item">
+      <span class="assumption-tag">A4</span>
+      <div class="assumption-text">
+        <strong>Signatures manuscrites preservees</strong>
+        <span>Les Zielvereinbarungen sont imprimees, signees physiquement au RDV. Aucun connecteur eSign premium requis. Evolution eSign prevue en v0.2.</span>
+      </div>
+    </li>
+    <li class="assumption-item">
+      <span class="assumption-tag">A5</span>
+      <div class="assumption-text">
+        <strong>Volume : 1 500 a 2 000 participants</strong>
+        <span>Largement compatible avec les limites Exchange Online E3 (10 000 destinataires/jour) et SharePoint (30 millions d'elements par liste).</span>
+      </div>
+    </li>
+    <li class="assumption-item">
+      <span class="assumption-tag">A6</span>
+      <div class="assumption-text">
+        <strong>Admin M365 competent requis pour le deploiement</strong>
+        <span>Creation de listes SharePoint, import de Forms, creation de Flows Power Automate. Profil standard d'un admin M365 en entreprise.</span>
+      </div>
+    </li>
+    <li class="assumption-item">
+      <span class="assumption-tag">A7</span>
+      <div class="assumption-text">
+        <strong>Identite visuelle ajustable librement</strong>
+        <span>Le template Word est modifiable sans toucher aux Flows. Logo, couleurs, polices sont personnalisables. La structure des Content Controls reste fixe.</span>
+      </div>
+    </li>
+    <li class="assumption-item">
+      <span class="assumption-tag">A8</span>
+      <div class="assumption-text">
+        <strong>Responsabilite de traitement RGPD/DSGVO</strong>
+        <span>La societe de reclassement deploieuse est responsable de traitement. L'auteur du kit ne traite aucune donnee de participants. Un AVV avec Microsoft est a conclure par l'organisation deploieuse.</span>
+      </div>
+    </li>
+  </ul>
+
+  <div class="page-footer">
+    <span class="footer-label">outplacement-tracker - Pitch v0.1.0 - Mai 2026</span>
+    <span class="footer-label">MIT - github.com/matthieu-rgb/outplacement-tracker</span>
+  </div>
+</div>
+
+<!-- =====================================================
+     PAGE 8 - PAGE FINALE
+===================================================== -->
+<div class="page page-final">
+  <div class="page-header">
+    <span class="page-header-label">outplacement-tracker &mdash; v0.1.0</span>
+    <span class="page-num">8 / 8</span>
+  </div>
+
+  <h2 class="section-title">Libre de l'utiliser</h2>
+
+  <p class="final-statement">"Ce kit est open source, sous licence MIT. Libre a vous de le deployer, de l'adapter, de le faire evoluer."</p>
+
+  <p style="font-size: 10.5pt; color: var(--gray-mid); margin-bottom: 24px;">Il n'y a pas d'obstacle entre cette documentation et une mise en production. Tout est disponible sur GitHub, sans inscription, sans demande d'acces, sans negociation de licence.</p>
+
+  <div class="final-links">
+    <div class="final-link-item">
+      <span class="final-link-label">GitHub</span>
+      <span class="final-link-value">github.com/matthieu-rgb/outplacement-tracker</span>
+    </div>
+    <div class="final-link-item">
+      <span class="final-link-label">Licence</span>
+      <span class="final-link-value">MIT &mdash; usage libre, modification libre, redistribution libre</span>
+    </div>
+    <div class="final-link-item">
+      <span class="final-link-label">Installation</span>
+      <span class="final-link-value">docs/INSTALLATION.md</span>
+    </div>
+    <div class="final-link-item">
+      <span class="final-link-label">Architecture</span>
+      <span class="final-link-value">docs/ARCHITECTURE.md</span>
+    </div>
+    <div class="final-link-item">
+      <span class="final-link-label">Hypotheses</span>
+      <span class="final-link-value">docs/ASSUMPTIONS.md</span>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    Aucun engagement de support. Aucune donnee collectee par l'auteur.<br>
+    Ce kit est livre tel quel, sans garantie. La societe de reclassement qui le deploie est seule responsable de sa mise en conformite DSGVO et de son exploitation.<br><br>
+    <strong>Matthieu Riegert</strong> &mdash; Mai 2026
+  </div>
+
+  <div class="page-footer">
+    <span class="footer-label">outplacement-tracker - Pitch v0.1.0 - Mai 2026</span>
+    <span class="footer-label">MIT - github.com/matthieu-rgb/outplacement-tracker</span>
+  </div>
+</div>
+
+</body>
+</html>
