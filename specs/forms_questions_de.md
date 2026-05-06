@@ -1,21 +1,21 @@
-# Forms - Questions en allemand (DE)
+# Formulare - Fragen auf Deutsch (DE)
 
-Specification exacte des deux Microsoft Forms en version allemande.
-Ces questions sont recopiees telles quelles dans Microsoft Forms lors du deploiement.
+Genaue Spezifikation der beiden Microsoft Forms in der deutschen Version.
+Diese Fragen werden bei der Bereitstellung unverändert in Microsoft Forms übernommen.
 
-Conventions :
-- Champ obligatoire signale par (*) dans le titre de la question
-- Champs optionnels : pas d'asterisque
-- Caracteres speciaux : ae = ae, oe = oe, ue = ue, ss = ss dans les noms de colonnes ; les umlauts sont utilises dans le texte visible par le participant
-- Ordre des questions = ordre d'affichage dans le formulaire
+Konventionen:
+- Pflichtfeld durch (*) im Fragentitel gekennzeichnet
+- Optionale Felder: kein Sternchen
+- Sonderzeichen: ae = ae, oe = oe, ue = ue, ss = ss in Spaltennamen; Umlaute werden im für den Teilnehmer sichtbaren Text verwendet
+- Reihenfolge der Fragen = Anzeigereihenfolge im Formular
 
 ---
 
-## Form 1 : Onboarding - Profil de carriere (DE)
+## Formular 1: Onboarding - Karriereprofil (DE)
 
-**Nom du formulaire** : Ihr Karriereprofil - Transfer Mappe
+**Formularname**: Ihr Karriereprofil - Transfer Mappe
 
-**Texte d'introduction** (affiche en haut du formulaire) :
+**Einleitungstext** (oben im Formular angezeigt):
 
 > Dieser kurze Fragebogen hilft Ihrer Beraterin, Sie und Ihre Ziele besser zu verstehen.
 > Die Angaben sind freiwillig - Sie entscheiden, was Sie teilen möchten. Sie können dieses Formular jederzeit erneut ausfüllen, um Ihre Angaben zu aktualisieren.
@@ -23,62 +23,62 @@ Conventions :
 
 ---
 
-### Question 1 - Plan A : Berufliches Hauptziel
+### Frage 1 - Plan A: Berufliches Hauptziel
 
-**Type** : Mehrzeiliger Text (Multiple lines of text)
-**Obligatoire** : non
-**Titre** : Ihr berufliches Hauptziel (Plan A)
-**Description / sous-texte** : Welche berufliche Richtung möchten Sie anstreben? Welche Art von Stelle suchen Sie? In welcher Branche oder Region?
-**Placeholder** : Beispiel: Projektmanager im Maschinenbau, Rhein-Saar-Region, Unternehmen ab 200 Mitarbeitern
-**Colonne SharePoint cible** : `Profils.plan_a`
-
----
-
-### Question 2 - Plan B : Berufliches Alternativziel
-
-**Type** : Mehrzeiliger Text
-**Obligatoire** : non
-**Titre** : Ihr berufliches Alternativziel (Plan B)
-**Description / sous-texte** : Falls Plan A nicht greift - welche alternative berufliche Richtung wäre für Sie ebenfalls interessant?
-**Placeholder** : Beispiel: Selbstständigkeit als Berater, oder Wechsel in den öffentlichen Dienst
-**Colonne SharePoint cible** : `Profils.plan_b`
+**Typ**: Mehrzeiliger Text (Multiple lines of text)
+**Pflichtfeld**: nein
+**Titel**: Ihr berufliches Hauptziel (Plan A)
+**Beschreibung / Untertext**: Welche berufliche Richtung möchten Sie anstreben? Welche Art von Stelle suchen Sie? In welcher Branche oder Region?
+**Platzhalter**: Beispiel: Projektmanager im Maschinenbau, Rhein-Saar-Region, Unternehmen ab 200 Mitarbeitern
+**Zielspalte SharePoint**: `Profils.plan_a`
 
 ---
 
-### Question 3 - Marketingplan
+### Frage 2 - Plan B: Berufliches Alternativziel
 
-**Type** : Mehrzeiliger Text
-**Obligatoire** : non
-**Titre** : Ihr berufliches Profil und Ihre Stärken
-**Description / sous-texte** : Was sind Ihre zentralen Kompetenzen? Was macht Sie für Arbeitgeber besonders interessant? Welche Erfahrungen oder Qualifikationen heben Sie hervor?
-**Placeholder** : Beispiel: 15 Jahre Erfahrung in der Fahrzeugelektronik, spezialisiert auf CAN-Bus und Diagnose, Führungserfahrung mit Teams bis 8 Personen, Deutsch und Französisch fließend
-**Colonne SharePoint cible** : `Profils.marketingplan`
-
----
-
-### Question 4 - Zielmarkt
-
-**Type** : Mehrzeiliger Text
-**Obligatoire** : non
-**Titre** : Ihr Zielmarkt
-**Description / sous-texte** : In welchem Umfeld möchten Sie arbeiten? Denken Sie an Region, Branche, Unternehmensgröße oder Unternehmenstyp.
-**Placeholder** : Beispiel: Saarland / Lothringen / Luxemburg, Automobilindustrie oder Maschinenbau, mittelständische Unternehmen (100-500 Mitarbeiter)
-**Colonne SharePoint cible** : `Profils.zielmarkt`
+**Typ**: Mehrzeiliger Text
+**Pflichtfeld**: nein
+**Titel**: Ihr berufliches Alternativziel (Plan B)
+**Beschreibung / Untertext**: Falls Plan A nicht greift - welche alternative berufliche Richtung wäre für Sie ebenfalls interessant?
+**Platzhalter**: Beispiel: Selbstständigkeit als Berater, oder Wechsel in den öffentlichen Dienst
+**Zielspalte SharePoint**: `Profils.plan_b`
 
 ---
 
-**Texte de confirmation** (affiche apres soumission) :
+### Frage 3 - Marketingplan
+
+**Typ**: Mehrzeiliger Text
+**Pflichtfeld**: nein
+**Titel**: Ihr berufliches Profil und Ihre Stärken
+**Beschreibung / Untertext**: Was sind Ihre zentralen Kompetenzen? Was macht Sie für Arbeitgeber besonders interessant? Welche Erfahrungen oder Qualifikationen heben Sie hervor?
+**Platzhalter**: Beispiel: 15 Jahre Erfahrung in der Fahrzeugelektronik, spezialisiert auf CAN-Bus und Diagnose, Führungserfahrung mit Teams bis 8 Personen, Deutsch und Französisch fließend
+**Zielspalte SharePoint**: `Profils.marketingplan`
+
+---
+
+### Frage 4 - Zielmarkt
+
+**Typ**: Mehrzeiliger Text
+**Pflichtfeld**: nein
+**Titel**: Ihr Zielmarkt
+**Beschreibung / Untertext**: In welchem Umfeld möchten Sie arbeiten? Denken Sie an Region, Branche, Unternehmensgröße oder Unternehmenstyp.
+**Platzhalter**: Beispiel: Saarland / Lothringen / Luxemburg, Automobilindustrie oder Maschinenbau, mittelständische Unternehmen (100-500 Mitarbeiter)
+**Zielspalte SharePoint**: `Profils.zielmarkt`
+
+---
+
+**Bestätigungstext** (nach Absenden angezeigt):
 
 > Vielen Dank für Ihre Angaben. Ihr Karriereprofil wurde gespeichert und steht Ihrer Beraterin zur Verfügung.
 > Sie können dieses Formular jederzeit erneut ausfüllen, um Ihre Angaben zu aktualisieren.
 
 ---
 
-## Form 2 : Bilan mensuel (DE)
+## Formular 2: Monatlicher Bericht (DE)
 
-**Nom du formulaire** : Ihr monatlicher Bericht - Transfer Mappe
+**Formularname**: Ihr monatlicher Bericht - Transfer Mappe
 
-**Texte d'introduction** (affiche en haut du formulaire) :
+**Einleitungstext** (oben im Formular angezeigt):
 
 > Bitte nehmen Sie sich 5 Minuten Zeit, um diesen kurzen Bericht vor Ihrem nächsten Beratungstermin auszufüllen.
 > Nur die erste Frage ist Pflichtangabe. Alle anderen Felder sind freiwillig - Sie entscheiden, was Sie teilen moechten.
@@ -86,101 +86,101 @@ Conventions :
 
 ---
 
-### Question 1 - Bilan general (*)
+### Frage 1 - Monatsbericht (*)
 
-**Type** : Mehrzeiliger Text
-**Obligatoire** : oui
-**Titre** : Wie war Ihr Monat? (*)
-**Description / sous-texte** : Bitte beschreiben Sie kurz, wie der vergangene Monat verlaufen ist - beruflich und/oder persönlich, was auch immer Ihnen wichtig erscheint.
-**Placeholder** : Ihr Bericht hier...
-**Colonne SharePoint cible** : `BilansMensuels.bilan_general`
+**Typ**: Mehrzeiliger Text
+**Pflichtfeld**: ja
+**Titel**: Wie war Ihr Monat? (*)
+**Beschreibung / Untertext**: Bitte beschreiben Sie kurz, wie der vergangene Monat verlaufen ist - beruflich und/oder persönlich, was auch immer Ihnen wichtig erscheint.
+**Platzhalter**: Ihr Bericht hier...
+**Zielspalte SharePoint**: `BilansMensuels.bilan_general`
 
 ---
 
-### Question 2 - Statut des objectifs
+### Frage 2 - Zielstatus
 
-**Type** : Choix (Choice) + complement texte libre
+**Typ**: Auswahl (Choice) + Freitext-Ergänzung
 
-**Partie 2a - Choix**
-**Obligatoire** : non
-**Titre** : Wie stehen Sie bei den vereinbarten Zielen?
-**Description / sous-texte** : Denken Sie an die Ziele, die Sie beim letzten Termin mit Ihrer Beraterin vereinbart haben.
-**Options** (choix unique) :
+**Teil 2a - Auswahl**
+**Pflichtfeld**: nein
+**Titel**: Wie stehen Sie bei den vereinbarten Zielen?
+**Beschreibung / Untertext**: Denken Sie an die Ziele, die Sie beim letzten Termin mit Ihrer Beraterin vereinbart haben.
+**Optionen** (Einzelauswahl):
 - Vollständig erreicht
 - Teilweise erreicht
 - Nicht erreicht
 - Noch nicht relevant
-**Colonne SharePoint cible** : `BilansMensuels.statut_objectifs`
-**Mapping valeurs** :
+**Zielspalte SharePoint**: `BilansMensuels.statut_objectifs`
+**Zuordnung der Werte**:
   - "Vollstaendig erreicht" -> `vollstaendig_erreicht`
   - "Teilweise erreicht" -> `teilweise_erreicht`
   - "Nicht erreicht" -> `nicht_erreicht`
   - "Noch nicht relevant" -> `noch_nicht_relevant`
 
-**Partie 2b - Texte libre**
-**Obligatoire** : non
-**Titre** : Möchten Sie dazu etwas erläutern?
-**Description / sous-texte** : (optional) Kurze Erklärung oder Kontext zu Ihrer Antwort oben.
-**Placeholder** : Ihre Erlaeuterung hier...
-**Colonne SharePoint cible** : `BilansMensuels.statut_objectifs_detail`
+**Teil 2b - Freitext**
+**Pflichtfeld**: nein
+**Titel**: Möchten Sie dazu etwas erläutern?
+**Beschreibung / Untertext**: (optional) Kurze Erklärung oder Kontext zu Ihrer Antwort oben.
+**Platzhalter**: Ihre Erlaeuterung hier...
+**Zielspalte SharePoint**: `BilansMensuels.statut_objectifs_detail`
 
 ---
 
-### Question 3 - Was lief gut
+### Frage 3 - Was lief gut
 
-**Type** : Mehrzeiliger Text
-**Obligatoire** : non
-**Titre** : Was lief in diesem Monat gut?
-**Description / sous-texte** : (optional) Welche positiven Entwicklungen, Erfolge oder Fortschritte haben Sie erlebt?
-**Placeholder** : Ihre Antwort hier...
-**Colonne SharePoint cible** : `BilansMensuels.was_lief_gut`
-
----
-
-### Question 4 - Wo brauche ich Unterstuetzung
-
-**Type** : Mehrzeiliger Text
-**Obligatoire** : non
-**Titre** : Wo brauchen Sie Unterstützung?
-**Description / sous-texte** : (optional) In welchen Bereichen würden Sie sich Hilfe oder Unterstützung wünschen - von Ihrer Beraterin oder anderweitig?
-**Placeholder** : Ihre Antwort hier...
-**Colonne SharePoint cible** : `BilansMensuels.wo_brauche_ich_unterstuetzung`
+**Typ**: Mehrzeiliger Text
+**Pflichtfeld**: nein
+**Titel**: Was lief in diesem Monat gut?
+**Beschreibung / Untertext**: (optional) Welche positiven Entwicklungen, Erfolge oder Fortschritte haben Sie erlebt?
+**Platzhalter**: Ihre Antwort hier...
+**Zielspalte SharePoint**: `BilansMensuels.was_lief_gut`
 
 ---
 
-### Question 5 - Themen fuer den naechsten Termin
+### Frage 4 - Wo brauche ich Unterstützung
 
-**Type** : Mehrzeiliger Text
-**Obligatoire** : non
-**Titre** : Welche Themen möchten Sie beim nächsten Termin besprechen?
-**Description / sous-texte** : (optional) Was liegt Ihnen besonders am Herzen für das nächste Gespräch?
-**Placeholder** : Ihre Antwort hier...
-**Colonne SharePoint cible** : `BilansMensuels.themen_naechster_termin`
-
----
-
-### Question 6 - Sonstige Anmerkungen
-
-**Type** : Mehrzeiliger Text
-**Obligatoire** : non
-**Titre** : Sonstige Anmerkungen
-**Description / sous-texte** : (optional) Haben Sie noch etwas, das Sie mitteilen moechten und das oben nicht abgedeckt ist?
-**Placeholder** : Ihre Antwort hier...
-**Colonne SharePoint cible** : `BilansMensuels.sonstige_anmerkungen`
+**Typ**: Mehrzeiliger Text
+**Pflichtfeld**: nein
+**Titel**: Wo brauchen Sie Unterstützung?
+**Beschreibung / Untertext**: (optional) In welchen Bereichen würden Sie sich Hilfe oder Unterstützung wünschen - von Ihrer Beraterin oder anderweitig?
+**Platzhalter**: Ihre Antwort hier...
+**Zielspalte SharePoint**: `BilansMensuels.wo_brauche_ich_unterstuetzung`
 
 ---
 
-**Texte de confirmation** (affiche apres soumission) :
+### Frage 5 - Themen für den nächsten Termin
+
+**Typ**: Mehrzeiliger Text
+**Pflichtfeld**: nein
+**Titel**: Welche Themen möchten Sie beim nächsten Termin besprechen?
+**Beschreibung / Untertext**: (optional) Was liegt Ihnen besonders am Herzen für das nächste Gespräch?
+**Platzhalter**: Ihre Antwort hier...
+**Zielspalte SharePoint**: `BilansMensuels.themen_naechster_termin`
+
+---
+
+### Frage 6 - Sonstige Anmerkungen
+
+**Typ**: Mehrzeiliger Text
+**Pflichtfeld**: nein
+**Titel**: Sonstige Anmerkungen
+**Beschreibung / Untertext**: (optional) Haben Sie noch etwas, das Sie mitteilen moechten und das oben nicht abgedeckt ist?
+**Platzhalter**: Ihre Antwort hier...
+**Zielspalte SharePoint**: `BilansMensuels.sonstige_anmerkungen`
+
+---
+
+**Bestätigungstext** (nach Absenden angezeigt):
 
 > Vielen Dank für Ihren Bericht. Ihre Beraterin wird diesen vor Ihrem Termin lesen.
 > Wir freuen uns darauf, Sie bald zu sehen.
 
 ---
 
-## Notes de configuration Forms
+## Konfigurationshinweise für Forms
 
-- **Partage** : "Jeder mit dem Link kann antworten" (lien genere par le Flow J-5, un lien par participant par mois)
-- **Anonymat** : desactiver "Antworten aufzeichnen" pour le nom du compte Microsoft si les participants n'ont pas de compte M365 (formulaire accessible sans connexion)
-- **Limite de soumissions** : 1 reponse par lien (Power Automate genere un lien unique par invitation)
-- **Langue d'interface** : Deutsch
-- **Export** : les reponses sont recuperees via le connecteur Microsoft Forms dans Power Automate, pas en export manuel Excel
+- **Freigabe**: "Jeder mit dem Link kann antworten" (Link vom Flow J-5 generiert, ein Link pro Teilnehmer pro Monat)
+- **Anonymität**: "Antworten aufzeichnen" für den Microsoft-Kontonamen deaktivieren, wenn die Teilnehmer kein M365-Konto haben (Formular ohne Anmeldung zugänglich)
+- **Einschränkung der Einreichungen**: 1 Antwort pro Link (Power Automate generiert einen eindeutigen Link pro Einladung)
+- **Oberflächensprache**: Deutsch
+- **Export**: Die Antworten werden über den Microsoft Forms-Connector in Power Automate abgerufen, nicht per manuellem Excel-Export

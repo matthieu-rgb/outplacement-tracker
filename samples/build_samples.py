@@ -1,12 +1,12 @@
 """
-build_samples.py - Generation des samples PDF outplacement-tracker v0.1
+build_samples.py - Sample PDF generation for outplacement-tracker v0.1
 
-Genere deux documents samples (DE et EN) avec des donnees fictives anonymisees,
-puis les convertit en PDF via LibreOffice headless.
+Generates two sample documents (DE and EN) with anonymised fictional data,
+then converts them to PDF via LibreOffice headless.
 
-Donnees fictives :
-- DE : Max Mustermann, 3 mois de bilans
-- EN : John Doe, 3 mois de bilans (contenu traduit)
+Fictional data:
+- DE: Max Mustermann, 3 months of monthly updates
+- EN: John Doe, 3 months of monthly updates (translated content)
 """
 
 import subprocess
@@ -17,7 +17,7 @@ from docx import Document
 from docx.oxml import OxmlElement
 
 # -------------------------------------------------------
-# Constantes
+# Constants
 # -------------------------------------------------------
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -28,7 +28,7 @@ OUTPUT_DIR = os.path.join(REPO_ROOT, "samples")
 NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 
 # -------------------------------------------------------
-# Donnees fictives - Max Mustermann (DE)
+# Fictional data - Max Mustermann (DE)
 # -------------------------------------------------------
 
 DATA_DE = {
@@ -58,7 +58,7 @@ DATA_DE = {
         "Mittelstaendische und grosse Unternehmen (100 bis 2000 Mitarbeiter)."
     ),
 
-    # Bilan 01 - Fevrier 2026
+    # Monthly update 01 - February 2026
     "bilan_01_date_rdv": "01.02.2026",
     "bilan_01_date_soumission": "28.01.2026",
     "bilan_01_bilan_general": (
@@ -83,7 +83,7 @@ DATA_DE = {
     ),
     "bilan_01_sonstige_anmerkungen": "",
 
-    # Bilan 02 - Mars 2026
+    # Monthly update 02 - March 2026
     "bilan_02_date_rdv": "01.03.2026",
     "bilan_02_date_soumission": "26.02.2026",
     "bilan_02_bilan_general": (
@@ -108,7 +108,7 @@ DATA_DE = {
     ),
     "bilan_02_sonstige_anmerkungen": "Vorstellungsgespraech Saarbruecken: 15.02.2026. Metz: 22.02.2026.",
 
-    # Bilan 03 - Avril 2026
+    # Monthly update 03 - April 2026
     "bilan_03_date_rdv": "01.04.2026",
     "bilan_03_date_soumission": "28.03.2026",
     "bilan_03_bilan_general": (
@@ -136,7 +136,7 @@ DATA_DE = {
         "Angebot erhalten am 20.03.2026. Entscheidungsfrist: 15.04.2026."
     ),
 
-    # Bilans 04 a 12 : vides (non encore soumis)
+    # Monthly updates 04 to 12: empty (not yet submitted)
     **{f"bilan_{nn:02d}_{field}": "" for nn in range(4, 13)
        for field in [
            "date_rdv", "date_soumission", "bilan_general", "statut_objectifs",
@@ -146,7 +146,7 @@ DATA_DE = {
 }
 
 # -------------------------------------------------------
-# Donnees fictives - John Doe (EN)
+# Fictional data - John Doe (EN)
 # -------------------------------------------------------
 
 DATA_EN = {
@@ -176,7 +176,7 @@ DATA_EN = {
         "Mid-sized to large companies (100 to 2000 employees)."
     ),
 
-    # Bilan 01 - February 2026
+    # Monthly update 01 - February 2026
     "bilan_01_date_rdv": "01.02.2026",
     "bilan_01_date_soumission": "28.01.2026",
     "bilan_01_bilan_general": (
@@ -201,7 +201,7 @@ DATA_EN = {
     ),
     "bilan_01_sonstige_anmerkungen": "",
 
-    # Bilan 02 - March 2026
+    # Monthly update 02 - March 2026
     "bilan_02_date_rdv": "01.03.2026",
     "bilan_02_date_soumission": "26.02.2026",
     "bilan_02_bilan_general": (
@@ -225,7 +225,7 @@ DATA_EN = {
     ),
     "bilan_02_sonstige_anmerkungen": "Saarbruecken interview: 15.02.2026. Metz: 22.02.2026.",
 
-    # Bilan 03 - April 2026
+    # Monthly update 03 - April 2026
     "bilan_03_date_rdv": "01.04.2026",
     "bilan_03_date_soumission": "28.03.2026",
     "bilan_03_bilan_general": (
@@ -253,7 +253,7 @@ DATA_EN = {
         "Offer received on 20.03.2026. Decision deadline: 15.04.2026."
     ),
 
-    # Bilans 04 a 12 : empty (not yet submitted)
+    # Monthly updates 04 to 12: empty (not yet submitted)
     **{f"bilan_{nn:02d}_{field}": "" for nn in range(4, 13)
        for field in [
            "date_rdv", "date_soumission", "bilan_general", "statut_objectifs",
@@ -263,23 +263,23 @@ DATA_EN = {
 }
 
 # -------------------------------------------------------
-# Fonctions
+# Functions
 # -------------------------------------------------------
 
 def fill_sdt(body_element, tag_val, text):
-    """Remplace le contenu d'un Content Control (SDT) par le texte fourni."""
+    """Replaces the content of a Content Control (SDT) with the provided text."""
     for sdt in body_element.iter(f"{{{NS}}}sdt"):
         tag_el = sdt.find(f".//{{{NS}}}tag")
         if tag_el is not None and tag_el.get(f"{{{NS}}}val") == tag_val:
             content = sdt.find(f"{{{NS}}}sdtContent")
             if content is not None:
-                # Vider les runs existants dans les paragraphes
+                # Clear existing runs in paragraphs
                 for p in content.findall(f".//{{{NS}}}p"):
                     for r in p.findall(f".//{{{NS}}}r"):
                         for t in r.findall(f"{{{NS}}}t"):
                             t.text = text if text else ""
                             return
-                # Si aucun run trouve, creer la structure minimale
+                # If no run found, build the minimal structure
                 p = content.find(f"{{{NS}}}p")
                 if p is None:
                     p = OxmlElement("w:p")
@@ -293,17 +293,17 @@ def fill_sdt(body_element, tag_val, text):
 
 
 def fill_template(template_path, data, output_docx_path):
-    """Ouvre le template, remplace tous les SDTs, sauvegarde en .docx."""
+    """Opens the template, replaces all SDTs, saves as .docx."""
     doc = Document(template_path)
     body = doc.element.body
     for tag_val, text in data.items():
         fill_sdt(body, tag_val, str(text))
     doc.save(output_docx_path)
-    print(f"  [OK] .docx genere : {output_docx_path}")
+    print(f"  [OK] .docx generated: {output_docx_path}")
 
 
 def convert_to_pdf_libreoffice(docx_path, output_dir):
-    """Convertit un .docx en PDF via LibreOffice headless."""
+    """Converts a .docx to PDF via LibreOffice headless."""
     result = subprocess.run(
         ["soffice", "--headless", "--convert-to", "pdf", "--outdir", output_dir, docx_path],
         capture_output=True,
@@ -311,14 +311,14 @@ def convert_to_pdf_libreoffice(docx_path, output_dir):
         timeout=120,
     )
     if result.returncode != 0:
-        print(f"  [ERREUR] LibreOffice : {result.stderr}")
+        print(f"  [ERROR] LibreOffice: {result.stderr}")
         return False
-    print(f"  [OK] PDF genere dans : {output_dir}")
+    print(f"  [OK] PDF generated in: {output_dir}")
     return True
 
 
 # -------------------------------------------------------
-# Execution principale
+# Main execution
 # -------------------------------------------------------
 
 if __name__ == "__main__":
@@ -327,44 +327,44 @@ if __name__ == "__main__":
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    # --- DE : Max Mustermann ---
-    print("Participant DE : Max Mustermann")
+    # --- DE: Max Mustermann ---
+    print("Participant DE: Max Mustermann")
     docx_de = os.path.join(OUTPUT_DIR, "sample_output_de.docx")
     fill_template(TEMPLATE_DE, DATA_DE, docx_de)
 
     pdf_de = os.path.join(OUTPUT_DIR, "sample_pdf_output_de.pdf")
-    print("  Conversion en PDF (LibreOffice headless)...")
+    print("  Converting to PDF (LibreOffice headless)...")
     success_de = convert_to_pdf_libreoffice(docx_de, OUTPUT_DIR)
     if success_de:
-        # LibreOffice genere le PDF avec le meme nom que le docx
+        # LibreOffice generates the PDF with the same name as the docx
         generated_pdf = os.path.join(OUTPUT_DIR, "sample_output_de.pdf")
         if os.path.exists(generated_pdf) and generated_pdf != pdf_de:
             shutil.move(generated_pdf, pdf_de)
-            print(f"  [OK] Renomme en : {pdf_de}")
+            print(f"  [OK] Renamed to: {pdf_de}")
     else:
-        print("  [WARN] PDF DE non genere. Le .docx est disponible.")
+        print("  [WARN] DE PDF not generated. The .docx is available.")
 
     print()
 
-    # --- EN : John Doe ---
-    print("Participant EN : John Doe")
+    # --- EN: John Doe ---
+    print("Participant EN: John Doe")
     docx_en = os.path.join(OUTPUT_DIR, "sample_output_en.docx")
     fill_template(TEMPLATE_EN, DATA_EN, docx_en)
 
     pdf_en = os.path.join(OUTPUT_DIR, "sample_pdf_output_en.pdf")
-    print("  Conversion en PDF (LibreOffice headless)...")
+    print("  Converting to PDF (LibreOffice headless)...")
     success_en = convert_to_pdf_libreoffice(docx_en, OUTPUT_DIR)
     if success_en:
         generated_pdf = os.path.join(OUTPUT_DIR, "sample_output_en.pdf")
         if os.path.exists(generated_pdf) and generated_pdf != pdf_en:
             shutil.move(generated_pdf, pdf_en)
-            print(f"  [OK] Renomme en : {pdf_en}")
+            print(f"  [OK] Renamed to: {pdf_en}")
     else:
-        print("  [WARN] PDF EN non genere. Le .docx est disponible.")
+        print("  [WARN] EN PDF not generated. The .docx is available.")
 
     print()
-    print("=== Termine ===")
-    print(f"Fichiers dans : {OUTPUT_DIR}/")
+    print("=== Done ===")
+    print(f"Files in: {OUTPUT_DIR}/")
     for f in sorted(os.listdir(OUTPUT_DIR)):
         if f.endswith((".docx", ".pdf")):
             fp = os.path.join(OUTPUT_DIR, f)

@@ -273,3 +273,45 @@ All public governance documents move to English. Only client-facing documents re
 - Client-facing documents (INSTALLATION.md, FAQ.md, PRIVACY.md, PITCH.pdf) remain in German unchanged.
 - Internal Claude agent definitions remain in French (gitignored).
 - ADR-007 is partially superseded on the governance document category. Its decisions on client-facing (German) and public-technical (English) documents remain valid.
+
+---
+
+## ADR-009: Language Policy Extended to All Repository Files
+
+**Status**: Accepted -- extends ADR-008 to all tracked files
+**Date**: 2026-05-06
+
+### Context
+
+ADR-008 established the language policy for governance documents and client-facing documents. It did not cover implementation artefacts: Power Automate guides, Forms construction guides, SharePoint schema, Word template specs, scripts, and sample files. These files were still in French (the original working language of the author), which is inconsistent with a public repository targeting German-speaking organisations.
+
+### Decision
+
+Language policy is extended to all tracked repository files. The target language for each file type is derived from its intended audience.
+
+| File type / path | Audience | Language |
+|---|---|---|
+| power_automate/*.md | M365 admin of the client | Deutsch |
+| forms/*.md | M365 admin of the client | Deutsch |
+| sharepoint/setup_lists.ps1 (comments) | M365 admin of the client | Deutsch |
+| specs/sharepoint_schema.md | M365 admin / technical reviewer | Deutsch |
+| specs/word_template_structure.md | M365 admin / technical reviewer | Deutsch |
+| specs/forms_questions_de.md (meta-text) | M365 admin | Deutsch |
+| templates/word/*_de_spec.md | M365 admin | Deutsch |
+| specs/email_templates.md (preamble and meta-labels) | M365 admin (bilingual reference) | English (neutral -- file covers both DE and EN templates) |
+| specs/forms_questions_en.md | M365 admin | English (already compliant) |
+| templates/word/*_en_spec.md | M365 admin | English |
+| samples/build_samples.py (comments) | Developer | English |
+| samples/README.md | Developer / GitHub visitor | English |
+
+### Exceptions
+
+- specs/forms_questions_en.md: no modification needed, already in English.
+- specs/email_templates.md: preamble and meta-labels in English (neutral), because the file contains both DE and EN templates. Using German meta-text would artificially favour the DE half.
+- Technical identifiers are not translatable regardless of file language: SharePoint column names, Content Control tag values, Power Automate variable names, and action names used inside expressions remain in their original form. Power Automate action names that used French words (Pour_chaque_participant, etc.) are renamed to German equivalents consistently across all guide files.
+
+### Consequences
+
+- All public files in the repository are now in the language of their target audience.
+- No French text remains in any tracked file (except internal .claude/agents/* which are gitignored).
+- ADR-009 applies retroactively: all non-compliant files are rewritten as part of this patch.

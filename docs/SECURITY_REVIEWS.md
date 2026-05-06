@@ -216,3 +216,70 @@ Terminology compliant throughout the document. Points verified:
 No substantive adjustment required.
 
 ---
+
+### REV-004
+
+**Date:** 2026-05-06
+**Deliverable:** sharepoint/setup_lists.ps1 (post-translation comment review)
+**Auditor:** DSGVO/Security Agent
+**Verdict:** APPROVED
+
+**Context:**
+
+Review triggered by translation of inline comments and Write-Host strings from French
+to German. Five specific checkpoints were evaluated.
+
+**Checklist:**
+
+- [x] No sensitive data in comments: CONFIRMED
+      Only domain reference is contoso.sharepoint.com (Microsoft canonical demo tenant,
+      not a real or customer tenant). No email address, no token, no credential,
+      no real tenant URL anywhere in the file.
+- [x] German translation introduces no new information vs French original: CONFIRMED
+      All comments are operational/documentary. No bypass technique, no workaround,
+      no security-relevant information introduced. The inline comment on line 122
+      ("DateOnly per CAML erzwingen") accurately describes the code and carries no risk.
+- [x] Placeholder values remain clearly marked: CONFIRMED
+      The script uses $SiteUrl as a mandatory parameter passed at runtime (line 17).
+      The .EXAMPLE block uses contoso.sharepoint.com as a demo value per PowerShell
+      documentation convention. No {curly brace} placeholders were used or removed.
+      The /sites/TransferMappe path fragment in the Write-Host guidance block (line 255)
+      is a project-wide site name, not a secret.
+- [x] Idempotency claim documented: CONFIRMED
+      Line 6 states the guarantee explicitly. All six helper functions implement it via
+      Get-PnP* -ErrorAction SilentlyContinue followed by null guard and early return
+      (Ensure-List line 33, column functions lines 59, 77, 95, 114, 140). Code matches claim.
+- [x] Functional code unmodified by translation: CONFIRMED
+      Cmdlet names, parameter names and values, variable names, conditional logic,
+      type references, -ErrorAction flags, -Required:$req pattern,
+      [Microsoft.SharePoint.Client.DateTimeFieldFormatType]::DateOnly enum reference,
+      and Invoke-PnPQuery calls are all intact. Translation touched only comment blocks
+      and Write-Host string literals.
+
+**Observations:**
+
+1. The column DisplayName values (nom, prenom, email, id_conseillere, etc.) are
+   intentionally kept in French. These are SharePoint field identifiers defined in the
+   data model ADR. The translation effort correctly left them untouched.
+
+2. The script provisions schema only - no personal data is hardcoded or passed at
+   provisioning time. PII will only appear in these lists at runtime, within the
+   client tenant.
+
+3. Connect-PnPOnline -Interactive (line 166) uses browser-based interactive
+   authentication. No service principal secret or application password is embedded.
+   This is the correct approach for a script distributed as open source.
+
+**DSGVO angle:**
+
+The lists created (Participants, Profils, BilansMensuels) will hold personal data
+including name, email, and appointment dates of Transfergesellschaft participants.
+The script itself is schema-only and contains no PII. Data processing responsibility
+lies with the deploying organisation per the responsibility chain documented in
+docs/PRIVACY.md section 2.
+
+**Residual risks identified:** NONE specific to this file.
+
+**Adjustments requested:** NONE
+
+---

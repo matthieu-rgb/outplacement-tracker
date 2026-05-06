@@ -1,16 +1,16 @@
 <#
 .SYNOPSIS
-    Provisioning des listes SharePoint pour outplacement-tracker v0.1
+    Bereitstellung der SharePoint-Listen fuer outplacement-tracker v0.1
 .DESCRIPTION
-    Cree les 3 listes SharePoint (Participants, Profils, BilansMensuels) et leurs colonnes.
-    Idempotent : peut etre rejoue sans erreur si les listes existent deja.
+    Erstellt die 3 SharePoint-Listen (Participants, Profils, BilansMensuels) und ihre Spalten.
+    Idempotent: kann ohne Fehler erneut ausgefuehrt werden, wenn die Listen bereits vorhanden sind.
 .PARAMETER SiteUrl
-    URL du site SharePoint cible (ex: https://contoso.sharepoint.com/sites/TransferMappe)
+    URL der Ziel-SharePoint-Website (Bsp.: https://contoso.sharepoint.com/sites/TransferMappe)
 .EXAMPLE
     .\setup_lists.ps1 -SiteUrl "https://contoso.sharepoint.com/sites/TransferMappe"
 .PREREQUIS
-    Module PnP.PowerShell installe : Install-Module PnP.PowerShell -Force
-    Connexion active : Connect-PnPOnline -Url $SiteUrl -Interactive
+    Modul PnP.PowerShell installiert: Install-Module PnP.PowerShell -Force
+    Aktive Verbindung: Connect-PnPOnline -Url $SiteUrl -Interactive
 #>
 param(
     [Parameter(Mandatory=$true)]
@@ -21,7 +21,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 # -------------------------------------------------------
-# Fonctions utilitaires
+# Hilfsfunktionen
 # -------------------------------------------------------
 
 function Ensure-List {
@@ -31,20 +31,20 @@ function Ensure-List {
     )
     $existing = Get-PnPList -Identity $Title -ErrorAction SilentlyContinue
     if ($null -ne $existing) {
-        Write-Host "[SKIP] Liste '$Title' existe deja." -ForegroundColor Yellow
+        Write-Host "[SKIP] Liste '$Title' bereits vorhanden." -ForegroundColor Yellow
         return $existing
     }
     Write-Host "[CREATE] Liste '$Title'..." -ForegroundColor Cyan
     $list = New-PnPList -Title $Title -Template GenericList -Url "Lists/$Title" -ErrorAction Stop
     Set-PnPList -Identity $Title -Description $Description
-    Write-Host "  -> Cree." -ForegroundColor Green
+    Write-Host "  -> Erstellt." -ForegroundColor Green
     return $list
 }
 
 function Enable-Versioning {
     param([string]$ListTitle, [int]$MajorVersions = 5)
     Set-PnPList -Identity $ListTitle -EnableVersioning $true -MajorVersions $MajorVersions
-    Write-Host "  [VERSIONING] Active sur '$ListTitle' ($MajorVersions versions)." -ForegroundColor DarkGray
+    Write-Host "  [VERSIONING] Aktiviert fuer '$ListTitle' ($MajorVersions Versionen)." -ForegroundColor DarkGray
 }
 
 function Add-TextColumnIfNotExists {
@@ -57,13 +57,13 @@ function Add-TextColumnIfNotExists {
     )
     $existing = Get-PnPField -List $ListTitle -Identity $InternalName -ErrorAction SilentlyContinue
     if ($null -ne $existing) {
-        Write-Host "  [SKIP] Colonne '$InternalName' existe deja sur '$ListTitle'." -ForegroundColor Yellow
+        Write-Host "  [SKIP] Spalte '$InternalName' bereits vorhanden in '$ListTitle'." -ForegroundColor Yellow
         return
     }
     $req = if ($Required) { $true } else { $false }
     Add-PnPField -List $ListTitle -InternalName $InternalName -DisplayName $DisplayName `
         -Type Text -AddToDefaultView -Required:$req | Out-Null
-    Write-Host "  [+] Colonne Text '$InternalName' cree sur '$ListTitle'." -ForegroundColor Green
+    Write-Host "  [+] Text-Spalte '$InternalName' erstellt in '$ListTitle'." -ForegroundColor Green
 }
 
 function Add-NoteColumnIfNotExists {
@@ -75,13 +75,13 @@ function Add-NoteColumnIfNotExists {
     )
     $existing = Get-PnPField -List $ListTitle -Identity $InternalName -ErrorAction SilentlyContinue
     if ($null -ne $existing) {
-        Write-Host "  [SKIP] Colonne '$InternalName' existe deja sur '$ListTitle'." -ForegroundColor Yellow
+        Write-Host "  [SKIP] Spalte '$InternalName' bereits vorhanden in '$ListTitle'." -ForegroundColor Yellow
         return
     }
     $req = if ($Required) { $true } else { $false }
     Add-PnPField -List $ListTitle -InternalName $InternalName -DisplayName $DisplayName `
         -Type Note -AddToDefaultView -Required:$req | Out-Null
-    Write-Host "  [+] Colonne Note '$InternalName' cree sur '$ListTitle'." -ForegroundColor Green
+    Write-Host "  [+] Note-Spalte '$InternalName' erstellt in '$ListTitle'." -ForegroundColor Green
 }
 
 function Add-NumberColumnIfNotExists {
@@ -93,13 +93,13 @@ function Add-NumberColumnIfNotExists {
     )
     $existing = Get-PnPField -List $ListTitle -Identity $InternalName -ErrorAction SilentlyContinue
     if ($null -ne $existing) {
-        Write-Host "  [SKIP] Colonne '$InternalName' existe deja sur '$ListTitle'." -ForegroundColor Yellow
+        Write-Host "  [SKIP] Spalte '$InternalName' bereits vorhanden in '$ListTitle'." -ForegroundColor Yellow
         return
     }
     $req = if ($Required) { $true } else { $false }
     Add-PnPField -List $ListTitle -InternalName $InternalName -DisplayName $DisplayName `
         -Type Number -AddToDefaultView -Required:$req | Out-Null
-    Write-Host "  [+] Colonne Number '$InternalName' cree sur '$ListTitle'." -ForegroundColor Green
+    Write-Host "  [+] Number-Spalte '$InternalName' erstellt in '$ListTitle'." -ForegroundColor Green
 }
 
 function Add-DateColumnIfNotExists {
@@ -112,19 +112,19 @@ function Add-DateColumnIfNotExists {
     )
     $existing = Get-PnPField -List $ListTitle -Identity $InternalName -ErrorAction SilentlyContinue
     if ($null -ne $existing) {
-        Write-Host "  [SKIP] Colonne '$InternalName' existe deja sur '$ListTitle'." -ForegroundColor Yellow
+        Write-Host "  [SKIP] Spalte '$InternalName' bereits vorhanden in '$ListTitle'." -ForegroundColor Yellow
         return
     }
     $req = if ($Required) { $true } else { $false }
     $field = Add-PnPField -List $ListTitle -InternalName $InternalName -DisplayName $DisplayName `
         -Type DateTime -AddToDefaultView -Required:$req
     if ($DateOnly) {
-        # Forcer DateOnly via CAML
+        # DateOnly per CAML erzwingen
         $field.DisplayFormat = [Microsoft.SharePoint.Client.DateTimeFieldFormatType]::DateOnly
         $field.Update()
         Invoke-PnPQuery
     }
-    Write-Host "  [+] Colonne DateTime '$InternalName' cree sur '$ListTitle'." -ForegroundColor Green
+    Write-Host "  [+] DateTime-Spalte '$InternalName' erstellt in '$ListTitle'." -ForegroundColor Green
 }
 
 function Add-ChoiceColumnIfNotExists {
@@ -138,7 +138,7 @@ function Add-ChoiceColumnIfNotExists {
     )
     $existing = Get-PnPField -List $ListTitle -Identity $InternalName -ErrorAction SilentlyContinue
     if ($null -ne $existing) {
-        Write-Host "  [SKIP] Colonne '$InternalName' existe deja sur '$ListTitle'." -ForegroundColor Yellow
+        Write-Host "  [SKIP] Spalte '$InternalName' bereits vorhanden in '$ListTitle'." -ForegroundColor Yellow
         return
     }
     $req = if ($Required) { $true } else { $false }
@@ -150,11 +150,11 @@ function Add-ChoiceColumnIfNotExists {
         $field.Update()
         Invoke-PnPQuery
     }
-    Write-Host "  [+] Colonne Choice '$InternalName' cree sur '$ListTitle'." -ForegroundColor Green
+    Write-Host "  [+] Choice-Spalte '$InternalName' erstellt in '$ListTitle'." -ForegroundColor Green
 }
 
 # -------------------------------------------------------
-# Connexion
+# Verbindung
 # -------------------------------------------------------
 
 Write-Host ""
@@ -164,15 +164,15 @@ Write-Host "======================================================" -ForegroundC
 Write-Host ""
 
 Connect-PnPOnline -Url $SiteUrl -Interactive
-Write-Host "Connecte a : $SiteUrl" -ForegroundColor Green
+Write-Host "Verbunden mit: $SiteUrl" -ForegroundColor Green
 Write-Host ""
 
 # -------------------------------------------------------
 # Liste 1 : Participants
 # -------------------------------------------------------
 
-Write-Host "--- Liste : Participants ---" -ForegroundColor White
-Ensure-List -Title "Participants" -Description "Un enregistrement par participant suivi. Table centrale de la solution outplacement-tracker."
+Write-Host "--- Liste: Participants ---" -ForegroundColor White
+Ensure-List -Title "Participants" -Description "Ein Datensatz pro betreutem Teilnehmer. Zentrale Tabelle der outplacement-tracker-Loesung."
 Enable-Versioning -ListTitle "Participants" -MajorVersions 5
 
 Add-TextColumnIfNotExists    -ListTitle "Participants" -InternalName "nom"                -DisplayName "Nom"                          -Required
@@ -192,8 +192,8 @@ Write-Host ""
 # Liste 2 : Profils
 # -------------------------------------------------------
 
-Write-Host "--- Liste : Profils ---" -ForegroundColor White
-Ensure-List -Title "Profils" -Description "Profil de carriere optionnel, un par participant."
+Write-Host "--- Liste: Profils ---" -ForegroundColor White
+Ensure-List -Title "Profils" -Description "Optionales Karriereprofil, ein Datensatz pro Teilnehmer."
 Enable-Versioning -ListTitle "Profils" -MajorVersions 5
 
 Add-NumberColumnIfNotExists  -ListTitle "Profils" -InternalName "id_participant"    -DisplayName "ID Participant"      -Required
@@ -210,8 +210,8 @@ Write-Host ""
 # Liste 3 : BilansMensuels
 # -------------------------------------------------------
 
-Write-Host "--- Liste : BilansMensuels ---" -ForegroundColor White
-Ensure-List -Title "BilansMensuels" -Description "Un enregistrement par bilan mensuel soumis. Zero a 12 par participant."
+Write-Host "--- Liste: BilansMensuels ---" -ForegroundColor White
+Ensure-List -Title "BilansMensuels" -Description "Ein Datensatz pro eingereichtem Monatsbericht. Null bis zwoelf pro Teilnehmer."
 Enable-Versioning -ListTitle "BilansMensuels" -MajorVersions 5
 
 Add-NumberColumnIfNotExists  -ListTitle "BilansMensuels" -InternalName "id_participant"                 -DisplayName "ID Participant"                -Required
@@ -229,29 +229,29 @@ Add-NoteColumnIfNotExists    -ListTitle "BilansMensuels" -InternalName "sonstige
 Write-Host ""
 
 # -------------------------------------------------------
-# Recapitulatif
+# Zusammenfassung
 # -------------------------------------------------------
 
 Write-Host "======================================================" -ForegroundColor White
-Write-Host " Provisioning termine.                                 " -ForegroundColor Green
+Write-Host " Bereitstellung abgeschlossen.                         " -ForegroundColor Green
 Write-Host "======================================================" -ForegroundColor White
 Write-Host ""
-Write-Host "Listes creees (ou deja existantes) :" -ForegroundColor White
+Write-Host "Erstellte (oder bereits vorhandene) Listen:" -ForegroundColor White
 
 $lists = @("Participants", "Profils", "BilansMensuels")
 foreach ($l in $lists) {
     $list = Get-PnPList -Identity $l -ErrorAction SilentlyContinue
     if ($null -ne $list) {
         $fields = Get-PnPField -List $l | Where-Object { -not $_.Hidden -and -not $_.ReadOnlyField }
-        Write-Host "  [OK] $l - $($fields.Count) colonnes visibles" -ForegroundColor Green
+        Write-Host "  [OK] $l - $($fields.Count) sichtbare Spalten" -ForegroundColor Green
     } else {
-        Write-Host "  [ERREUR] $l non trouve !" -ForegroundColor Red
+        Write-Host "  [FEHLER] $l nicht gefunden!" -ForegroundColor Red
     }
 }
 
 Write-Host ""
-Write-Host "Prochaines etapes :" -ForegroundColor White
-Write-Host "  1. Creer les formulaires Microsoft Forms (voir forms/forms_construction_guide.md)" -ForegroundColor DarkGray
-Write-Host "  2. Deposer les templates Word dans /sites/TransferMappe/Templates/" -ForegroundColor DarkGray
-Write-Host "  3. Creer les Flows Power Automate (voir power_automate/)" -ForegroundColor DarkGray
+Write-Host "Naechste Schritte:" -ForegroundColor White
+Write-Host "  1. Microsoft Forms-Formulare erstellen (siehe forms/forms_construction_guide.md)" -ForegroundColor DarkGray
+Write-Host "  2. Word-Templates in /sites/TransferMappe/Templates/ ablegen" -ForegroundColor DarkGray
+Write-Host "  3. Power Automate Flows erstellen (siehe power_automate/)" -ForegroundColor DarkGray
 Write-Host ""

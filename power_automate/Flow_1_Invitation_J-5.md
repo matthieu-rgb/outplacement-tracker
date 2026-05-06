@@ -1,140 +1,140 @@
-# Flow 1 : Invitation J-5
+# Flow 1 : Einladung J-5
 
-outplacement-tracker v0.1 - Implementation guide (blueprint sans tenant)
+outplacement-tracker v0.1 - Implementierungsanleitung (Blueprint ohne Tenant)
 
-Ce document permet a un administrateur Microsoft 365 de reconstruire ce Flow
-a partir de zero, action par action, sans import JSON.
+Dieses Dokument ermoeglicht einem Microsoft 365-Administrator, diesen Flow
+von Grund auf neu zu erstellen, Aktion fuer Aktion, ohne JSON-Import.
 
 ---
 
-## Vue d'ensemble
+## Uebersicht
 
-| Parametre | Valeur |
+| Parameter | Wert |
 |---|---|
-| Nom du Flow | TransferMappe - Invitation J-5 |
-| Declencheur | Planifie (tous les jours a 07h00) |
-| Fonction | Pour chaque participant actif avec un RDV dans 5 jours, envoyer l'email d'invitation avec le lien vers le formulaire Forms correspondant |
-| Frequence | Quotidien |
-| Connexions requises | SharePoint, Office 365 Outlook |
+| Name des Flows | TransferMappe - Invitation J-5 |
+| Ausloeseer | Geplant (taeglich um 07:00 Uhr) |
+| Funktion | Fuer jeden aktiven Teilnehmer mit einem Termin in 5 Tagen eine Einladungs-E-Mail mit dem Link zum entsprechenden Forms-Formular senden |
+| Haeufigkeit | Taeglich |
+| Erforderliche Verbindungen | SharePoint, Office 365 Outlook |
 
 ---
 
-## Etape 1 : Creer le Flow
+## Schritt 1 : Flow erstellen
 
-1. Aller sur make.powerautomate.com
-2. Cliquer sur "Creer" > "Flux planifie"
-3. Renseigner :
-   - Nom : `TransferMappe - Invitation J-5`
-   - Heure de debut : `07:00`
-   - Repeter toutes les : `1 jour`
-4. Cliquer sur "Creer"
+1. Auf make.powerautomate.com gehen
+2. "Erstellen" > "Geplanter Cloud-Flow" anklicken
+3. Folgendes eingeben :
+   - Name : `TransferMappe - Invitation J-5`
+   - Startzeit : `07:00`
+   - Wiederholen alle : `1 Tag`
+4. "Erstellen" anklicken
 
 ---
 
-## Etape 2 : Variables de configuration
+## Schritt 2 : Konfigurationsvariablen
 
-En debut de Flow, ajouter 4 actions "Initialiser une variable" (une par variable).
+Am Anfang des Flows 4 Aktionen "Variable initialisieren" hinzufuegen (eine je Variable).
 
-| Nom de variable | Type | Valeur initiale | Description |
+| Variablenname | Typ | Anfangswert | Beschreibung |
 |---|---|---|---|
-| varSiteUrl | String | `https://{tenant}.sharepoint.com/sites/TransferMappe` | URL du site SharePoint - remplacer {tenant} |
-| varSharedMailbox | String | `transfer@{domaine}.de` | Adresse expeditrice - shared mailbox configuree par l'admin |
-| varFormUrlDE | String | `{URL du Forms bilan mensuel DE}` | Copier depuis le Form 3 (voir forms_construction_guide.md) |
-| varFormUrlEN | String | `{URL du Forms bilan mensuel EN}` | Copier depuis le Form 4 |
+| varSiteUrl | String | `https://{tenant}.sharepoint.com/sites/TransferMappe` | URL der SharePoint-Website - {tenant} ersetzen |
+| varSharedMailbox | String | `transfer@{domaine}.de` | Absenderadresse - vom Administrator konfiguriertes Shared Mailbox |
+| varFormUrlDE | String | `{URL des monatlichen Berichtsformulars DE}` | Aus Formular 3 kopieren (siehe forms_construction_guide.md) |
+| varFormUrlEN | String | `{URL des monatlichen Berichtsformulars EN}` | Aus Formular 4 kopieren |
 
 ---
 
-## Etape 3 : Calculer la date cible (aujourd'hui + 5 jours)
+## Schritt 3 : Zieldatum berechnen (heute + 5 Tage)
 
-- Action : **Composer** (Data Operations > Composer)
-- Nom de l'action : `Calculer_date_cible`
-- Entrees (expression) :
+- Aktion : **Verfassen** (Datenvorgaenge > Verfassen)
+- Name der Aktion : `Datum_berechnen`
+- Eingaben (Ausdruck) :
 
 ```
 addDays(utcNow(), 5, 'yyyy-MM-dd')
 ```
 
-Cette expression retourne la date dans 5 jours au format `YYYY-MM-DD` (ex. `2026-05-10`).
+Dieser Ausdruck gibt das Datum in 5 Tagen im Format `YYYY-MM-DD` zurueck (z.B. `2026-05-10`).
 
 ---
 
-## Etape 4 : Recuperer les participants actifs avec RDV dans 5 jours
+## Schritt 4 : Aktive Teilnehmer mit Termin in 5 Tagen abrufen
 
-- Action : **Obtenir des elements** (SharePoint > Obtenir des elements)
-- Nom de l'action : `Get_participants_J5`
-- Site : `variables('varSiteUrl')`
-- Nom de la liste : `Participants`
-- Filtrer la requete (OData) :
+- Aktion : **Elemente abrufen** (SharePoint > Elemente abrufen)
+- Name der Aktion : `Get_participants_J5`
+- Website : `variables('varSiteUrl')`
+- Listenname : `Participants`
+- Abfrage filtern (OData) :
 
 ```
-statut eq 'actif' and date_prochain_rdv eq '@{outputs('Calculer_date_cible')}'
+statut eq 'actif' and date_prochain_rdv eq '@{outputs('Datum_berechnen')}'
 ```
 
-Note : la valeur de date doit correspondre exactement au format stocke dans SharePoint (DateOnly ISO 8601). Si la colonne `date_prochain_rdv` stocke une heure (meme 00:00:00Z), ajuster le filtre en consequence ou utiliser `startswith`.
+Hinweis : Der Datumswert muss genau dem in SharePoint gespeicherten Format entsprechen (DateOnly ISO 8601). Wenn die Spalte `date_prochain_rdv` eine Uhrzeit enthaelt (auch 00:00:00Z), den Filter entsprechend anpassen oder `startswith` verwenden.
 
-- Nombre maximal d'elements : `100` (ajuster selon le volume de participants)
+- Maximale Anzahl von Elementen : `100` (entsprechend dem Teilnehmervolumen anpassen)
 
 ---
 
-## Etape 5 : Pour chaque participant (Apply to each)
+## Schritt 5 : Fuer jeden Teilnehmer (Apply to each)
 
-- Action : **Appliquer a chacun** (Control > Appliquer a chacun)
-- Nom de l'action : `Pour_chaque_participant`
-- Entree : `value` de l'action `Get_participants_J5`
+- Aktion : **Auf jedes anwenden** (Steuerung > Auf jedes anwenden)
+- Name der Aktion : `Fuer_jeden_Teilnehmer`
+- Eingabe : `value` der Aktion `Get_participants_J5`
 
-### Action 5.1 : Condition sur la langue
+### Aktion 5.1 : Bedingung fuer die Sprache
 
-- Action : **Condition** (Control > Condition)
-- Nom de l'action : `Condition_langue`
-- Condition :
+- Aktion : **Bedingung** (Steuerung > Bedingung)
+- Name der Aktion : `Bedingung_Sprache`
+- Bedingung :
 
 ```
-items('Pour_chaque_participant')?['langue']
+items('Fuer_jeden_Teilnehmer')?['langue']
 ```
 
-... est egal a ...
+... ist gleich ...
 
 ```
 EN
 ```
 
-#### Branche "Si oui" (langue EN)
+#### Zweig "Wenn ja" (Sprache EN)
 
-Passer a l'action 5.2 avec :
+Weiter zu Aktion 5.2 mit :
 - `varFormUrl` = `variables('varFormUrlEN')`
-- Template email = Template 2 (EN)
+- E-Mail-Vorlage = Vorlage 2 (EN)
 
-#### Branche "Si non" (langue DE, valeur par defaut)
+#### Zweig "Wenn nein" (Sprache DE, Standardwert)
 
-Passer a l'action 5.2 avec :
+Weiter zu Aktion 5.2 mit :
 - `varFormUrl` = `variables('varFormUrlDE')`
-- Template email = Template 1 (DE)
+- E-Mail-Vorlage = Vorlage 1 (DE)
 
-### Action 5.2 : Envoyer l'email d'invitation
+### Aktion 5.2 : Einladungs-E-Mail senden
 
-Creer cette action dans **chacune** des deux branches (oui/non) de la condition.
+Diese Aktion in **jedem** der beiden Zweige (ja/nein) der Bedingung anlegen.
 
-- Action : **Envoyer un e-mail (V2)** (Office 365 Outlook > Envoyer un e-mail (V2))
-- Nom de l'action : `Envoyer_invitation_DE` ou `Envoyer_invitation_EN`
-- De (From) : `variables('varSharedMailbox')`
-- A (To) : `items('Pour_chaque_participant')?['email']`
+- Aktion : **E-Mail senden (V2)** (Office 365 Outlook > E-Mail senden (V2))
+- Name der Aktion : `Einladung_senden_DE` oder `Einladung_senden_EN`
+- Von (From) : `variables('varSharedMailbox')`
+- An (To) : `items('Fuer_jeden_Teilnehmer')?['email']`
 
-**Version DE - Objet :**
+**Version DE - Betreff :**
 
 ```
-Ihr nächster Beratungstermin am @{formatDateTime(items('Pour_chaque_participant')?['date_prochain_rdv'], 'dd.MM.yyyy')} - Bitte Kurzbericht ausfüllen
+Ihr nächster Beratungstermin am @{formatDateTime(items('Fuer_jeden_Teilnehmer')?['date_prochain_rdv'], 'dd.MM.yyyy')} - Bitte Kurzbericht ausfüllen
 ```
 
-**Version DE - Corps (HTML) :**
+**Version DE - Inhalt (HTML) :**
 
 ```html
 <!DOCTYPE html>
 <html lang="de">
 <body style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; max-width: 600px; margin: 0 auto; padding: 20px;">
 
-  <p>Guten Tag @{items('Pour_chaque_participant')?['prenom']} @{items('Pour_chaque_participant')?['nom']},</p>
+  <p>Guten Tag @{items('Fuer_jeden_Teilnehmer')?['prenom']} @{items('Fuer_jeden_Teilnehmer')?['nom']},</p>
 
-  <p>Ihr nächster Beratungstermin findet am <strong>@{formatDateTime(items('Pour_chaque_participant')?['date_prochain_rdv'], 'dd.MM.yyyy')}</strong> statt.</p>
+  <p>Ihr nächster Beratungstermin findet am <strong>@{formatDateTime(items('Fuer_jeden_Teilnehmer')?['date_prochain_rdv'], 'dd.MM.yyyy')}</strong> statt.</p>
 
   <p>Um diesen Termin optimal vorzubereiten, bitten wir Sie, bis zum Vortag kurz folgende Fragen zu beantworten (ca. 5 Minuten):</p>
 
@@ -158,22 +158,22 @@ Ihr nächster Beratungstermin am @{formatDateTime(items('Pour_chaque_participant
 </html>
 ```
 
-**Version EN - Objet :**
+**Version EN - Betreff :**
 
 ```
-Your next appointment on @{formatDateTime(items('Pour_chaque_participant')?['date_prochain_rdv'], 'dd.MM.yyyy')} - Please complete your monthly update
+Your next appointment on @{formatDateTime(items('Fuer_jeden_Teilnehmer')?['date_prochain_rdv'], 'dd.MM.yyyy')} - Please complete your monthly update
 ```
 
-**Version EN - Corps (HTML) :**
+**Version EN - Inhalt (HTML) :**
 
 ```html
 <!DOCTYPE html>
 <html lang="en">
 <body style="font-family: Arial, sans-serif; font-size: 14px; color: #333333; max-width: 600px; margin: 0 auto; padding: 20px;">
 
-  <p>Dear @{items('Pour_chaque_participant')?['prenom']} @{items('Pour_chaque_participant')?['nom']},</p>
+  <p>Dear @{items('Fuer_jeden_Teilnehmer')?['prenom']} @{items('Fuer_jeden_Teilnehmer')?['nom']},</p>
 
-  <p>Your next appointment with your advisor is scheduled for <strong>@{formatDateTime(items('Pour_chaque_participant')?['date_prochain_rdv'], 'dd.MM.yyyy')}</strong>.</p>
+  <p>Your next appointment with your advisor is scheduled for <strong>@{formatDateTime(items('Fuer_jeden_Teilnehmer')?['date_prochain_rdv'], 'dd.MM.yyyy')}</strong>.</p>
 
   <p>To help prepare for this session, we kindly ask you to answer a few short questions at least the day before your appointment (approx. 5 minutes):</p>
 
@@ -199,62 +199,62 @@ Your next appointment on @{formatDateTime(items('Pour_chaque_participant')?['dat
 
 ---
 
-## Etape 6 : Gestion d'erreurs
+## Schritt 6 : Fehlerbehandlung
 
-Ajouter une action de notification en cas d'echec du Flow.
+Eine Benachrichtigungsaktion fuer den Fall eines Flow-Fehlers hinzufuegen.
 
-1. En dehors de la boucle "Pour chaque participant", ajouter une action :
-   - Action : **Envoyer un e-mail (V2)**
-   - Nom de l'action : `Notifier_erreur`
-   - Configurer "Executer apres" (Run after) : cocher uniquement **"a echoue"**
-   - A : adresse email de l'administrateur (a configurer)
-   - Objet : `ERREUR - Flow TransferMappe Invitation J-5`
-   - Corps :
+1. Ausserhalb der Schleife "Fuer jeden Teilnehmer" eine Aktion hinzufuegen :
+   - Aktion : **E-Mail senden (V2)**
+   - Name der Aktion : `Fehler_benachrichtigen`
+   - "Ausfuehren nach" (Run after) konfigurieren : nur **"fehlgeschlagen"** ankreuzen
+   - An : E-Mail-Adresse des Administrators (zu konfigurieren)
+   - Betreff : `FEHLER - Flow TransferMappe Invitation J-5`
+   - Inhalt :
 
 ```
-Une erreur s'est produite dans le Flow "TransferMappe - Invitation J-5".
+Im Flow "TransferMappe - Invitation J-5" ist ein Fehler aufgetreten.
 
-Date : @{utcNow()}
+Datum : @{utcNow()}
 
-Verifier les journaux d'execution Power Automate pour le detail.
+Die Power Automate-Ausfuehrungsprotokolle fuer Details pruefen.
 
-Lien direct : https://make.powerautomate.com
+Direktlink : https://make.powerautomate.com
 ```
 
 ---
 
-## Recapitulatif des actions du Flow (dans l'ordre)
+## Zusammenfassung der Flow-Aktionen (in Reihenfolge)
 
 ```
-[Declencheur planifie - 07:00 quotidien]
+[Geplanter Ausloeseer - 07:00 taeglich]
   |
-  +-- [Initialiser variable] varSiteUrl
-  +-- [Initialiser variable] varSharedMailbox
-  +-- [Initialiser variable] varFormUrlDE
-  +-- [Initialiser variable] varFormUrlEN
-  +-- [Composer] Calculer_date_cible  (addDays +5)
-  +-- [Obtenir des elements] Get_participants_J5  (filtre statut=actif AND date=cible)
-  +-- [Appliquer a chacun] Pour_chaque_participant
+  +-- [Variable initialisieren] varSiteUrl
+  +-- [Variable initialisieren] varSharedMailbox
+  +-- [Variable initialisieren] varFormUrlDE
+  +-- [Variable initialisieren] varFormUrlEN
+  +-- [Verfassen] Datum_berechnen  (addDays +5)
+  +-- [Elemente abrufen] Get_participants_J5  (Filter statut=actif AND date=Zieldatum)
+  +-- [Auf jedes anwenden] Fuer_jeden_Teilnehmer
         |
-        +-- [Condition] Condition_langue  (langue == EN ?)
+        +-- [Bedingung] Bedingung_Sprache  (langue == EN ?)
               |
-              +-- [Si oui] Envoyer_invitation_EN (HTML EN, varFormUrlEN)
-              +-- [Si non] Envoyer_invitation_DE (HTML DE, varFormUrlDE)
+              +-- [Wenn ja] Einladung_senden_EN (HTML EN, varFormUrlEN)
+              +-- [Wenn nein] Einladung_senden_DE (HTML DE, varFormUrlDE)
   |
-  +-- [Envoyer e-mail] Notifier_erreur  (Run after: failed)
+  +-- [E-Mail senden] Fehler_benachrichtigen  (Run after: fehlgeschlagen)
 ```
 
 ---
 
-## Precautions et points d'attention
+## Hinweise und zu beachtende Punkte
 
-- Tester d'abord avec un seul participant de test (adresse email fictive) avant mise en production
-- La shared mailbox doit avoir la permission "Send As" pour le compte de service Power Automate
-- Le lien Forms doit etre en mode "Tout le monde peut repondre" (acces sans compte M365 requis)
-- Les participants ne reoivent pas leur propre reponse en copie (pas de "Reply-To" sur la mailbox generique)
-- En cas de volume superieur a 100 participants par jour, augmenter le "Nombre maximal d'elements" et verifier les limites de l'action Power Automate (5 000 elements max par appel SharePoint)
-- Le filtre OData sur `date_prochain_rdv` suppose que cette colonne est de type DateOnly. Si elle inclut une heure (ex. `2026-05-10T00:00:00Z`), le filtre `eq` peut ne pas fonctionner. Dans ce cas, utiliser :
+- Zuerst mit einem einzelnen Testteilnehmer (fiktive E-Mail-Adresse) testen, bevor die Loesung in Produktion geht
+- Das Shared Mailbox muss die Berechtigung "Senden als" fuer das Power Automate-Dienstkonto haben
+- Der Forms-Link muss im Modus "Jeder kann antworten" sein (Zugriff ohne M365-Konto erforderlich)
+- Teilnehmer erhalten keine Kopie ihrer eigenen Antwort (kein "Reply-To" auf dem generischen Postfach)
+- Bei mehr als 100 Teilnehmern pro Tag die "Maximale Anzahl von Elementen" erhoehen und die Limits der Power Automate-Aktion pruefen (max. 5.000 Elemente pro SharePoint-Aufruf)
+- Der OData-Filter auf `date_prochain_rdv` setzt voraus, dass diese Spalte vom Typ DateOnly ist. Wenn sie eine Uhrzeit enthaelt (z.B. `2026-05-10T00:00:00Z`), funktioniert der Filter `eq` moeglicherweise nicht. In diesem Fall verwenden :
 
 ```
-statut eq 'actif' and date_prochain_rdv ge '@{outputs('Calculer_date_cible')}T00:00:00Z' and date_prochain_rdv lt '@{outputs('Calculer_date_cible')}T23:59:59Z'
+statut eq 'actif' and date_prochain_rdv ge '@{outputs('Datum_berechnen')}T00:00:00Z' and date_prochain_rdv lt '@{outputs('Datum_berechnen')}T23:59:59Z'
 ```

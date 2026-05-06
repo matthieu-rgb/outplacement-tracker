@@ -1,56 +1,56 @@
-# Flow 2 : Generation PDF le jour du RDV
+# Flow 2 : PDF-Generierung am Tag des Termins
 
-outplacement-tracker v0.1 - Implementation guide (blueprint sans tenant)
+outplacement-tracker v0.1 - Implementierungsanleitung (Blueprint ohne Tenant)
 
-Ce document permet a un administrateur Microsoft 365 de reconstruire ce Flow
-a partir de zero, action par action, sans import JSON.
+Dieses Dokument ermoeglicht einem Microsoft 365-Administrator, diesen Flow
+von Grund auf neu zu erstellen, Aktion fuer Aktion, ohne JSON-Import.
 
 ---
 
-## Vue d'ensemble
+## Uebersicht
 
-| Parametre | Valeur |
+| Parameter | Wert |
 |---|---|
-| Nom du Flow | TransferMappe - Generation PDF |
-| Declencheur | Planifie (tous les jours a 06h00) |
-| Fonction | Pour chaque participant actif dont le RDV est aujourd'hui : recuperer profil + bilans, remplir le template Word, convertir en PDF, envoyer a la conseillere, sauvegarder dans SharePoint |
-| Frequence | Quotidien |
-| Connexions requises | SharePoint, Word Online (Business), Office 365 Outlook |
+| Name des Flows | TransferMappe - Generation PDF |
+| Ausloeseer | Geplant (taeglich um 06:00 Uhr) |
+| Funktion | Fuer jeden aktiven Teilnehmer mit Termin heute : Profil und Berichte abrufen, Word-Vorlage befuellen, in PDF konvertieren, an die Beraterin senden, in SharePoint speichern |
+| Haeufigkeit | Taeglich |
+| Erforderliche Verbindungen | SharePoint, Word Online (Business), Office 365 Outlook |
 
-Le Flow se declenche 1h avant le Flow J-5 (06h00 vs 07h00) pour eviter toute collision.
-
----
-
-## Etape 1 : Creer le Flow
-
-1. Aller sur make.powerautomate.com
-2. Cliquer sur "Creer" > "Flux planifie"
-3. Renseigner :
-   - Nom : `TransferMappe - Generation PDF`
-   - Heure de debut : `06:00`
-   - Repeter toutes les : `1 jour`
-4. Cliquer sur "Creer"
+Der Flow wird 1 Stunde vor dem J-5-Flow ausgeloest (06:00 Uhr vs. 07:00 Uhr), um Konflikte zu vermeiden.
 
 ---
 
-## Etape 2 : Variables de configuration
+## Schritt 1 : Flow erstellen
 
-Ajouter 4 actions "Initialiser une variable" en debut de Flow.
+1. Auf make.powerautomate.com gehen
+2. "Erstellen" > "Geplanter Cloud-Flow" anklicken
+3. Folgendes eingeben :
+   - Name : `TransferMappe - Generation PDF`
+   - Startzeit : `06:00`
+   - Wiederholen alle : `1 Tag`
+4. "Erstellen" anklicken
 
-| Nom de variable | Type | Valeur initiale | Description |
+---
+
+## Schritt 2 : Konfigurationsvariablen
+
+Am Anfang des Flows 4 Aktionen "Variable initialisieren" hinzufuegen.
+
+| Variablenname | Typ | Anfangswert | Beschreibung |
 |---|---|---|---|
-| varSiteUrl | String | `https://{tenant}.sharepoint.com/sites/TransferMappe` | URL du site SharePoint |
-| varSharedMailbox | String | `transfer@{domaine}.de` | Adresse expeditrice |
-| varTemplatePathDE | String | `/sites/TransferMappe/TransferMappes/Templates/transfer_mappe_template_de.docx` | Chemin SharePoint du template Word DE |
-| varTemplatePathEN | String | `/sites/TransferMappe/TransferMappes/Templates/transfer_mappe_template_en.docx` | Chemin SharePoint du template Word EN |
+| varSiteUrl | String | `https://{tenant}.sharepoint.com/sites/TransferMappe` | URL der SharePoint-Website |
+| varSharedMailbox | String | `transfer@{domaine}.de` | Absenderadresse |
+| varTemplatePathDE | String | `/sites/TransferMappe/TransferMappes/Templates/transfer_mappe_template_de.docx` | SharePoint-Pfad der Word-Vorlage DE |
+| varTemplatePathEN | String | `/sites/TransferMappe/TransferMappes/Templates/transfer_mappe_template_en.docx` | SharePoint-Pfad der Word-Vorlage EN |
 
 ---
 
-## Etape 3 : Calculer la date du jour
+## Schritt 3 : Heutiges Datum berechnen
 
-- Action : **Composer** (Data Operations > Composer)
-- Nom de l'action : `Date_aujourdhui`
-- Entrees (expression) :
+- Aktion : **Verfassen** (Datenvorgaenge > Verfassen)
+- Name der Aktion : `Datum_heute`
+- Eingaben (Ausdruck) :
 
 ```
 formatDateTime(utcNow(), 'yyyy-MM-dd')
@@ -58,110 +58,110 @@ formatDateTime(utcNow(), 'yyyy-MM-dd')
 
 ---
 
-## Etape 4 : Recuperer les participants actifs avec RDV aujourd'hui
+## Schritt 4 : Aktive Teilnehmer mit heutigem Termin abrufen
 
-- Action : **Obtenir des elements** (SharePoint)
-- Nom de l'action : `Get_participants_rdv_auj`
-- Site : `variables('varSiteUrl')`
-- Nom de la liste : `Participants`
-- Filtrer la requete :
+- Aktion : **Elemente abrufen** (SharePoint)
+- Name der Aktion : `Get_participants_rdv_auj`
+- Website : `variables('varSiteUrl')`
+- Listenname : `Participants`
+- Abfrage filtern :
 
 ```
-statut eq 'actif' and date_prochain_rdv eq '@{outputs('Date_aujourdhui')}'
+statut eq 'actif' and date_prochain_rdv eq '@{outputs('Datum_heute')}'
 ```
 
-- Nombre maximal d'elements : `100`
+- Maximale Anzahl von Elementen : `100`
 
 ---
 
-## Etape 5 : Pour chaque participant (boucle principale)
+## Schritt 5 : Fuer jeden Teilnehmer (Hauptschleife)
 
-- Action : **Appliquer a chacun**
-- Nom de l'action : `Pour_chaque_participant_rdv`
-- Entree : `value` de `Get_participants_rdv_auj`
+- Aktion : **Auf jedes anwenden**
+- Name der Aktion : `Fuer_jeden_Teilnehmer_Termin`
+- Eingabe : `value` von `Get_participants_rdv_auj`
 
-### Action 5.1 : Recuperer le profil du participant
+### Aktion 5.1 : Profil des Teilnehmers abrufen
 
-- Action : **Obtenir des elements** (SharePoint)
-- Nom de l'action : `Get_profil`
-- Site : `variables('varSiteUrl')`
-- Nom de la liste : `Profils`
-- Filtrer la requete :
-
-```
-id_participant eq @{items('Pour_chaque_participant_rdv')?['ID']}
-```
-
-- Nombre maximal d'elements : `1`
-
-Note : `ID` est la colonne id auto-generee par SharePoint (entier). Ne pas confondre avec `id_participant`.
-
-### Action 5.2 : Recuperer tous les bilans du participant (tries par date ASC)
-
-- Action : **Obtenir des elements** (SharePoint)
-- Nom de l'action : `Get_bilans`
-- Site : `variables('varSiteUrl')`
-- Nom de la liste : `BilansMensuels`
-- Filtrer la requete :
+- Aktion : **Elemente abrufen** (SharePoint)
+- Name der Aktion : `Get_profil`
+- Website : `variables('varSiteUrl')`
+- Listenname : `Profils`
+- Abfrage filtern :
 
 ```
-id_participant eq @{items('Pour_chaque_participant_rdv')?['ID']}
+id_participant eq @{items('Fuer_jeden_Teilnehmer_Termin')?['ID']}
 ```
 
-- Trier par : `date_rdv` - Croissant (ASC)
-- Nombre maximal d'elements : `12`
+- Maximale Anzahl von Elementen : `1`
 
-### Action 5.3 : Choisir le chemin du template selon la langue
+Hinweis : `ID` ist die von SharePoint automatisch generierte ID-Spalte (Ganzzahl). Nicht mit `id_participant` verwechseln.
 
-- Action : **Condition**
-- Nom de l'action : `Condition_langue_pdf`
-- Condition : `items('Pour_chaque_participant_rdv')?['langue']` est egal a `EN`
-- Branche "Si oui" : initialiser une variable `varTemplatePath` = `variables('varTemplatePathEN')`
-- Branche "Si non" : initialiser une variable `varTemplatePath` = `variables('varTemplatePathDE')`
+### Aktion 5.2 : Alle Berichte des Teilnehmers abrufen (aufsteigend nach Datum sortiert)
 
-Note : declarer `varTemplatePath` comme String vide dans l'etape 2 avant de l'affecter ici.
+- Aktion : **Elemente abrufen** (SharePoint)
+- Name der Aktion : `Get_bilans`
+- Website : `variables('varSiteUrl')`
+- Listenname : `BilansMensuels`
+- Abfrage filtern :
 
-### Action 5.4 : Remplir le template Word (Populate a Microsoft Word template)
+```
+id_participant eq @{items('Fuer_jeden_Teilnehmer_Termin')?['ID']}
+```
 
-- Action : **Remplir un modele Microsoft Word** (Word Online (Business))
-- Nom de l'action : `Remplir_template`
-- Emplacement : `SharePoint`
-- Bibliotheque de documents : `Documents` (ou le nom de votre bibliotheque)
-- Fichier : `variables('varTemplatePath')`
+- Sortieren nach : `date_rdv` - Aufsteigend (ASC)
+- Maximale Anzahl von Elementen : `12`
 
-#### Mapping des Content Controls
+### Aktion 5.3 : Vorlagenpfad gemaess Sprache auswaehlen
 
-Chaque ligne ci-dessous correspond a un champ dans l'action Power Automate.
-La colonne "Expression" est l'expression dynamique a saisir dans le champ correspondant.
+- Aktion : **Bedingung**
+- Name der Aktion : `Bedingung_Sprache_PDF`
+- Bedingung : `items('Fuer_jeden_Teilnehmer_Termin')?['langue']` ist gleich `EN`
+- Zweig "Wenn ja" : Variable `varTemplatePath` = `variables('varTemplatePathEN')` initialisieren
+- Zweig "Wenn nein" : Variable `varTemplatePath` = `variables('varTemplatePathDE')` initialisieren
 
-**Page de garde (6 Content Controls)**
+Hinweis : `varTemplatePath` als leeren String in Schritt 2 deklarieren, bevor sie hier zugewiesen wird.
 
-| Content Control (Tag value) | Expression Power Automate |
+### Aktion 5.4 : Word-Vorlage befuellen (Populate a Microsoft Word template)
+
+- Aktion : **Microsoft Word-Vorlage auffuellen** (Word Online (Business))
+- Name der Aktion : `Vorlage_befuellen`
+- Speicherort : `SharePoint`
+- Dokumentbibliothek : `Documents` (oder den Namen Ihrer Bibliothek verwenden)
+- Datei : `variables('varTemplatePath')`
+
+#### Zuordnung der Content Controls
+
+Jede Zeile entspricht einem Feld in der Power Automate-Aktion.
+Die Spalte "Ausdruck" enthaelt den dynamischen Ausdruck, der in das entsprechende Feld einzutragen ist.
+
+**Deckblatt (6 Content Controls)**
+
+| Content Control (Tag-Wert) | Power Automate-Ausdruck |
 |---|---|
-| `doc_titre` | `if(equals(items('Pour_chaque_participant_rdv')?['langue'], 'EN'), 'Transfer Portfolio', 'Transfer Mappe')` |
-| `participant_prenom` | `items('Pour_chaque_participant_rdv')?['prenom']` |
-| `participant_nom` | `items('Pour_chaque_participant_rdv')?['nom']` |
-| `participant_date_debut` | `formatDateTime(items('Pour_chaque_participant_rdv')?['date_debut_parcours'], 'dd.MM.yyyy')` |
-| `conseillere_nom` | `items('Pour_chaque_participant_rdv')?['id_conseillere']` |
+| `doc_titre` | `if(equals(items('Fuer_jeden_Teilnehmer_Termin')?['langue'], 'EN'), 'Transfer Portfolio', 'Transfer Mappe')` |
+| `participant_prenom` | `items('Fuer_jeden_Teilnehmer_Termin')?['prenom']` |
+| `participant_nom` | `items('Fuer_jeden_Teilnehmer_Termin')?['nom']` |
+| `participant_date_debut` | `formatDateTime(items('Fuer_jeden_Teilnehmer_Termin')?['date_debut_parcours'], 'dd.MM.yyyy')` |
+| `conseillere_nom` | `items('Fuer_jeden_Teilnehmer_Termin')?['id_conseillere']` |
 | `doc_date_generation` | `formatDateTime(utcNow(), 'dd.MM.yyyy')` |
 
-**Section Profil (4 Content Controls)**
+**Abschnitt Profil (4 Content Controls)**
 
-La valeur "Nicht angegeben" / "Not provided" est injectee si le champ est vide.
+Der Wert "Nicht angegeben" / "Not provided" wird eingefuegt, wenn das Feld leer ist.
 
-| Content Control (Tag value) | Expression Power Automate |
+| Content Control (Tag-Wert) | Power Automate-Ausdruck |
 |---|---|
-| `profil_plan_a` | `if(equals(length(body('Get_profil')?['value']), 0), if(equals(items('Pour_chaque_participant_rdv')?['langue'], 'EN'), 'Not provided', 'Nicht angegeben'), coalesce(body('Get_profil')?['value'][0]?['plan_a'], if(equals(items('Pour_chaque_participant_rdv')?['langue'], 'EN'), 'Not provided', 'Nicht angegeben')))` |
-| `profil_plan_b` | `if(equals(length(body('Get_profil')?['value']), 0), if(equals(items('Pour_chaque_participant_rdv')?['langue'], 'EN'), 'Not provided', 'Nicht angegeben'), coalesce(body('Get_profil')?['value'][0]?['plan_b'], if(equals(items('Pour_chaque_participant_rdv')?['langue'], 'EN'), 'Not provided', 'Nicht angegeben')))` |
-| `profil_marketingplan` | `if(equals(length(body('Get_profil')?['value']), 0), if(equals(items('Pour_chaque_participant_rdv')?['langue'], 'EN'), 'Not provided', 'Nicht angegeben'), coalesce(body('Get_profil')?['value'][0]?['marketingplan'], if(equals(items('Pour_chaque_participant_rdv')?['langue'], 'EN'), 'Not provided', 'Nicht angegeben')))` |
-| `profil_zielmarkt` | `if(equals(length(body('Get_profil')?['value']), 0), if(equals(items('Pour_chaque_participant_rdv')?['langue'], 'EN'), 'Not provided', 'Nicht angegeben'), coalesce(body('Get_profil')?['value'][0]?['zielmarkt'], if(equals(items('Pour_chaque_participant_rdv')?['langue'], 'EN'), 'Not provided', 'Nicht angegeben')))` |
+| `profil_plan_a` | `if(equals(length(body('Get_profil')?['value']), 0), if(equals(items('Fuer_jeden_Teilnehmer_Termin')?['langue'], 'EN'), 'Not provided', 'Nicht angegeben'), coalesce(body('Get_profil')?['value'][0]?['plan_a'], if(equals(items('Fuer_jeden_Teilnehmer_Termin')?['langue'], 'EN'), 'Not provided', 'Nicht angegeben')))` |
+| `profil_plan_b` | `if(equals(length(body('Get_profil')?['value']), 0), if(equals(items('Fuer_jeden_Teilnehmer_Termin')?['langue'], 'EN'), 'Not provided', 'Nicht angegeben'), coalesce(body('Get_profil')?['value'][0]?['plan_b'], if(equals(items('Fuer_jeden_Teilnehmer_Termin')?['langue'], 'EN'), 'Not provided', 'Nicht angegeben')))` |
+| `profil_marketingplan` | `if(equals(length(body('Get_profil')?['value']), 0), if(equals(items('Fuer_jeden_Teilnehmer_Termin')?['langue'], 'EN'), 'Not provided', 'Nicht angegeben'), coalesce(body('Get_profil')?['value'][0]?['marketingplan'], if(equals(items('Fuer_jeden_Teilnehmer_Termin')?['langue'], 'EN'), 'Not provided', 'Nicht angegeben')))` |
+| `profil_zielmarkt` | `if(equals(length(body('Get_profil')?['value']), 0), if(equals(items('Fuer_jeden_Teilnehmer_Termin')?['langue'], 'EN'), 'Not provided', 'Nicht angegeben'), coalesce(body('Get_profil')?['value'][0]?['zielmarkt'], if(equals(items('Fuer_jeden_Teilnehmer_Termin')?['langue'], 'EN'), 'Not provided', 'Nicht angegeben')))` |
 
-**Mapping statut_objectifs -> libelle visible**
+**Zuordnung statut_objectifs -> lesbarer Anzeigetext**
 
-Le code interne SharePoint est traduit en libelle lisible. Utiliser la fonction `switch` dans une action Composer precedant le remplissage du template, ou directement en expression dans le champ :
+Der interne SharePoint-Code wird in einen lesbaren Text uebersetzt. Die Funktion `switch` in einer vorangehenden Verfassen-Aktion verwenden oder direkt als Ausdruck im Feld eintragen :
 
 ```
-if(equals(items('Pour_chaque_participant_rdv')?['langue'], 'EN'),
+if(equals(items('Fuer_jeden_Teilnehmer_Termin')?['langue'], 'EN'),
   switch(body('Get_bilans')?['value'][0]?['statut_objectifs'],
     'vollstaendig_erreicht', 'Fully achieved',
     'teilweise_erreicht', 'Partially achieved',
@@ -176,35 +176,35 @@ if(equals(items('Pour_chaque_participant_rdv')?['langue'], 'EN'),
     ''))
 ```
 
-Note : remplacer `[0]` par `[1]`, `[2]`, etc. selon le numero de bilan concerne.
+Hinweis : `[0]` durch `[1]`, `[2]` usw. ersetzen, je nach Nummer des betreffenden Berichts.
 
-**Sections Bilan 01 a 12 (9 Content Controls x 12 = 108)**
+**Abschnitte Bericht 01 bis 12 (9 Content Controls x 12 = 108)**
 
-Le pattern est identique pour chaque bilan. Remplacer `NN` par `01` a `12` et `[N-1]` par l'index tableau correspondant (bilan 01 = index 0, bilan 12 = index 11).
+Das Muster ist fuer jeden Bericht identisch. `NN` durch `01` bis `12` ersetzen und `[N-1]` durch den entsprechenden Array-Index (Bericht 01 = Index 0, Bericht 12 = Index 11).
 
-Si le bilan N n'existe pas (tableau plus court que N), injecter une chaine vide `""`.
+Wenn Bericht N nicht existiert (Array kuerzer als N), einen leeren String `""` einfuegen.
 
-Pattern pour `bilan_NN_*` (exemple avec bilan 01, index 0) :
+Muster fuer `bilan_NN_*` (Beispiel mit Bericht 01, Index 0) :
 
-| Content Control | Expression |
+| Content Control | Ausdruck |
 |---|---|
 | `bilan_01_date_rdv` | `if(greater(length(body('Get_bilans')?['value']), 0), formatDateTime(body('Get_bilans')?['value'][0]?['date_rdv'], 'dd.MM.yyyy'), '')` |
 | `bilan_01_date_soumission` | `if(greater(length(body('Get_bilans')?['value']), 0), formatDateTime(body('Get_bilans')?['value'][0]?['date_soumission'], 'dd.MM.yyyy'), '')` |
 | `bilan_01_bilan_general` | `if(greater(length(body('Get_bilans')?['value']), 0), coalesce(body('Get_bilans')?['value'][0]?['bilan_general'], ''), '')` |
-| `bilan_01_statut_objectifs` | `if(greater(length(body('Get_bilans')?['value']), 0), [expression switch langue/code ci-dessus avec index 0], '')` |
+| `bilan_01_statut_objectifs` | `if(greater(length(body('Get_bilans')?['value']), 0), [switch-Ausdruck Sprache/Code oben mit Index 0], '')` |
 | `bilan_01_statut_objectifs_detail` | `if(greater(length(body('Get_bilans')?['value']), 0), coalesce(body('Get_bilans')?['value'][0]?['statut_objectifs_detail'], ''), '')` |
 | `bilan_01_was_lief_gut` | `if(greater(length(body('Get_bilans')?['value']), 0), coalesce(body('Get_bilans')?['value'][0]?['was_lief_gut'], ''), '')` |
 | `bilan_01_wo_brauche_ich` | `if(greater(length(body('Get_bilans')?['value']), 0), coalesce(body('Get_bilans')?['value'][0]?['wo_brauche_ich_unterstuetzung'], ''), '')` |
 | `bilan_01_themen_naechster_termin` | `if(greater(length(body('Get_bilans')?['value']), 0), coalesce(body('Get_bilans')?['value'][0]?['themen_naechster_termin'], ''), '')` |
 | `bilan_01_sonstige_anmerkungen` | `if(greater(length(body('Get_bilans')?['value']), 0), coalesce(body('Get_bilans')?['value'][0]?['sonstige_anmerkungen'], ''), '')` |
 
-Pour bilan 02 (index 1), remplacer `[0]` par `[1]` et `greater(..., 0)` par `greater(..., 1)` dans chaque expression.
+Fuer Bericht 02 (Index 1) : `[0]` durch `[1]` und `greater(..., 0)` durch `greater(..., 1)` in jedem Ausdruck ersetzen.
 
-Pour bilan 12 (index 11) : `greater(length(body('Get_bilans')?['value']), 11)` et `[11]`.
+Fuer Bericht 12 (Index 11) : `greater(length(body('Get_bilans')?['value']), 11)` und `[11]`.
 
-**Tableau recapitulatif des seuils par bilan**
+**Uebersichtstabelle der Schwellenwerte je Bericht**
 
-| Bilan | Index tableau | Condition de presence |
+| Bericht | Array-Index | Pruefbedingung |
 |---|---|---|
 | 01 | 0 | `greater(length(body('Get_bilans')?['value']), 0)` |
 | 02 | 1 | `greater(length(body('Get_bilans')?['value']), 1)` |
@@ -219,46 +219,46 @@ Pour bilan 12 (index 11) : `greater(length(body('Get_bilans')?['value']), 11)` e
 | 11 | 10 | `greater(length(body('Get_bilans')?['value']), 10)` |
 | 12 | 11 | `greater(length(body('Get_bilans')?['value']), 11)` |
 
-### Action 5.5 : Convertir le document Word en PDF
+### Aktion 5.5 : Word-Dokument in PDF konvertieren
 
-- Action : **Convertir un document Word en PDF** (Word Online (Business))
-- Nom de l'action : `Convertir_en_PDF`
-- Entree : sortie de l'action `Remplir_template` (contenu du fichier)
+- Aktion : **Word-Dokument in PDF konvertieren** (Word Online (Business))
+- Name der Aktion : `In_PDF_konvertieren`
+- Eingabe : Ausgabe der Aktion `Vorlage_befuellen` (Dateiinhalt)
 
-Note : cette action est disponible dans le connecteur Word Online (Business) inclus en E3.
-Elle ne requiert pas de licence Power Automate Premium.
+Hinweis : Diese Aktion ist im Connector Word Online (Business) verfuegbar, der in E3 enthalten ist.
+Sie erfordert keine Power Automate Premium-Lizenz.
 
-### Action 5.6 : Sauvegarder le PDF dans SharePoint
+### Aktion 5.6 : PDF in SharePoint speichern
 
-- Action : **Creer un fichier** (SharePoint > Creer un fichier)
-- Nom de l'action : `Sauvegarder_PDF`
-- Site : `variables('varSiteUrl')`
-- Chemin du dossier : `/TransferMappes/@{items('Pour_chaque_participant_rdv')?['nom']}_@{items('Pour_chaque_participant_rdv')?['prenom']}/`
-- Nom du fichier :
-
-```
-TransferMappe_@{items('Pour_chaque_participant_rdv')?['prenom']}_@{items('Pour_chaque_participant_rdv')?['nom']}_@{outputs('Date_aujourdhui')}.pdf
-```
-
-- Contenu du fichier : sortie du corps de l'action `Convertir_en_PDF`
-
-Note : creer manuellement la bibliotheque de documents `TransferMappes` dans SharePoint
-avant la premiere execution du Flow. Le sous-dossier par participant est cree automatiquement.
-
-### Action 5.7 : Envoyer le PDF a la conseillere
-
-- Action : **Envoyer un e-mail (V2)** (Office 365 Outlook)
-- Nom de l'action : `Envoyer_PDF_conseillere`
-- De : `variables('varSharedMailbox')`
-- A : `items('Pour_chaque_participant_rdv')?['id_conseillere']`
-
-**Objet (template DE, valeur par defaut) :**
+- Aktion : **Datei erstellen** (SharePoint > Datei erstellen)
+- Name der Aktion : `PDF_speichern`
+- Website : `variables('varSiteUrl')`
+- Ordnerpfad : `/TransferMappes/@{items('Fuer_jeden_Teilnehmer_Termin')?['nom']}_@{items('Fuer_jeden_Teilnehmer_Termin')?['prenom']}/`
+- Dateiname :
 
 ```
-Transfer Mappe - @{items('Pour_chaque_participant_rdv')?['prenom']} @{items('Pour_chaque_participant_rdv')?['nom']} - Termin heute @{formatDateTime(items('Pour_chaque_participant_rdv')?['date_prochain_rdv'], 'dd.MM.yyyy')}
+TransferMappe_@{items('Fuer_jeden_Teilnehmer_Termin')?['prenom']}_@{items('Fuer_jeden_Teilnehmer_Termin')?['nom']}_@{outputs('Datum_heute')}.pdf
 ```
 
-**Corps HTML (DE) :**
+- Dateiinhalt : Ausgabe des Texts der Aktion `In_PDF_konvertieren`
+
+Hinweis : Die Dokumentbibliothek `TransferMappes` in SharePoint manuell anlegen,
+bevor der Flow zum ersten Mal ausgefuehrt wird. Der Unterordner je Teilnehmer wird automatisch erstellt.
+
+### Aktion 5.7 : PDF an die Beraterin senden
+
+- Aktion : **E-Mail senden (V2)** (Office 365 Outlook)
+- Name der Aktion : `PDF_an_Beraterin_senden`
+- Von : `variables('varSharedMailbox')`
+- An : `items('Fuer_jeden_Teilnehmer_Termin')?['id_conseillere']`
+
+**Betreff (Vorlage DE, Standardwert) :**
+
+```
+Transfer Mappe - @{items('Fuer_jeden_Teilnehmer_Termin')?['prenom']} @{items('Fuer_jeden_Teilnehmer_Termin')?['nom']} - Termin heute @{formatDateTime(items('Fuer_jeden_Teilnehmer_Termin')?['date_prochain_rdv'], 'dd.MM.yyyy')}
+```
+
+**HTML-Inhalt (DE) :**
 
 ```html
 <!DOCTYPE html>
@@ -268,8 +268,8 @@ Transfer Mappe - @{items('Pour_chaque_participant_rdv')?['prenom']} @{items('Pou
   <p>Guten Morgen,</p>
 
   <p>im Anhang finden Sie die aktuelle Transfer Mappe von
-  <strong>@{items('Pour_chaque_participant_rdv')?['prenom']} @{items('Pour_chaque_participant_rdv')?['nom']}</strong>
-  für den Beratungstermin heute, <strong>@{formatDateTime(items('Pour_chaque_participant_rdv')?['date_prochain_rdv'], 'dd.MM.yyyy')}</strong>.</p>
+  <strong>@{items('Fuer_jeden_Teilnehmer_Termin')?['prenom']} @{items('Fuer_jeden_Teilnehmer_Termin')?['nom']}</strong>
+  für den Beratungstermin heute, <strong>@{formatDateTime(items('Fuer_jeden_Teilnehmer_Termin')?['date_prochain_rdv'], 'dd.MM.yyyy')}</strong>.</p>
 
   <p>Das Dokument enthält:</p>
   <ul>
@@ -279,7 +279,7 @@ Transfer Mappe - @{items('Pour_chaque_participant_rdv')?['prenom']} @{items('Pou
   </ul>
 
   <p>Eine Kopie wurde in SharePoint gespeichert:<br>
-    <a href="@{body('Sauvegarder_PDF')?['Path']}" style="color: #003DA5;">Zum Dokument in SharePoint</a>
+    <a href="@{body('PDF_speichern')?['Path']}" style="color: #003DA5;">Zum Dokument in SharePoint</a>
   </p>
 
   <p>Mit freundlichen Grüßen,<br>Transfer Mappe System</p>
@@ -291,81 +291,80 @@ Transfer Mappe - @{items('Pour_chaque_participant_rdv')?['prenom']} @{items('Pou
 </html>
 ```
 
-**Piece jointe :**
+**Anhang :**
 
-- Dans l'action "Envoyer un e-mail (V2)", cliquer sur "Afficher les options avancees"
-- Joindre : activer "Pieces jointes"
-- Nom : `TransferMappe_@{items('Pour_chaque_participant_rdv')?['prenom']}_@{items('Pour_chaque_participant_rdv')?['nom']}_@{outputs('Date_aujourdhui')}.pdf`
-- Contenu : sortie du corps de `Convertir_en_PDF`
-
----
-
-## Etape 6 : Gestion d'erreurs
-
-Hors de la boucle principale, ajouter :
-
-- Action : **Envoyer un e-mail (V2)**
-- Nom de l'action : `Notifier_erreur_PDF`
-- Run after : **a echoue**
-- A : adresse administrateur
-- Objet : `ERREUR - Flow TransferMappe Generation PDF`
-- Corps :
-
-```
-Une erreur s'est produite dans le Flow "TransferMappe - Generation PDF".
-
-Date : @{utcNow()}
-
-Verifier les journaux d'execution Power Automate.
-Un ou plusieurs participants n'ont pas recu leur PDF ce matin.
-
-Lien : https://make.powerautomate.com
-```
+- In der Aktion "E-Mail senden (V2)" auf "Erweiterte Optionen anzeigen" klicken
+- Anlagen aktivieren
+- Name : `TransferMappe_@{items('Fuer_jeden_Teilnehmer_Termin')?['prenom']}_@{items('Fuer_jeden_Teilnehmer_Termin')?['nom']}_@{outputs('Datum_heute')}.pdf`
+- Inhalt : Ausgabe des Texts von `In_PDF_konvertieren`
 
 ---
 
-## Recapitulatif des actions du Flow (dans l'ordre)
+## Schritt 6 : Fehlerbehandlung
+
+Ausserhalb der Hauptschleife hinzufuegen :
+
+- Aktion : **E-Mail senden (V2)**
+- Name der Aktion : `Fehler_benachrichtigen_PDF`
+- Run after : **fehlgeschlagen**
+- An : Administrator-Adresse
+- Betreff : `FEHLER - Flow TransferMappe Generation PDF`
+- Inhalt :
 
 ```
-[Declencheur planifie - 06:00 quotidien]
+Im Flow "TransferMappe - Generation PDF" ist ein Fehler aufgetreten.
+
+Datum : @{utcNow()}
+
+Die Power Automate-Ausfuehrungsprotokolle pruefen.
+Ein oder mehrere Teilnehmer haben heute Morgen kein PDF erhalten.
+
+Link : https://make.powerautomate.com
+```
+
+---
+
+## Zusammenfassung der Flow-Aktionen (in Reihenfolge)
+
+```
+[Geplanter Ausloeseer - 06:00 taeglich]
   |
-  +-- [Initialiser variable] varSiteUrl
-  +-- [Initialiser variable] varSharedMailbox
-  +-- [Initialiser variable] varTemplatePathDE
-  +-- [Initialiser variable] varTemplatePathEN
-  +-- [Initialiser variable] varTemplatePath  (String, vide)
-  +-- [Composer] Date_aujourdhui  (formatDateTime utcNow yyyy-MM-dd)
-  +-- [Obtenir des elements] Get_participants_rdv_auj  (filtre statut=actif AND date=aujourdhui)
-  +-- [Appliquer a chacun] Pour_chaque_participant_rdv
+  +-- [Variable initialisieren] varSiteUrl
+  +-- [Variable initialisieren] varSharedMailbox
+  +-- [Variable initialisieren] varTemplatePathDE
+  +-- [Variable initialisieren] varTemplatePathEN
+  +-- [Variable initialisieren] varTemplatePath  (String, leer)
+  +-- [Verfassen] Datum_heute  (formatDateTime utcNow yyyy-MM-dd)
+  +-- [Elemente abrufen] Get_participants_rdv_auj  (Filter statut=actif AND date=heute)
+  +-- [Auf jedes anwenden] Fuer_jeden_Teilnehmer_Termin
         |
-        +-- [Obtenir des elements] Get_profil  (filtre id_participant)
-        +-- [Obtenir des elements] Get_bilans  (filtre id_participant, tri date_rdv ASC)
-        +-- [Condition] Condition_langue_pdf  (langue == EN ?)
-              +-- [Si oui] varTemplatePath = varTemplatePathEN
-              +-- [Si non] varTemplatePath = varTemplatePathDE
-        +-- [Remplir un modele Word] Remplir_template  (118 Content Controls)
-        +-- [Convertir Word en PDF] Convertir_en_PDF
-        +-- [Creer un fichier] Sauvegarder_PDF  (SharePoint /TransferMappes/...)
-        +-- [Envoyer un e-mail] Envoyer_PDF_conseillere  (avec piece jointe PDF)
+        +-- [Elemente abrufen] Get_profil  (Filter id_participant)
+        +-- [Elemente abrufen] Get_bilans  (Filter id_participant, Sortierung date_rdv ASC)
+        +-- [Bedingung] Bedingung_Sprache_PDF  (langue == EN ?)
+              +-- [Wenn ja] varTemplatePath = varTemplatePathEN
+              +-- [Wenn nein] varTemplatePath = varTemplatePathDE
+        +-- [Word-Vorlage auffuellen] Vorlage_befuellen  (118 Content Controls)
+        +-- [Word in PDF konvertieren] In_PDF_konvertieren
+        +-- [Datei erstellen] PDF_speichern  (SharePoint /TransferMappes/...)
+        +-- [E-Mail senden] PDF_an_Beraterin_senden  (mit PDF-Anhang)
   |
-  +-- [Envoyer e-mail] Notifier_erreur_PDF  (Run after: failed)
+  +-- [E-Mail senden] Fehler_benachrichtigen_PDF  (Run after: fehlgeschlagen)
 ```
 
 ---
 
-## Precautions et points d'attention
+## Hinweise und zu beachtende Punkte
 
-- Verifier que les templates Word (.docx) sont deposes dans SharePoint sous le chemin
-  `/sites/TransferMappe/TransferMappes/Templates/` avant la premiere execution
-- L'action "Populate a Microsoft Word template" necessite que tous les 118 Content Controls
-  soient renseignes. Ne jamais laisser un champ vide dans l'action : injecter `""` si le
-  bilan n'existe pas
-- La bibliotheque `TransferMappes` doit exister dans SharePoint avant la premiere execution
-- L'adresse `id_conseillere` dans Participants est l'email M365 de la conseillere.
-  Power Automate peut l'utiliser directement comme destinataire
-- Taille maximale recommandee du PDF : 10 MB. Un PDF 12 mois de bilans textuels reste
-  largement en dessous de cette limite
-- Le Flow traite les participants sequentiellement. Pour 100 participants par jour, prevoir
-  un temps d'execution d'environ 20 a 30 minutes
-- Ne jamais modifier le template Word (.docx) en cours de production sans tester sur
-  un participant de test : tout changement de Tag value necessite une mise a jour du Flow
+- Pruefen, dass die Word-Vorlagen (.docx) in SharePoint unter dem Pfad
+  `/sites/TransferMappe/TransferMappes/Templates/` abgelegt sind, bevor der Flow zum ersten Mal ausgefuehrt wird
+- Die Aktion "Populate a Microsoft Word template" erfordert, dass alle 118 Content Controls
+  belegt sind. Kein Feld in der Aktion leer lassen : `""` einfuegen, wenn ein Bericht nicht existiert
+- Die Bibliothek `TransferMappes` muss in SharePoint vor der ersten Ausfuehrung vorhanden sein
+- Die Adresse `id_conseillere` in der Teilnehmerliste ist die M365-E-Mail der Beraterin.
+  Power Automate kann sie direkt als Empfaengeradresse verwenden
+- Empfohlene maximale PDF-Groesse : 10 MB. Ein PDF mit 12 Monatsberichten in Textform bleibt
+  deutlich unterhalb dieser Grenze
+- Der Flow verarbeitet Teilnehmer sequenziell. Fuer 100 Teilnehmer pro Tag ist mit einer
+  Ausfuehrungszeit von etwa 20 bis 30 Minuten zu rechnen
+- Die Word-Vorlage (.docx) waehrend der Produktion nie aendern, ohne zuvor mit einem
+  Testteilnehmer zu testen : jede Aenderung eines Tag-Werts erfordert eine Aktualisierung des Flows

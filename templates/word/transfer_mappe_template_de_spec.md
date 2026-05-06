@@ -1,63 +1,63 @@
-# Transfer Mappe Template DE - Specification de construction
+# Transfer Mappe Template DE - Konstruktionsspezifikation
 
-Ce fichier documente exactement le contenu et la mise en page du template Word allemand
-`transfer_mappe_template_de.docx` a construire manuellement dans Microsoft Word.
+Diese Datei dokumentiert exakt den Inhalt und das Layout des deutschen Word-Templates
+`transfer_mappe_template_de.docx`, das manuell in Microsoft Word erstellt werden muss.
 
-Pour la liste exhaustive des Content Controls et Tag values, voir :
+Die vollstaendige Liste der Content Controls und Tag-Werte befindet sich in:
 `specs/word_template_structure.md`
 
-Pour les instructions de construction dans Word, voir la section
-"Instructions de construction du .docx" dans `specs/word_template_structure.md`.
+Die Konstruktionsanweisungen fuer Word befinden sich im Abschnitt
+"Instructions de construction du .docx" in `specs/word_template_structure.md`.
 
 ---
 
-## Metadonnees du fichier
+## Metadaten der Datei
 
-- **Nom du fichier** : `transfer_mappe_template_de.docx`
-- **Format** : Office Open XML (.docx), Word 2016 ou superieur
-- **Langue du document** : Deutsch (de-DE)
-- **Mise en page** : A4 portrait, marges 2.5 cm
-- **A stocker dans SharePoint** : `/sites/TransferMappe/Templates/transfer_mappe_template_de.docx`
+- **Dateiname** : `transfer_mappe_template_de.docx`
+- **Format** : Office Open XML (.docx), Word 2016 oder hoeher
+- **Dokumentsprache** : Deutsch (de-DE)
+- **Seiteneinrichtung** : A4 Hochformat, Raender 2,5 cm
+- **Ablageort in SharePoint** : `/sites/TransferMappe/Templates/transfer_mappe_template_de.docx`
 
 ---
 
-## Page de garde
+## Deckblatt
 
-**Contenu (de haut en bas) :**
+**Inhalt (von oben nach unten) :**
 
 ```
-[Logo de la societe - image placee manuellement par l'administrateur]
-[Espace vertical]
+[Firmenlogo - Bild wird manuell vom Administrator eingefuegt]
+[Vertikaler Abstand]
 
 TRANSFER MAPPE
 [Content Control : doc_titre - Plain Text]
 
-[Filet horizontal bleu #003DA5, epaisseur 2pt]
+[Horizontale Linie blau #003DA5, Staerke 2pt]
 
 Teilnehmer/in :    [Content Control : participant_prenom] [Content Control : participant_nom]
 Beraterin :        [Content Control : conseillere_nom]
 Beginn :           [Content Control : participant_date_debut]
 Erstellt am :      [Content Control : doc_date_generation]
 
-[Espace vertical]
-[Pied de page de garde - mention de confidentialite]
-Vertraulich - Nur für den internen Gebrauch
+[Vertikaler Abstand]
+[Fusszeile Deckblatt - Vertraulichkeitshinweis]
+Vertraulich - Nur fuer den internen Gebrauch
 ```
 
-**Styles appliques :**
-- "TRANSFER MAPPE" : Heading 1, centre, 24pt, #003DA5, majuscules
-- Labels ("Teilnehmer/in :", etc.) : Normal, gras
-- Valeurs (Content Controls) : Normal, non gras
+**Verwendete Formatvorlagen :**
+- "TRANSFER MAPPE" : Heading 1, zentriert, 24pt, #003DA5, Grossbuchstaben
+- Bezeichner ("Teilnehmer/in :", usw.) : Normal, fett
+- Werte (Content Controls) : Normal, nicht fett
 
 ---
 
-## Section 1 : Karriereprofil
+## Abschnitt 1 : Karriereprofil
 
-**Titre de section :** `1. Karriereprofil` (Heading 1)
+**Abschnittstitel :** `1. Karriereprofil` (Heading 1)
 
-**Sous-titre :** `Berufliche Zielsetzung` (Heading 2)
+**Untertitel :** `Berufliche Zielsetzung` (Heading 2)
 
-**Contenu :**
+**Inhalt :**
 
 ```
 Plan A - Berufliches Hauptziel
@@ -73,21 +73,21 @@ Zielmarkt
 [Content Control : profil_zielmarkt]
 ```
 
-**Comportement si profil non rempli :**
-Le Flow injecte "Nicht angegeben" dans chaque Content Control vide.
-La section reste visible dans le PDF.
+**Verhalten bei nicht ausgefuelltem Profil :**
+Der Flow schreibt "Nicht angegeben" in jeden leeren Content Control.
+Der Abschnitt bleibt im PDF sichtbar.
 
-**Saut de page** apres la section Karriereprofil.
+**Seitenumbruch** nach dem Abschnitt Karriereprofil.
 
 ---
 
-## Sections 2 a 13 : Monatsberichte (Bilans mensuels 01 a 12)
+## Abschnitte 2 bis 13 : Monatsberichte (Bilans mensuels 01 bis 12)
 
-Chaque section est identique en structure. Remplacer `NN` par `01`, `02`, ..., `12`.
+Jeder Abschnitt hat dieselbe Struktur. `NN` ist durch `01`, `02`, ..., `12` zu ersetzen.
 
-**Titre de section :** `Monatsbericht NN` (Heading 1)
+**Abschnittstitel :** `Monatsbericht NN` (Heading 1)
 
-**Contenu :**
+**Inhalt :**
 
 ```
 Termin :           [Content Control : bilan_NN_date_rdv]
@@ -113,10 +113,10 @@ Sonstige Anmerkungen
 [Content Control : bilan_NN_sonstige_anmerkungen]
 ```
 
-**Bloc Zielvereinbarung / Unterschriften (zone fixe, pas de Content Control) :**
+**Block Zielvereinbarung / Unterschriften (fester Bereich, kein Content Control) :**
 
 ```
-[Filet horizontal gris #cccccc]
+[Horizontale Linie grau #cccccc]
 
 Zielvereinbarung - Unterschriften
 
@@ -129,47 +129,47 @@ _________________________________           _________________________________
 [Content Control : participant_nom]
 ```
 
-Note : les lignes de signature sont des bordures de paragraphe (bas), pas des underscores texte.
-Note : `participant_prenom`, `participant_nom`, `conseillere_nom` sont les memes Content Controls que sur la page de garde. Word autorise plusieurs instances du meme Tag value dans un document - toutes seront remplies par la meme valeur par Power Automate.
+Hinweis: Die Unterschriftenlinien sind Absatzrahmen (unten), keine Unterstrich-Zeichen.
+Hinweis: `participant_prenom`, `participant_nom`, `conseillere_nom` sind dieselben Content Controls wie auf dem Deckblatt. Word erlaubt mehrere Instanzen desselben Tag-Werts in einem Dokument - alle werden von Power Automate mit demselben Wert befuellt.
 
-**Saut de page** apres chaque section bilan (sauf la derniere).
+**Seitenumbruch** nach jedem Monatsbericht-Abschnitt (ausser dem letzten).
 
 ---
 
-## Pied de page global (toutes pages sauf page de garde)
+## Globale Fusszeile (alle Seiten ausser Deckblatt)
 
 ```
 Transfer Mappe | [Content Control : participant_prenom] [Content Control : participant_nom] | Vertraulich
-                                                                              Page X sur Y
+                                                                              Seite X von Y
 ```
 
-Note : le numero de page (X sur Y) est un champ Word natif (`{ PAGE }` et `{ NUMPAGES }`), pas un Content Control.
+Hinweis: Die Seitenzahl (X von Y) ist ein natives Word-Feld (`{ PAGE }` und `{ NUMPAGES }`), kein Content Control.
 
 ---
 
-## Styles de mise en forme
+## Formatvorlagen
 
-| Element                        | Police      | Taille | Couleur  | Graisse | Alignement |
-|--------------------------------|-------------|--------|----------|---------|------------|
-| Titre principal (page de garde)| Calibri     | 24pt   | #003DA5  | Gras    | Centre     |
-| Heading 1 (titres de section)  | Calibri     | 16pt   | #003DA5  | Gras    | Gauche     |
-| Heading 2 (sous-titres)        | Calibri     | 13pt   | #003DA5  | Gras    | Gauche     |
-| Labels de champs               | Calibri     | 11pt   | #333333  | Gras    | Gauche     |
-| Contenu (Content Controls)     | Calibri     | 11pt   | #333333  | Normal  | Gauche     |
-| Texte signature                | Calibri     | 10pt   | #666666  | Normal  | Gauche     |
-| Pied de page                   | Calibri     | 9pt    | #999999  | Normal  | Justifie   |
+| Element                           | Schrift     | Groesse | Farbe    | Gewicht | Ausrichtung |
+|-----------------------------------|-------------|---------|----------|---------|-------------|
+| Haupttitel (Deckblatt)            | Calibri     | 24pt    | #003DA5  | Fett    | Zentriert   |
+| Heading 1 (Abschnittstitel)       | Calibri     | 16pt    | #003DA5  | Fett    | Links       |
+| Heading 2 (Untertitel)            | Calibri     | 13pt    | #003DA5  | Fett    | Links       |
+| Feldbezeichner                    | Calibri     | 11pt    | #333333  | Fett    | Links       |
+| Inhalt (Content Controls)         | Calibri     | 11pt    | #333333  | Normal  | Links       |
+| Unterschriftentext                | Calibri     | 10pt    | #666666  | Normal  | Links       |
+| Fusszeile                         | Calibri     | 9pt     | #999999  | Normal  | Blocksatz   |
 
-**Couleur d'accent** : #003DA5 (bleu corporate, identique a la Transfer Mappe 10k Beratung)
-**Couleur texte principal** : #333333 (gris fonce, evite le noir pur pour la lisibilite)
+**Akzentfarbe** : #003DA5 (Corporate-Blau, identisch mit der Transfer Mappe 10k Beratung)
+**Haupttextfarbe** : #333333 (Dunkelgrau, vermeidet reines Schwarz fuer bessere Lesbarkeit)
 
 ---
 
-## Checklist de validation avant depot dans SharePoint
+## Pruefcheckliste vor dem Hochladen in SharePoint
 
-- [ ] Tous les 118 Content Controls sont presents (6 page de garde + 4 profil + 108 bilans)
-- [ ] Chaque Content Control est de type "Plain Text" (pas Rich Text, pas Date Picker)
-- [ ] Chaque Tag value correspond exactement a la liste dans `specs/word_template_structure.md`
-- [ ] Le document s'ouvre sans erreur dans Word Online (tester via SharePoint)
-- [ ] L'action "Populate a Microsoft Word template" dans Power Automate detecte bien tous les champs
-- [ ] Un test de generation avec des donnees fictives produit un PDF lisible
-- [ ] Les blocs signature sont visibles et correctement places en bas de chaque section bilan
+- [ ] Alle 118 Content Controls sind vorhanden (6 Deckblatt + 4 Profil + 108 Monatsberichte)
+- [ ] Jeder Content Control ist vom Typ "Plain Text" (nicht Rich Text, nicht Date Picker)
+- [ ] Jeder Tag-Wert entspricht exakt der Liste in `specs/word_template_structure.md`
+- [ ] Das Dokument oeffnet sich ohne Fehler in Word Online (Test ueber SharePoint)
+- [ ] Die Aktion "Populate a Microsoft Word template" in Power Automate erkennt alle Felder
+- [ ] Ein Testlauf mit fiktiven Daten erzeugt ein lesbares PDF
+- [ ] Die Unterschriftenblocks sind sichtbar und korrekt am Ende jedes Monatsberichts platziert

@@ -1,43 +1,44 @@
 # Samples - outplacement-tracker v0.1
 
-Ce dossier contient des documents d'exemple generes avec des donnees fictives
-et anonymisees a des fins de demonstration.
+This folder contains sample documents generated with fictional, anonymised data
+for demonstration purposes.
 
-## Fichiers disponibles
+## Available files
 
-| Fichier | Description |
+| File | Description |
 |---|---|
-| `sample_pdf_output_de.pdf` | PDF cumulatif DE - Max Mustermann - 3 mois fictifs |
-| `sample_pdf_output_en.pdf` | PDF cumulatif EN - John Doe - 3 mois fictifs |
-| `sample_output_de.docx` | Document Word source (DE) avant conversion |
-| `sample_output_en.docx` | Document Word source (EN) avant conversion |
-| `build_samples.py` | Script Python de generation |
+| `sample_pdf_output_de.pdf` | Cumulative PDF DE - Max Mustermann - 3 fictional months |
+| `sample_pdf_output_en.pdf` | Cumulative PDF EN - John Doe - 3 fictional months |
+| `sample_output_de.docx` | Source Word document (DE) before conversion |
+| `sample_output_en.docx` | Source Word document (EN) before conversion |
+| `build_samples.py` | Python generation script |
 
-## Donnees fictives
+## Fictional data
 
-Toutes les donnees sont integralement fictives. Aucune personne reelle n'est representee.
+All data is entirely fictional. No real person is represented.
 
-**Participant DE :** Max Mustermann, Beraterin Maria Schmidt
-**Participant EN :** John Doe, Advisor Maria Schmidt
+**Participant DE:** Max Mustermann, Beraterin Maria Schmidt
+**Participant EN:** John Doe, Advisor Maria Schmidt
 
-Trois mois de bilans sont inclus (janvier a mars 2026). Les sections bilan 04 a 12
-sont vides, illustrant le comportement du template pour les mois non encore soumis.
+Three months of monthly updates are included (January to March 2026). Sections for
+updates 04 to 12 are empty, illustrating the template behaviour for months not yet
+submitted.
 
-## Regenerer les samples
+## Regenerating the samples
 
-Prerequis : python-docx installe, LibreOffice present sur la machine.
+Prerequisites: python-docx installed, LibreOffice present on the machine.
 
 ```bash
-cd /chemin/vers/outplacement-tracker
+cd /path/to/outplacement-tracker
 python3 samples/build_samples.py
 ```
 
-Sur une machine sans LibreOffice, le script produit les .docx mais pas les PDF.
-Ouvrir les .docx dans Microsoft Word et exporter en PDF manuellement.
+On a machine without LibreOffice, the script produces the .docx files but not the
+PDFs. Open the .docx files in Microsoft Word and export to PDF manually.
 
-## Note DSGVO
+## GDPR note
 
-Ces fichiers ne contiennent aucune donnee personnelle reelle.
-Les noms "Max Mustermann" et "John Doe" sont des noms generiques conventionnels
-utilises comme donnees de demonstration dans le contexte germanique et anglosaxon.
-Aucune adresse email, numero de dossier ou information identifiante reelle n'est presente.
+These files contain no real personal data.
+The names "Max Mustermann" and "John Doe" are conventional placeholder names used
+as demonstration data in the German and English-speaking contexts respectively.
+No real email address, case number or identifying information is present.

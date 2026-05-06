@@ -7,7 +7,7 @@ For the exhaustive list of Content Controls and Tag values, see:
 `specs/word_template_structure.md`
 
 For Word construction instructions, see the section
-"Instructions de construction du .docx" in `specs/word_template_structure.md`.
+"Construction instructions for the .docx" in `specs/word_template_structure.md`.
 
 This is a 1:1 translation of `transfer_mappe_template_de_spec.md`.
 All Tag values (Content Control tags) are IDENTICAL to the DE template.

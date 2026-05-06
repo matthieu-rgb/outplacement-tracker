@@ -1,86 +1,86 @@
 # Word Template Structure - Transfer Mappe v0.1
 
-Specification complete du template Word pour la generation du PDF cumulatif.
-Ce document est la reference pour :
-- La construction manuelle du .docx dans Microsoft Word
-- La creation des Content Controls avec leurs Tag values
-- La configuration de l'action "Populate a Microsoft Word template" dans Power Automate
+Vollständige Spezifikation des Word-Templates für die Generierung des kumulativen PDFs.
+Dieses Dokument ist die Referenz für:
+- Den manuellen Aufbau der .docx-Datei in Microsoft Word
+- Die Erstellung der Content Controls mit ihren Tag-Werten
+- Die Konfiguration der Aktion "Populate a Microsoft Word template" in Power Automate
 
 ---
 
-## Contexte technique
+## Technischer Kontext
 
-Power Automate (plan E3, sans premium) utilise l'action native **"Populate a Microsoft Word template"** du connecteur Word Online (Business). Cette action remplace les Content Controls du template par les valeurs injectees.
+Power Automate (Plan E3, ohne Premium) verwendet die native Aktion **"Populate a Microsoft Word template"** des Connectors Word Online (Business). Diese Aktion ersetzt die Content Controls des Templates durch die einzufügenden Werte.
 
-**Contraintes de compatibilite** :
-- Seuls les Content Controls de type **Plain Text** (`<w:sdt>` avec `<w:tag w:val="..."/>`) sont supportes par cette action
-- Les Content Controls de type Rich Text, Image, Date Picker ou Dropdown ne sont PAS injectes par Power Automate
-- Le Tag value (`w:val`) est l'identifiant que Power Automate utilise pour la correspondance : il doit etre unique dans le document et exactement identique au nom de champ configure dans le Flow
-- Les sections de bilan mensuel (repetees 1 a 12 fois) utilisent le mecanisme de boucle : chaque instance de bilan est injectee dans un Content Control distinct (bilan_01_, bilan_02_, etc.)
+**Kompatibilitätseinschränkungen**:
+- Nur Content Controls vom Typ **Plain Text** (`<w:sdt>` mit `<w:tag w:val="..."/>`) werden von dieser Aktion unterstützt
+- Content Controls vom Typ Rich Text, Image, Date Picker oder Dropdown werden von Power Automate NICHT befüllt
+- Der Tag-Wert (`w:val`) ist der Bezeichner, den Power Automate für die Zuordnung verwendet: er muss im Dokument eindeutig und exakt identisch mit dem im Flow konfigurierten Feldnamen sein
+- Die Monatsbericht-Abschnitte (1- bis 12-mal wiederholt) verwenden den Schleifenmechanismus: Jede Berichtsinstanz wird in einen eigenen Content Control eingefügt (bilan_01_, bilan_02_ usw.)
 
 ---
 
-## Structure generale du document
+## Allgemeine Dokumentstruktur
 
 ```
-[Page de garde]
-  - Titre du document
-  - Nom et prenom du participant
-  - Date de debut du parcours
-  - Conseillere responsable
-  - Date de generation du PDF
+[Deckblatt]
+  - Dokumenttitel
+  - Vor- und Nachname des Teilnehmers
+  - Beginn des Begleitungsprozesses
+  - Zuständige Beraterin
+  - Datum der PDF-Generierung
 
-[Section 1 : Profil de carriere]
+[Abschnitt 1: Karriereprofil]
   - Plan A
   - Plan B
   - Marketingplan
   - Zielmarkt
-  - (Section affichee meme si vide, avec mention "Non renseigne")
+  - (Abschnitt wird auch bei leerem Inhalt angezeigt, mit Hinweis "Nicht angegeben")
 
-[Section 2 : Zielvereinbarung - Bilan 01]
-  - Date du RDV
-  - Bilan general
-  - Statut des objectifs
-  - Statut des objectifs - detail
+[Abschnitt 2: Zielvereinbarung - Bericht 01]
+  - Datum des Termins
+  - Allgemeiner Monatsbericht
+  - Zielstatus
+  - Zielstatus - Erläuterung
   - Was lief gut
-  - Wo brauche ich Unterstuetzung
-  - Themen naechster Termin
+  - Wo brauche ich Unterstützung
+  - Themen nächster Termin
   - Sonstige Anmerkungen
-  - [Bloc signature - emplacement vide manuscrit]
+  - [Unterschriftenblock - leerer handschriftlicher Bereich]
 
-[Section 3 : Zielvereinbarung - Bilan 02]
-  ... (meme structure)
+[Abschnitt 3: Zielvereinbarung - Bericht 02]
+  ... (gleiche Struktur)
 
 [...]
 
-[Section 13 : Zielvereinbarung - Bilan 12]
-  ... (meme structure)
+[Abschnitt 13: Zielvereinbarung - Bericht 12]
+  ... (gleiche Struktur)
 
-[Pied de page global]
-  - Mention de confidentialite
-  - Numero de page / total
+[Globale Fußzeile]
+  - Vertraulichkeitshinweis
+  - Seitenzahl / Gesamtzahl
 ```
 
 ---
 
-## Inventaire complet des Content Controls
+## Vollständiges Inventar der Content Controls
 
-### Page de garde
+### Deckblatt
 
-| Tag value (w:val)         | Type       | Source SharePoint                        | Valeur si vide            |
+| Tag-Wert (w:val)          | Typ        | SharePoint-Quelle                        | Wert wenn leer            |
 |---------------------------|------------|------------------------------------------|---------------------------|
-| `doc_titre`               | Plain Text | Fixe (DE : "Transfer Mappe", EN : "Transfer Portfolio") | - |
+| `doc_titre`               | Plain Text | Fest (DE: "Transfer Mappe", EN: "Transfer Portfolio") | - |
 | `participant_prenom`      | Plain Text | `Participants.prenom`                    | -                         |
 | `participant_nom`         | Plain Text | `Participants.nom`                       | -                         |
-| `participant_date_debut`  | Plain Text | `Participants.date_debut_parcours` (DD.MM.YYYY) | -                   |
-| `conseillere_nom`         | Plain Text | Derive de `Participants.id_conseillere` (nom affiche M365) | - |
-| `doc_date_generation`     | Plain Text | Date du jour au moment du declenchement du Flow (DD.MM.YYYY) | - |
+| `participant_date_debut`  | Plain Text | `Participants.date_debut_parcours` (TT.MM.JJJJ) | -                  |
+| `conseillere_nom`         | Plain Text | Abgeleitet von `Participants.id_conseillere` (M365-Anzeigename) | - |
+| `doc_date_generation`     | Plain Text | Aktuelles Datum zum Zeitpunkt des Flow-Auslösers (TT.MM.JJJJ) | - |
 
 ---
 
-### Section Profil de carriere
+### Abschnitt Karriereprofil
 
-| Tag value (w:val)         | Type       | Source SharePoint                        | Valeur si vide               |
+| Tag-Wert (w:val)          | Typ        | SharePoint-Quelle                        | Wert wenn leer               |
 |---------------------------|------------|------------------------------------------|------------------------------|
 | `profil_plan_a`           | Plain Text | `Profils.plan_a`                         | DE: "Nicht angegeben" / EN: "Not provided" |
 | `profil_plan_b`           | Plain Text | `Profils.plan_b`                         | DE: "Nicht angegeben" / EN: "Not provided" |
@@ -89,29 +89,29 @@ Power Automate (plan E3, sans premium) utilise l'action native **"Populate a Mic
 
 ---
 
-### Sections Bilan mensuel (repetees 12 fois)
+### Abschnitte Monatsbericht (12-mal wiederholt)
 
-Le prefixe `bilan_NN_` ou `NN` va de `01` a `12` identifie chaque bilan dans le document.
-Power Automate injecte les bilans dans l'ordre chronologique croissant (`date_rdv` ASC).
-Les sections correspondant a des bilans non encore soumis sont laissees vides ou masquees (voir note ci-dessous).
+Das Präfix `bilan_NN_`, wobei `NN` von `01` bis `12` geht, identifiziert jeden Bericht im Dokument.
+Power Automate fügt die Berichte in aufsteigend chronologischer Reihenfolge ein (`date_rdv` ASC).
+Abschnitte für noch nicht eingereichte Berichte werden leer gelassen oder ausgeblendet (siehe Hinweis unten).
 
-**Exemple pour le bilan 01 :**
+**Beispiel für Bericht 01:**
 
-| Tag value (w:val)                   | Type       | Source SharePoint                              | Valeur si vide / non soumis    |
-|-------------------------------------|------------|------------------------------------------------|--------------------------------|
-| `bilan_01_date_rdv`                 | Plain Text | `BilansMensuels.date_rdv` (DD.MM.YYYY)        | Laisser vide                   |
-| `bilan_01_date_soumission`          | Plain Text | `BilansMensuels.date_soumission` (DD.MM.YYYY) | Laisser vide                   |
-| `bilan_01_bilan_general`            | Plain Text | `BilansMensuels.bilan_general`                | Laisser vide                   |
-| `bilan_01_statut_objectifs`         | Plain Text | `BilansMensuels.statut_objectifs` (libelle traduit) | Laisser vide             |
-| `bilan_01_statut_objectifs_detail`  | Plain Text | `BilansMensuels.statut_objectifs_detail`      | Laisser vide                   |
-| `bilan_01_was_lief_gut`             | Plain Text | `BilansMensuels.was_lief_gut`                 | Laisser vide                   |
-| `bilan_01_wo_brauche_ich`           | Plain Text | `BilansMensuels.wo_brauche_ich_unterstuetzung`| Laisser vide                   | Note : Tag value abrege volontairement (max 64 car. recommande pour Power Automate) ; le Flow fait la correspondance |
-| `bilan_01_themen_naechster_termin`  | Plain Text | `BilansMensuels.themen_naechster_termin`      | Laisser vide                   |
-| `bilan_01_sonstige_anmerkungen`     | Plain Text | `BilansMensuels.sonstige_anmerkungen`         | Laisser vide                   |
+| Tag-Wert (w:val)                    | Typ        | SharePoint-Quelle                              | Wert wenn leer / nicht eingereicht |
+|-------------------------------------|------------|------------------------------------------------|------------------------------------|
+| `bilan_01_date_rdv`                 | Plain Text | `BilansMensuels.date_rdv` (TT.MM.JJJJ)        | Leer lassen                        |
+| `bilan_01_date_soumission`          | Plain Text | `BilansMensuels.date_soumission` (TT.MM.JJJJ) | Leer lassen                        |
+| `bilan_01_bilan_general`            | Plain Text | `BilansMensuels.bilan_general`                | Leer lassen                        |
+| `bilan_01_statut_objectifs`         | Plain Text | `BilansMensuels.statut_objectifs` (übersetztes Label) | Leer lassen              |
+| `bilan_01_statut_objectifs_detail`  | Plain Text | `BilansMensuels.statut_objectifs_detail`      | Leer lassen                        |
+| `bilan_01_was_lief_gut`             | Plain Text | `BilansMensuels.was_lief_gut`                 | Leer lassen                        |
+| `bilan_01_wo_brauche_ich`           | Plain Text | `BilansMensuels.wo_brauche_ich_unterstuetzung`| Leer lassen                        | Hinweis: Tag-Wert bewusst abgekürzt (max. 64 Zeichen empfohlen für Power Automate); der Flow stellt die Zuordnung sicher |
+| `bilan_01_themen_naechster_termin`  | Plain Text | `BilansMensuels.themen_naechster_termin`      | Leer lassen                        |
+| `bilan_01_sonstige_anmerkungen`     | Plain Text | `BilansMensuels.sonstige_anmerkungen`         | Leer lassen                        |
 
-**Meme structure pour bilans 02 a 12** (remplacer `01` par `02`, `03`, ..., `12`).
+**Gleiche Struktur für Berichte 02 bis 12** (`01` durch `02`, `03`, ..., `12` ersetzen).
 
-**Liste exhaustive de tous les Tag values des bilans :**
+**Vollständige Liste aller Tag-Werte der Berichte:**
 
 ```
 bilan_01_date_rdv               bilan_07_date_rdv
@@ -175,15 +175,15 @@ bilan_06_themen_naechster_termin bilan_12_themen_naechster_termin
 bilan_06_sonstige_anmerkungen   bilan_12_sonstige_anmerkungen
 ```
 
-**Total Content Controls** : 6 (page de garde) + 4 (profil) + 108 (12 x 9 bilans) = **118 Content Controls**
+**Gesamt Content Controls**: 6 (Deckblatt) + 4 (Profil) + 108 (12 x 9 Berichte) = **118 Content Controls**
 
 ---
 
-### Bloc signature (dans chaque section bilan)
+### Unterschriftenblock (in jedem Berichtsabschnitt)
 
-Le bloc signature n'est PAS un Content Control injecte par Power Automate. C'est une zone fixe du template Word, presente sur chaque page de bilan.
+Der Unterschriftenblock ist KEIN von Power Automate befüllter Content Control. Es handelt sich um einen festen Bereich des Word-Templates, der auf jeder Berichtsseite vorhanden ist.
 
-**Structure du bloc (en bas de chaque section bilan, dans le template) :**
+**Blockstruktur (am Ende jedes Berichtsabschnitts, im Template):**
 
 ```
 Zielvereinbarung - Unterschriften
@@ -196,65 +196,65 @@ _________________________________       _________________________________
 {{participant_prenom}} {{participant_nom}}   {{conseillere_nom}}
 ```
 
-Note : les lignes de signature sont dessinées avec un filet bas de paragraphe (bordure Word), pas avec des underscores en texte brut. Les noms sont injectes via Content Controls (`participant_prenom`, `participant_nom`, `conseillere_nom` - les memes que sur la page de garde, referencables plusieurs fois dans le document).
+Hinweis: Die Unterschriftenlinien werden mit einer Absatzunterkante (Word-Rahmen) gezeichnet, nicht mit Unterstrichen als Klartext. Die Namen werden über Content Controls eingefügt (`participant_prenom`, `participant_nom`, `conseillere_nom` - dieselben wie auf dem Deckblatt, im Dokument mehrfach referenzierbar).
 
 ---
 
-## Mapping statut_objectifs -> libelle affiche dans le PDF
+## Zuordnung statut_objectifs -> angezeigtes Label im PDF
 
-Le Flow traduit le code interne SharePoint en libelle lisible avant injection dans le Content Control.
+Der Flow übersetzt den internen SharePoint-Code in ein lesbares Label, bevor er ihn in den Content Control einfügt.
 
-| Code SharePoint              | Libelle DE                | Libelle EN                |
+| SharePoint-Code              | Label DE                  | Label EN                  |
 |------------------------------|---------------------------|---------------------------|
 | `vollstaendig_erreicht`      | Vollständig erreicht      | Fully achieved            |
 | `teilweise_erreicht`         | Teilweise erreicht        | Partially achieved        |
 | `nicht_erreicht`             | Nicht erreicht            | Not achieved              |
 | `noch_nicht_relevant`        | Noch nicht relevant       | Not yet relevant          |
-| (vide, non soumis)           | -                         | -                         |
+| (leer, nicht eingereicht)    | -                         | -                         |
 
 ---
 
-## Instructions de construction du .docx dans Microsoft Word
+## Anleitung zur Erstellung der .docx-Datei in Microsoft Word
 
-### Etape 1 : Creer le fichier
+### Schritt 1: Datei erstellen
 
-1. Ouvrir Word, nouveau document vierge
-2. Mettre en page : A4, marges 2.5 cm sur tous les cotes
-3. Definir les styles :
-   - "Heading 1" : Calibri 18pt, gras, couleur #003DA5 (bleu corporate)
-   - "Heading 2" : Calibri 14pt, gras, couleur #003DA5
-   - "Normal" : Calibri 11pt, couleur #333333, interligne 1.15
-   - "SignatureLine" : style personnalise, pas de puces, bordure bas 0.5pt #666666
+1. Word öffnen, neues leeres Dokument
+2. Seiteneinrichtung: A4, Seitenränder 2,5 cm an allen Seiten
+3. Formatvorlagen definieren:
+   - "Heading 1": Calibri 18pt, fett, Farbe #003DA5 (Corporate-Blau)
+   - "Heading 2": Calibri 14pt, fett, Farbe #003DA5
+   - "Normal": Calibri 11pt, Farbe #333333, Zeilenabstand 1,15
+   - "SignatureLine": benutzerdefinierte Formatvorlage, keine Aufzählungszeichen, Unterkante 0,5pt #666666
 
-### Etape 2 : Inserer les Content Controls
+### Schritt 2: Content Controls einfügen
 
-Pour chaque Content Control :
-1. Aller dans Ruban > Developpeur > Controls > "Plain Text Content Control" (Aa)
-2. Cliquer sur "Properties" (icone cle)
-3. Renseigner :
-   - **Title** : libelle lisible (ex. "Bilan general - Mois 01")
-   - **Tag** : valeur exacte du Tag value (ex. `bilan_01_bilan_general`)
-4. Cocher "Remove content control when contents are edited" : NON
-5. Style : "Normal" par defaut
+Für jeden Content Control:
+1. Menüband > Entwickler > Steuerelemente > "Nur-Text-Inhaltssteuerelement" (Aa) auswählen
+2. Auf "Eigenschaften" (Schlüsselsymbol) klicken
+3. Folgendes eingeben:
+   - **Titel**: lesbares Label (z.B. "Monatsbericht - Monat 01")
+   - **Tag**: exakter Tag-Wert (z.B. `bilan_01_bilan_general`)
+4. "Inhaltssteuerelement entfernen, wenn Inhalt bearbeitet wird" aktivieren: NEIN
+5. Formatvorlage: standardmäßig "Normal"
 
-### Etape 3 : Activer l'onglet Developpeur (si absent)
+### Schritt 3: Registerkarte Entwickler aktivieren (falls nicht sichtbar)
 
-Fichier > Options > Personnaliser le Ruban > cocher "Developpeur"
+Datei > Optionen > Menüband anpassen > "Entwickler" aktivieren
 
-### Etape 4 : Sauvegarder en format .docx
+### Schritt 4: Im Format .docx speichern
 
-Fichier > Enregistrer sous > Format : "Document Word (.docx)"
-Ne PAS sauvegarder en .doc (ancien format) ni en .dotx (template Word) - Power Automate requiert un .docx standard.
+Datei > Speichern unter > Format: "Word-Dokument (.docx)"
+NICHT als .doc (altes Format) oder .dotx (Word-Vorlage) speichern - Power Automate erfordert eine Standard-.docx-Datei.
 
-### Etape 5 : Deposer le fichier dans SharePoint
+### Schritt 5: Datei in SharePoint ablegen
 
-Le template doit etre stocke dans une bibliotheque SharePoint accessible par le compte de service Power Automate (ex. /sites/TransferMappe/Templates/transfer_mappe_template_de.docx).
+Das Template muss in einer SharePoint-Dokumentbibliothek gespeichert werden, die für das Power Automate-Dienstkonto zugänglich ist (z.B. /sites/TransferMappe/Templates/transfer_mappe_template_de.docx).
 
 ---
 
-## Structure XML de reference pour un Content Control (extrait)
+## XML-Referenzstruktur eines Content Controls (Auszug)
 
-Cet extrait XML montre la structure attendue dans le document .docx. Il est fourni a titre de reference pour validation ou construction programmatique.
+Dieser XML-Auszug zeigt die erwartete Struktur im .docx-Dokument. Er dient als Referenz für die Validierung oder die programmatische Erstellung.
 
 ```xml
 <w:sdt>
@@ -279,11 +279,11 @@ Cet extrait XML montre la structure attendue dans le document .docx. Il est four
 
 ---
 
-## Notes importantes pour Power Automate
+## Wichtige Hinweise für Power Automate
 
-1. **Action a utiliser** : "Populate a Microsoft Word template" du connecteur "Word Online (Business)"
-2. **Chemin du template** : pointer vers le .docx dans SharePoint (pas OneDrive)
-3. **Champs dynamiques** : Power Automate detecte automatiquement tous les Content Controls du template et propose leurs Tag values comme champs a remplir dans l'action
-4. **Champs vides** : si un champ n'est pas renseigne (bilan non soumis, profil vide), injecter une chaine vide `""` - ne jamais laisser le champ manquant dans l'action Power Automate
-5. **Conversion PDF** : apres l'action "Populate", utiliser l'action "Convert Word Document to PDF" du meme connecteur Word Online (Business) - disponible en E3 sans premium
-6. **Ordre des bilans** : trier les bilans par `date_rdv` ASC avant la boucle d'injection dans Power Automate
+1. **Zu verwendende Aktion**: "Populate a Microsoft Word template" des Connectors "Word Online (Business)"
+2. **Template-Pfad**: auf die .docx-Datei in SharePoint zeigen (nicht OneDrive)
+3. **Dynamische Felder**: Power Automate erkennt automatisch alle Content Controls des Templates und schlägt ihre Tag-Werte als auszufüllende Felder in der Aktion vor
+4. **Leere Felder**: Ist ein Feld nicht ausgefüllt (Bericht nicht eingereicht, leeres Profil), eine leere Zeichenkette `""` einfügen - das Feld darf in der Power Automate-Aktion niemals fehlen
+5. **PDF-Konvertierung**: nach der Aktion "Populate" die Aktion "Convert Word Document to PDF" desselben Connectors Word Online (Business) verwenden - in E3 ohne Premium verfügbar
+6. **Reihenfolge der Berichte**: Berichte vor der Einspielschleife in Power Automate nach `date_rdv` ASC sortieren
