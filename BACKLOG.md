@@ -1,73 +1,73 @@
 # BACKLOG.md
 
-Idees et fonctionnalites en dehors du scope v0.1. Ne PAS implementer dans la v0.1.
+Ideas and features outside the v0.1 scope. Do NOT implement in v0.1.
 
-Toute proposition d'ajout en cours de sprint atterrit ici, pas dans le code. Le Tech Lead arbitre.
-
----
-
-## v0.2 envisage
-
-### Tracker personnel optionnel de candidatures
-
-Module **opt-in** pour les participants qui souhaitent saisir au fil de l'eau leurs candidatures et contacts. Strictement volontaire et reserve a un usage personnel du participant. Les donnees ne sont visibles ni de la conseillere ni de la direction de la societe de reclassement.
-
-Justification : certains participants apprecient un outil de tracking pour eux-memes. La v0.1 n'en propose pas pour eviter le piege de la surveillance, mais une version opt-in respecte le choix individuel.
-
-### Reporting agrege pour la conseillere
-
-Tableau de bord SharePoint listant les participants suivis avec :
-
-- Date du prochain RDV
-- Statut du dernier bilan recu (rempli / non rempli / en retard)
-- Tendance qualitative sur les 3 derniers mois
-
-Pas de donnees individuelles agregees a usage analytique. Vue operationnelle uniquement.
-
-### Signature electronique conforme eIDAS
-
-Integration DocuSign, Adobe Sign ou Microsoft eSign pour les Zielvereinbarungen. Demande une licence premium et engage la conformite eIDAS. Hors-scope v0.1 par sobriete.
+Any proposed addition raised during a sprint lands here, not in the code. The Tech Lead arbitrates.
 
 ---
 
-## v0.3+ envisage
+## v0.2 planned
 
-### Module Qualifikationen und Zeugnisse
+### Optional personal application tracker
 
-Espace SharePoint structure pour le depot et la classification des certificats, diplomes et attestations du participant. Recherche, tagging, export.
+An **opt-in** module for Teilnehmer who wish to log their applications and contacts on an ongoing basis. Strictly voluntary and reserved for the Teilnehmer's personal use. The data is visible neither to the Beraterin nor to the management of the Transfergesellschaft.
 
-### Note de frais (Rechnung an die Transfer GmbH)
+Rationale: some Teilnehmer appreciate a tracking tool for their own use. v0.1 does not include one to avoid the surveillance trap, but an opt-in version respects individual choice.
 
-Forms separe pour les demandes de remboursement de frais (transport, formation, equipement). Validation par la conseillere. Export comptable mensuel.
+### Aggregated reporting for the Beraterin
 
-### Application mobile dediee
+A SharePoint dashboard listing monitored Teilnehmer with:
 
-App Microsoft Power Apps ou Teams App permettant au participant de remplir son bilan mensuel depuis son telephone, avec rappels push.
+- Date of next appointment
+- Status of the last review received (submitted / not submitted / overdue)
+- Qualitative trend over the past 3 months
 
-### Integration Teams pour les RDV
+No individual data aggregated for analytical purposes. Operational view only.
 
-Lien Teams Meeting genere automatiquement avec chaque RDV mensuel. Notification J-1, rappel le jour J.
+### eIDAS-compliant electronic signature
 
-### Multi-tenancy et personnalisation par societe
-
-Pour les regroupements de Transfergesellschaften ou les holdings. Pas pertinent en v0.1.
+DocuSign, Adobe Sign, or Microsoft eSign integration for Zielvereinbarungen. Requires a premium licence and involves eIDAS compliance. Out of scope for v0.1 by design.
 
 ---
 
-## Idees ecartees definitivement
+## v0.3+ planned
 
-### Saisie obligatoire de chaque candidature et contact
+### Qualifikationen und Zeugnisse module
 
-Rejetee. Voir `docs/DECISIONS.md` ADR-003. Incompatible avec l'esprit de la Transfer Mappe et la confiance participant-conseillere.
+A structured SharePoint space for uploading and classifying the Teilnehmer's certificates, qualifications, and attestations. Search, tagging, and export.
 
-### Hebergement par l'auteur sur un VPS personnel
+### Expense claims (Rechnung an die Transfer GmbH)
 
-Rejetee. Voir conversation initiale du projet. Incompatible avec la position de "don a la communaute" et engagement DSGVO disproportionne pour l'auteur.
+A separate form for expense reimbursement requests (transport, training, equipment). Validated by the Beraterin. Monthly accounting export.
 
-### Mecanisme de relance automatique en cas de non-remplissage
+### Dedicated mobile application
 
-Rejetee. Le participant choisit de remplir ou non. Pas de pression, pas de relance, pas de notification "vous n'avez pas rempli". La responsabilite du suivi reste a la conseillere.
+A Microsoft Power Apps or Teams App allowing the Teilnehmer to complete the monthly review from a mobile device, with push reminders.
 
-### Score de "performance" du participant
+### Teams integration for appointments
 
-Rejetee categoriquement. La Transfer Mappe n'est pas un outil d'evaluation et l'outplacement n'est pas une competition.
+A Teams Meeting link generated automatically with each monthly appointment. J-1 notification and day-of reminder.
+
+### Multi-tenancy and per-organisation customisation
+
+For groups of Transfergesellschaften or holding structures. Not relevant for v0.1.
+
+---
+
+## Definitively rejected ideas
+
+### Mandatory logging of every application and contact
+
+Rejected. See `docs/DECISIONS.md` ADR-003. Incompatible with the spirit of the Transfer Mappe and the trust relationship between Teilnehmer and Beraterin.
+
+### Hosting by the author on a personal VPS
+
+Rejected. See initial project discussion. Incompatible with the "community contribution" position and represents a disproportionate DSGVO commitment for the author.
+
+### Automatic reminder on non-submission
+
+Rejected. The Teilnehmer chooses whether to submit. No pressure, no reminder, no "you have not submitted" notification. Responsibility for follow-up remains with the Beraterin.
+
+### Teilnehmer "performance" score
+
+Categorically rejected. The Transfer Mappe is not an evaluation tool and outplacement is not a competition.

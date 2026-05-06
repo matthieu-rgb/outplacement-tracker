@@ -1,112 +1,112 @@
 # ASSUMPTIONS.md
 
-Hypotheses metier prises pour le projet `outplacement-tracker` v0.1.
+Business assumptions made for the `outplacement-tracker` v0.1 project.
 
-L'auteur n'a pas eu d'acces direct a l'equipe metier d'une Transfergesellschaft pour valider en detail les specifications. Les hypotheses ci-dessous ont ete prises sur la base :
+The author did not have direct access to the business team of a Transfergesellschaft to validate the specifications in detail. The assumptions below were made on the basis of:
 
-- De la lecture attentive de la "Transfer Mappe" v2026 V1 de 10 k Beratung GmbH
-- Du cadre legal allemand des Transfergesellschaften (§ 111 SGB III)
-- Des pratiques observees dans le secteur de l'outplacement en Allemagne
+- A close reading of the "Transfer Mappe" v2026 V1 from 10 k Beratung GmbH
+- The German legal framework for Transfergesellschaften (SS 111 SGB III)
+- Practices observed in the German outplacement sector
 
-Toute societe deployant cette solution est invitee a valider et ajuster ces hypotheses selon ses propres pratiques. La solution est suffisamment souple pour le permettre.
-
----
-
-## A1 : Duree maximale d'un parcours
-
-**Hypothese** : 12 mois maximum.
-
-**Source** : § 111 SGB III, qui plafonne la duree legale d'une Transfergesellschaft a 12 mois.
-
-**Impact** : le template Word et les Power Automate Flows sont dimensionnes pour empiler jusqu'a 12 bilans mensuels.
-
-**Ajustable** : oui, en modifiant la limite dans le template Word et la boucle Power Automate.
+Any organisation deploying this solution is invited to validate and adjust these assumptions according to its own practices. The solution is flexible enough to accommodate this.
 
 ---
 
-## A2 : Frequence des rendez-vous
+## A1 : Maximum programme duration
 
-**Hypothese** : un rendez-vous par mois entre le participant et la conseillere.
+**Hypothesis**: 12 months maximum.
 
-**Source** : pratique standard observee dans le secteur, coherent avec la duree d'un parcours typique.
+**Source**: SS 111 SGB III, which caps the legal duration of a Transfergesellschaft at 12 months.
 
-**Impact** : le formulaire de bilan est envoye une fois par mois, 5 jours avant le RDV.
+**Impact**: the Word template and the Power Automate Flows are sized to stack up to 12 monthly reviews.
 
-**Ajustable** : oui, en modifiant le declencheur du Power Automate Flow d'invitation et la liste des dates de RDV dans SharePoint.
-
----
-
-## A3 : Nature du suivi mensuel
-
-**Hypothese** : le suivi mensuel est principalement declaratif et libre. Le participant resume ce qu'il souhaite partager. Aucun tracker obligatoire de candidatures ou de contacts.
-
-**Source** : la Transfer Mappe d'origine precise explicitement que le document appartient au participant. La relation conseillere-participant repose sur la confiance, pas sur la surveillance.
-
-**Impact** : le formulaire mensuel comporte 6 champs dont 5 sont optionnels.
-
-**Ajustable** : oui, en ajoutant ou retirant des champs dans le Microsoft Forms.
+**Adjustable**: yes, by modifying the limit in the Word template and the Power Automate loop.
 
 ---
 
-## A4 : Signatures sur les Zielvereinbarungen
+## A2 : Appointment frequency
 
-**Hypothese** : les signatures restent manuscrites. Le PDF cumulatif contient des emplacements de signature vides, le document est imprime, signe et scanne au RDV.
+**Hypothesis**: one appointment per month between the Teilnehmer and the Beraterin.
 
-**Source** : signatures manuscrites legalement suffisantes pour ce type de document interne en Allemagne. Decision retenue par sobriete (pas de licence eSign premium).
+**Source**: standard practice observed in the sector, consistent with the duration of a typical programme.
 
-**Impact** : aucun connecteur premium requis, pas de DocuSign ou Adobe Sign.
+**Impact**: the review form is sent once a month, 5 days before the appointment.
 
-**Ajustable** : oui, une evolution vers eSign est documentee dans `BACKLOG.md` pour la v0.2.
-
----
-
-## A5 : Volume cible
-
-**Hypothese** : la solution est dimensionnee pour 1 500 a 2 000 participants suivis simultanement par une societe de reclassement.
-
-**Source** : volume mentionne par l'utilisateur initial du projet.
-
-**Impact** : ~75 a 100 envois d'emails par jour ouvre, largement compatible avec les limites Outlook (10 000 mails/jour).
-
-**Ajustable** : oui, jusqu'a plusieurs dizaines de milliers de participants sans modification de l'architecture.
+**Adjustable**: yes, by modifying the trigger of the invitation Power Automate Flow and the list of appointment dates in SharePoint.
 
 ---
 
-## A6 : Profil de l'administrateur deployeur
+## A3 : Nature of monthly monitoring
 
-**Hypothese** : la societe de reclassement dispose d'un administrateur Microsoft 365 capable de :
+**Hypothesis**: monthly monitoring is primarily declarative and open-ended. The Teilnehmer summarises what they choose to share. No mandatory tracker for applications or contacts.
 
-- Creer des listes SharePoint (ou executer un script PowerShell PnP)
-- Importer des Microsoft Forms
-- Importer des Power Automate Flows
-- Configurer les variables (boite mail expediteur, conseillere par defaut)
+**Source**: the original Transfer Mappe states explicitly that the document belongs to the Teilnehmer. The Beraterin-Teilnehmer relationship is based on trust, not surveillance.
 
-**Source** : profil standard d'un administrateur M365 en entreprise allemande.
+**Impact**: the monthly form has 6 fields, of which 5 are optional.
 
-**Impact** : la documentation `INSTALLATION.md` est ecrite a destination de ce profil, pas d'un utilisateur final.
-
-**Ajustable** : non. Si l'administrateur n'a pas ces competences, la societe doit faire appel a un prestataire ou former en interne.
+**Adjustable**: yes, by adding or removing fields in the Microsoft Forms form.
 
 ---
 
-## A7 : Identite visuelle du PDF de sortie
+## A4 : Signatures on Zielvereinbarungen
 
-**Hypothese** : la societe de reclassement souhaite que le PDF cumulatif respecte une identite visuelle proche de leur Transfer Mappe papier (sobre, bleu corporate, typo serif pour les titres).
+**Hypothesis**: signatures remain handwritten. The cumulative PDF contains blank signature slots; the document is printed, signed, and scanned at the appointment.
 
-**Source** : observation de la Transfer Mappe 10 k Beratung GmbH v2026 V1.
+**Source**: handwritten signatures are legally sufficient for this type of internal document in Germany. Decision retained for simplicity (no premium eSign licence).
 
-**Impact** : le template Word est concu avec un design sobre et personnalisable. Les couleurs et logos sont ajustables sans modifier l'architecture.
+**Impact**: no premium connector required, no DocuSign or Adobe Sign.
 
-**Ajustable** : oui, le template Word est librement modifiable.
+**Adjustable**: yes, an evolution towards eSign is documented in `BACKLOG.md` for v0.2.
 
 ---
 
-## A8 : Cadre RGPD/DSGVO
+## A5 : Target volume
 
-**Hypothese** : la societe de reclassement est responsable de traitement au sens du RGPD pour les donnees des participants. L'auteur du projet n'est ni responsable ni sous-traitant.
+**Hypothesis**: the solution is sized for 1,500 to 2,000 Teilnehmer tracked simultaneously by a Transfergesellschaft.
 
-**Source** : la solution est livree comme un kit open source. L'auteur ne traite aucune donnee.
+**Source**: volume specified by the initial project stakeholder.
 
-**Impact** : aucun AVV (Auftragsverarbeitungsvertrag) entre l'auteur et la societe de reclassement. La societe de reclassement assume integralement la responsabilite du traitement.
+**Impact**: approximately 75 to 100 email sends per working day, well within Outlook limits (10,000 emails/day).
 
-**Ajustable** : non. Si une societe souhaite externaliser le deploiement et l'exploitation, elle doit faire appel a un prestataire qui signera un AVV avec elle.
+**Adjustable**: yes, up to several tens of thousands of Teilnehmer without architectural changes.
+
+---
+
+## A6 : Profile of the deploying administrator
+
+**Hypothesis**: the Transfergesellschaft has a Microsoft 365 administrator capable of:
+
+- Creating SharePoint lists (or running a PnP PowerShell script)
+- Importing Microsoft Forms
+- Importing Power Automate Flows
+- Configuring variables (sender mailbox, default Beraterin)
+
+**Source**: standard profile of an M365 administrator in a German organisation.
+
+**Impact**: `INSTALLATION.md` is written for this profile, not for an end user.
+
+**Adjustable**: no. If the administrator does not have these competencies, the organisation must engage an external provider or train internally.
+
+---
+
+## A7 : Visual identity of the output PDF
+
+**Hypothesis**: the Transfergesellschaft expects the cumulative PDF to reflect a visual identity close to their paper Transfer Mappe (sober, corporate blue, serif typeface for headings).
+
+**Source**: observation of the Transfer Mappe from 10 k Beratung GmbH v2026 V1.
+
+**Impact**: the Word template is designed with a sober and customisable layout. Colours and logos are adjustable without modifying the architecture.
+
+**Adjustable**: yes, the Word template is freely editable.
+
+---
+
+## A8 : DSGVO/BDSG framework
+
+**Hypothesis**: the Transfergesellschaft is the data controller (Verantwortlicher) within the meaning of the DSGVO for Teilnehmer data. The project author is neither controller nor processor.
+
+**Source**: the solution is delivered as an open source kit. The author processes no data.
+
+**Impact**: no Auftragsverarbeitungsvertrag between the author and the Transfergesellschaft. The Transfergesellschaft assumes full responsibility for data processing.
+
+**Adjustable**: no. If an organisation wishes to outsource deployment and operation, it must engage a provider who will sign an Auftragsverarbeitungsvertrag with it.

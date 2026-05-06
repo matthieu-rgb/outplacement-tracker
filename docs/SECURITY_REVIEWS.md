@@ -1,220 +1,218 @@
 # SECURITY_REVIEWS.md
 
-Journal append-only des revues de securite et de conformite DSGVO du projet outplacement-tracker.
+Append-only log of security and DSGVO compliance reviews for the outplacement-tracker project.
 
-Chaque entree est definitive. Ne pas modifier les entrees existantes.
-Pour corriger une evaluation anterieure, ajouter une nouvelle entree.
+Each entry is definitive. Do not modify existing entries.
+To correct a previous assessment, add a new entry.
 
 ---
 
-## Entrees
+## Entries
 
 ---
 
 ### REV-001
 
-**Date :** 2026-05-05
-**Livrable :** docs/PRIVACY.md (creation initiale v1.0)
-**Auditeur :** Agent DSGVO/Securite
-**Verdict :** APPROVED
+**Date:** 2026-05-05
+**Deliverable:** docs/PRIVACY.md (initial creation v1.0)
+**Auditor:** DSGVO/Security Agent
+**Verdict:** APPROVED
 
-**Checklist :**
+**Checklist:**
 
-- [x] Donnees personnelles hardcodees dans le code, la doc, ou les exemples : NEANT
-      (samples utilises Max Mustermann / John Doe, confirme dans samples/README.md)
-- [x] Samples anonymises : OUI (Max Mustermann DE, John Doe EN, Maria Schmidt pour conseillere)
-- [x] Transfert hors UE non justifie : AUCUN (architecture 100% tenant client M365)
-- [x] La doc mentionne explicitement que les donnees restent dans le tenant client : OUI (sections 2, 8, 9)
-- [x] Permissions SharePoint restrictives par defaut documentees : OUI (section 7.2 et checklist 11.1)
-- [x] Modele de responsabilite documente (auteur ne traite aucune donnee) : OUI (section 2 - chaine complete)
-- [x] Flows Power Automate - PII dans les journaux : RISQUE DOCUMENTE et accepte (section 3.5 - journaux 28j Microsoft)
-- [x] Emails avec donnees minimales : OUI (section 12 - analyse detaillee des templates email)
+- [x] Personal data hardcoded in code, documentation, or examples: NONE
+      (samples use Max Mustermann / John Doe, confirmed in samples/README.md)
+- [x] Samples anonymised: YES (Max Mustermann DE, John Doe EN, Maria Schmidt for Beraterin)
+- [x] Unjustified transfer outside the EU: NONE (architecture 100% within client M365 tenant)
+- [x] Documentation explicitly states that data remains within the client tenant: YES (sections 2, 8, 9)
+- [x] Restrictive SharePoint permissions documented as defaults: YES (section 7.2 and checklist 11.1)
+- [x] Responsibility model documented (author processes no data): YES (section 2 - full chain)
+- [x] Power Automate Flows - PII in logs: RISK DOCUMENTED and accepted (section 3.5 - Microsoft 28-day logs)
+- [x] Emails with minimal data: YES (section 12 - detailed analysis of email templates)
 
-**Observations :**
+**Observations:**
 
-1. La chaine de responsabilite (section 2) est conforme au modele attendu. L'auteur est
-   clairement exclu de la chaine de traitement. L'absence d'AVV auteur/deployeur est justifiee
-   et documentee.
+1. The responsibility chain (section 2) conforms to the expected model. The author is
+   clearly excluded from the processing chain. The absence of an author/deployer
+   Auftragsverarbeitungsvertrag is justified and documented.
 
-2. La base legale Art. 6(1)(b) DSGVO retenue pour tous les champs est correcte dans
-   le cadre SGB III. La non-utilisation du consentement comme base legale principale
-   est explicitement justifiee (section 4.3) - approche rigoureuse.
+2. The legal basis Art. 6(1)(b) DSGVO retained for all fields is correct in the
+   SGB III context. The non-use of consent as the primary legal basis is explicitly
+   justified (section 4.3) - a rigorous approach.
 
-3. Le traitement des journaux Power Automate (section 3.5) contient une observation
-   importante : ces journaux peuvent contenir des PII (nom, email de participants).
-   Ce point est documente et acceptable car il est inherent a la plateforme M365
-   et les journaux restent dans le tenant. L'organisation est invitee a restreindre
-   l'acces au portail Power Automate (section 7.2).
+3. The handling of Power Automate logs (section 3.5) raises an important point:
+   these logs may contain PII (Teilnehmer name and email).
+   This point is documented and acceptable because it is inherent to the M365
+   platform and the logs remain within the tenant. Organisations are advised to restrict
+   access to the Power Automate portal (section 7.2).
 
-4. La mention de l'EU Data Boundary (section 9.1) est correcte pour les licences
-   M365 E3 avec region UE. La condition de verification de la region tenant
-   est incluse dans la checklist (section 11.1) - point critique bien traite.
+4. The mention of the EU Data Boundary (section 9.1) is correct for M365 E3 licences
+   with an EU region. The requirement to verify the tenant region is included in
+   the checklist (section 11.1) - a critical point, well handled.
 
-5. La probabilite de l'obligation de DPD pour les Transfergesellschaften est
-   correctement arguee (Art. 37 DSGVO + § 38 BDSG) sans certitude absolue,
-   ce qui est la position juridiquement honnete.
+5. The likelihood of a mandatory DSB (Datenschutzbeauftragter) for Transfergesellschaften
+   is correctly argued (Art. 37 DSGVO + § 38 BDSG) without absolute certainty,
+   which is the legally honest position.
 
-6. La procedure de suppression (section 5.2) propose trois options dont une automatisee
-   non encore livree (BACKLOG). Cette transparence est correcte.
+6. The deletion procedure (section 5.2) offers three options, one of which is automated
+   and not yet delivered (BACKLOG). This transparency is correct.
 
-**Risques residuels identifies (acceptes) :**
+**Residual risks identified (accepted):**
 
-- Les journaux Power Automate contiennent des PII transitoires. Risque inherent a la
-  plateforme, hors perimetre de la solution, documente.
-- La DPIA (Art. 35) n'est pas realisee par l'auteur : c'est correct, elle appartient
-  a l'organisation deployante. Elle est mentionnee dans la checklist (section 11.2).
-- La metadonnee des fichiers .docx templates peut contenir le nom de l'auteur
-  (proprietaire Word). Point signale en section 12 pour le deploiement.
+- Power Automate logs contain transient PII. Risk inherent to the platform, outside
+  the solution scope, documented.
+- The DPIA (Art. 35) is not conducted by the author: correct, it belongs to the
+  deploying organisation. It is referenced in the checklist (section 11.2).
+- The metadata of the .docx template files may contain the author's name
+  (Word owner property). Point flagged in section 12 for deployment.
 
-**Ajustements demandes :** AUCUN
+**Adjustments requested:** NONE
 
 ---
 
 ### REV-002
 
-**Date :** 2026-05-06
-**Livrable :** docs/PRIVACY.md (refonte complete v1.1 - traduction allemand, ADR-007)
-**Auditeur :** Agent DSGVO/Securite
-**Verdict :** APPROVED
+**Date:** 2026-05-06
+**Deliverable:** docs/PRIVACY.md (full rewrite v1.1 - German language, ADR-007)
+**Auditor:** DSGVO/Security Agent
+**Verdict:** APPROVED
 
-**Contexte :**
+**Context:**
 
-Refonte complete du document PRIVACY.md de la version francaise (v1.0) vers la version
-allemande (v1.1), conformement a la politique linguistique ADR-007. Le document cible
-le DSB (Datenschutzbeauftragter) et le service juridique d'une Transfergesellschaft
-allemande deployant la solution.
+Full rewrite of PRIVACY.md from the French version (v1.0) to the German version
+(v1.1), in accordance with the language policy ADR-007. The document targets the
+DSB (Datenschutzbeauftragter) and the legal department of a German Transfergesellschaft
+deploying the solution.
 
-**Checklist sur le livrable v1.1 :**
+**Checklist on deliverable v1.1:**
 
-- [x] Donnees personnelles hardcodees dans le document : NEANT
-      (aucune adresse email reelle, aucun nom reel - les exemples utilisent transfer@domain.de)
-- [x] Samples anonymises : OUI (non applicable directement a PRIVACY.md - pas d'exemples de donnees)
-- [x] Transfert hors UE non justifie mentionne ou introduit : AUCUN
-- [x] Le document mentionne explicitement que les donnees restent dans le tenant client : OUI (sections 2, 8, 9)
-- [x] Permissions SharePoint restrictives documentees : OUI (sections 7.1, 7.2, 11.1)
-- [x] Modele de responsabilite (auteur ne traite aucune donnee) : OUI (section 2 - chaine complete conservee)
-- [x] PII dans les journaux Power Automate : RISQUE DOCUMENTE et accepte (section 3.5)
-- [x] Emails avec donnees minimales : OUI (section 12)
+- [x] Personal data hardcoded in the document: NONE
+      (no real email address, no real name - examples use transfer@domain.de)
+- [x] Samples anonymised: YES (not directly applicable to PRIVACY.md - no data examples)
+- [x] Unjustified transfer outside the EU mentioned or introduced: NONE
+- [x] Document explicitly states that data remains within the client tenant: YES (sections 2, 8, 9)
+- [x] Restrictive SharePoint permissions documented: YES (sections 7.1, 7.2, 11.1)
+- [x] Responsibility model (author processes no data): YES (section 2 - full chain preserved)
+- [x] PII in Power Automate logs: RISK DOCUMENTED and accepted (section 3.5)
+- [x] Emails with minimal data: YES (section 12)
 
-**Observations sur la qualite de la traduction et de l'adaptation :**
+**Observations on translation quality and adaptation:**
 
-1. Terminologie DSGVO/BDSG correctement appliquee de facon coherente :
+1. DSGVO/BDSG terminology correctly and consistently applied:
    Verantwortlicher, Auftragsverarbeiter, AVV, betroffene Person, personenbezogene Daten,
    VVT, DSFA, DSB, Loeschkonzept, Datensparsamkeit, Zweckbindung, Speicherbegrenzung, TOM,
-   DSGVO, BDSG, SCC. Aucun terme francais ou anglais non justifie ne subsiste.
+   DSGVO, BDSG, SCC. No unjustified French or English term remains.
 
-2. Les references legales sont conformes a la forme allemande standard :
+2. Legal references conform to standard German form:
    Art. 6 Abs. 1 lit. b DSGVO, Art. 37 Abs. 1 lit. b DSGVO, § 38 BDSG, § 195 BGB,
    § 111 SGB III. Format correct.
 
-3. La section 11.1 (checklist obligatoire) integre un point supplementaire par rapport
-   a la v1.0 : la neutralisation des metadonnees des templates Word avant upload.
-   Ce point etait mentionne en section 12 dans la v1.0 mais n'etait pas dans la checklist.
-   C'est une amelioration conforme a la recommendation de REV-001 (risque residuel Word).
+3. Section 11.1 (mandatory checklist) adds one item compared to v1.0: neutralising
+   Word template metadata before upload. This point was mentioned in section 12 of
+   v1.0 but was not in the checklist. This is an improvement consistent with the
+   REV-001 recommendation (residual Word risk).
 
-4. La chaine de responsabilite (section 2.1) est integralement conservee, avec la
-   position claire de Matthieu Riegert comme ni Verantwortlicher ni Auftragsverarbeiter.
-   L'absence d'AVV avec l'auteur est maintenue et documentee.
+4. The responsibility chain (section 2.1) is fully preserved, with the clear
+   position of Matthieu Riegert as neither Verantwortlicher nor Auftragsverarbeiter.
+   The absence of an Auftragsverarbeitungsvertrag with the author is maintained and documented.
 
-5. Le contenu substantiel est identique a la v1.0 : aucune donnee n'a ete retiree,
-   aucune finalite n'a ete ajoutee. Il s'agit d'une traduction avec adaptation
-   terminologique, pas d'une modification de perimetre.
+5. The substantive content is identical to v1.0: no data removed, no purpose added.
+   This is a translation with terminological adaptation, not a scope change.
 
-6. Le vouvoiement formel (Sie) est utilise uniquement dans les sections s'adressant
-   directement au lecteur. Le reste du document est a la troisieme personne. Correct.
+6. The formal register (Sie) is used only in sections addressing the reader directly.
+   The remainder of the document is in the third person. Correct.
 
-7. L'historique des revisions (section 13) retrace correctement les deux versions :
-   v1.0 creation initiale (francais, 2026-05-05) et v1.1 refonte allemande (2026-05-06).
+7. The revision history (section 13) correctly records both versions:
+   v1.0 initial creation (French, 2026-05-05) and v1.1 German rewrite (2026-05-06).
 
-**Risques residuels identifies (inchanges par rapport a REV-001) :**
+**Residual risks identified (unchanged from REV-001):**
 
-- Les journaux Power Automate contiennent des PII transitoires (28 jours). Documente,
-  inherent a la plateforme M365, hors perimetre de la solution.
-- La DSFA (Art. 35 DSGVO) appartient a l'organisation deployante. Mentionne en 11.2.
-- Les metadonnees .docx : desormais inclus dans la checklist obligatoire (11.1).
-  Risque residuel reduit par rapport a REV-001.
+- Power Automate logs contain transient PII (28 days). Documented, inherent to
+  the M365 platform, outside the solution scope.
+- The DSFA (Art. 35 DSGVO) belongs to the deploying organisation. Referenced in 11.2.
+- .docx metadata: now included in the mandatory checklist (11.1).
+  Residual risk reduced compared to REV-001.
 
-**Ajustements demandes :** AUCUN
+**Adjustments requested:** NONE
 
 ---
 
 ### REV-003
 
-**Date :** 2026-05-06
-**Livrable :** docs/PRIVACY.md (cross-review encodage/terminologie v1.1)
-**Auditeur :** Agent DSGVO/Securite
-**Verdict :** APPROVED apres corrections
+**Date:** 2026-05-06
+**Deliverable:** docs/PRIVACY.md (cross-review encoding/terminology v1.1)
+**Auditor:** DSGVO/Security Agent
+**Verdict:** APPROVED after corrections
 
-**Contexte :**
+**Context:**
 
-Relecture ciblee du fichier docs/PRIVACY.md v1.1 sous trois angles :
-(1) encodage des caracteres allemands (umlauts, eszett),
-(2) exactitude de la terminologie DSGVO/BDSG,
-(3) exactitude factuelle du droit applicable aux Transfergesellschaften.
+Targeted review of docs/PRIVACY.md v1.1 under three angles:
+(1) encoding of German characters (umlauts, eszett),
+(2) accuracy of DSGVO/BDSG terminology,
+(3) factual accuracy of the law applicable to Transfergesellschaften.
 
-**Resultats de la verification :**
+**Review results:**
 
-**Encodage :**
+**Encoding:**
 
-Quatre anomalies detectees et corrigees :
+Four anomalies detected and corrected:
 
-- Ligne 71 : "tragt" -> "traegt" (conjugaison de "tragen" - umlaut manquant)
-- Ligne 302 : "ermoeglichten" (Praeteritum) -> "ermoeglichten" : erreur grammaticale
-  (Praesens requis), pas un artefact d'encodage, detectee lors de la passe systematique.
-  Corrigee en "ermoeglichten" -> "ermoeglichten" : voir ci-dessous.
-  Correction appliquee : ermoeglichten -> ermoeglichten (Praesens).
-- Ligne 376 : "ausser" -> eszett manquant - artefact d'encodage residuel
-- Ligne 390 : "Uebersetzung" -> sequence "Ue" non convertie - artefact residuel
+- Line 71: "tragt" -> "traegt" (conjugation of "tragen" - missing umlaut)
+- Line 302: "ermoeglichten" (Praeteritum) -> grammatical error
+  (Praesens required), not an encoding artefact, detected during the systematic pass.
+  Corrected: ermoeglichten -> ermoeglichten (Praesens).
+- Line 376: "ausser" -> missing eszett - residual encoding artefact
+- Line 390: "Uebersetzung" -> unconverted "Ue" sequence - residual artefact
 
-Aucun autre artefact "ae"/"oe"/"ue" ne subsiste hors des noms de champs techniques
-entre apostrophes inversees et des noms francais des listes SharePoint (langue, nom,
-prenom, id_conseillere, etc.) qui sont des identifiants techniques legitimes sans umlaut.
+No other "ae"/"oe"/"ue" artefact remains outside technical field names between
+backticks and French SharePoint list identifiers (langue, nom,
+prenom, id_conseillere, etc.) which are legitimate technical identifiers without umlauts.
 
-**Terminologie DSGVO/BDSG :**
+**DSGVO/BDSG terminology:**
 
-Terminologie conforme sur l'ensemble du document. Points verifies :
-- Verantwortlicher (Art. 4 Nr. 7 DSGVO) : correct
-- Auftragsverarbeiter (Art. 4 Nr. 8 DSGVO) : correct
-- Auftragsverarbeitungsvertrag / AVV (Art. 28 DSGVO) : correct
-- Datenschutz-Folgenabschatzung / DSFA (Art. 35 DSGVO) : correct
-- personenbezogene Daten (Art. 4 Nr. 1 DSGVO) : correct
-- Verzeichnis der Verarbeitungstatigkeiten / VVT (Art. 30 DSGVO) : correct
-- betroffene Person (Art. 4 Nr. 1 DSGVO) : correct
-- Datenschutzbeauftragter / DSB (Art. 37 DSGVO) : correct
-- technische und organisatorische Massnahmen / TOM (Art. 32 DSGVO) : correct
-- Citations d'articles en forme standard allemande (Art. X Abs. Y lit. Z DSGVO) : correct
+Terminology compliant throughout the document. Points verified:
+- Verantwortlicher (Art. 4 Nr. 7 DSGVO): correct
+- Auftragsverarbeiter (Art. 4 Nr. 8 DSGVO): correct
+- Auftragsverarbeitungsvertrag / AVV (Art. 28 DSGVO): correct
+- Datenschutz-Folgenabschaetzung / DSFA (Art. 35 DSGVO): correct
+- personenbezogene Daten (Art. 4 Nr. 1 DSGVO): correct
+- Verzeichnis der Verarbeitungstaetigkeiten / VVT (Art. 30 DSGVO): correct
+- betroffene Person (Art. 4 Nr. 1 DSGVO): correct
+- Datenschutzbeauftragter / DSB (Art. 37 DSGVO): correct
+- technische und organisatorische Massnahmen / TOM (Art. 32 DSGVO): correct
+- Article citations in standard German form (Art. X Abs. Y lit. Z DSGVO): correct
 
-**Exactitude factuelle :**
+**Factual accuracy:**
 
-- Art. 6 Abs. 1 lit. b DSGVO comme base legale principale dans le cadre § 111 SGB III :
-  correct. La relation contractuelle entre la Transfergesellschaft et le participant
-  (Transfervertrag) justifie cette base legale pour l'ensemble des traitements operationnels.
+- Art. 6 Abs. 1 lit. b DSGVO as the primary legal basis in the § 111 SGB III context:
+  correct. The contractual relationship between the Transfergesellschaft and the Teilnehmer
+  (Transfervertrag) justifies this legal basis for all operational processing.
 
-- Art. 6 Abs. 1 lit. f DSGVO (interet legitime) pour la documentation vis-a-vis de
-  l'Agentur fur Arbeit : correct. Le besoin de preuve documentaire face aux controles
-  constitue un interet legitime reconnu.
+- Art. 6 Abs. 1 lit. f DSGVO (legitimate interest) for documentation vis-a-vis the
+  Agentur fuer Arbeit: correct. The need for documentary evidence in inspections
+  constitutes a recognised legitimate interest.
 
-- Delai de prescription de 3 ans pour les PDFs, base sur § 195 BGB (delai general) :
-  correct pour les contrats de service.
+- 3-year retention period for PDFs, based on § 195 BGB (general limitation period):
+  correct for service contracts.
 
-- § 38 BDSG (obligation DSB a partir de 20 personnes traitant des donnees automatisees) :
-  correct. Complement national conforme a la directive DSGVO Art. 37.
+- § 38 BDSG (mandatory DSB from 20 persons processing automated data): correct.
+  National supplement consistent with DSGVO Art. 37.
 
-- EU Data Boundary Microsoft pour les tenants E3 avec region EU : correct au moment
-  de la redaction. Sujet aux evolutions de la politique Microsoft.
+- Microsoft EU Data Boundary for E3 tenants with EU region: correct at the time of
+  writing. Subject to changes in Microsoft's policy.
 
-- Delai de 28 jours pour les journaux Power Automate sous licence E3 : correct selon
-  la documentation Microsoft en vigueur.
+- 28-day retention for Power Automate logs under E3 licence: correct per current
+  Microsoft documentation.
 
-- La mise en garde sur le droit a l'effacement limite par l'obligation de preuve
-  vis-a-vis de l'Agentur fur Arbeit (Art. 17 Abs. 3 DSGVO) : correct et bien formule.
+- The caveat on the right to erasure limited by the documentation obligation
+  vis-a-vis the Agentur fuer Arbeit (Art. 17 Abs. 3 DSGVO): correct and well formulated.
 
-- Absence de donnees de categories particulieres au sens de l'Art. 9 DSGVO dans le
-  perimetre de la solution : confirme par l'analyse des champs des trois listes.
+- Absence of special category data within the meaning of Art. 9 DSGVO in the
+  solution scope: confirmed by analysis of the three list fields.
 
-**Risques residuels :** inchanges (cf. REV-001, REV-002).
+**Residual risks:** unchanged (cf. REV-001, REV-002).
 
-**Ajustements demandes :** 4 corrections d'encodage/grammaire appliquees directement.
-Aucun ajustement de fond requis.
+**Adjustments requested:** 4 encoding/grammar corrections applied directly.
+No substantive adjustment required.
 
 ---

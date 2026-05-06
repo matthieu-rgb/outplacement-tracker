@@ -259,6 +259,18 @@ In the absence of a Microsoft 365 Developer Program tenant during Sprint 2, Powe
 
 Practical consequence: deployment takes 1 to 2 hours rather than 30 minutes (if JSON files were importable). Functional quality is not affected.
 
+### ADR-007 : Language policy by document audience
+
+Each document is written in the language of its target audience. Client-facing documents (INSTALLATION.md, FAQ.md, PRIVACY.md, PITCH.pdf) are in German. Public-technical documents (README.md, CHANGELOG.md, ARCHITECTURE.md) are in English. Internal governance documents were initially kept in French.
+
+Partially superseded by ADR-008 on the governance document category.
+
+### ADR-008 : Governance documents moved to English
+
+All public governance documents (SCOPE.md, SPRINTS.md, BACKLOG.md, ASSUMPTIONS.md, DECISIONS.md, SECURITY_REVIEWS.md) are rewritten in English. Only client-facing documents remain in German. Internal agent definitions (.claude/agents/) remain in French (gitignored).
+
+This document (ARCHITECTURE.md) is in English pursuant to ADR-007 and ADR-008.
+
 ---
 
 ## Security and DSGVO

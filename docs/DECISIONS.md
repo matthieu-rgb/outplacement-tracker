@@ -1,259 +1,275 @@
 # DECISIONS.md
 
-Architecture Decision Records (ADR) du projet `outplacement-tracker`.
+Architecture Decision Records (ADR) for the `outplacement-tracker` project.
 
-Chaque decision structurante du projet est enregistree ici au format suivant :
+Each structural decision is recorded here in the following format:
 
-- **Contexte** : pourquoi se pose la question
-- **Alternatives** : options envisagees
-- **Decision** : choix retenu
-- **Consequences** : ce qui en decoule
+- **Context**: why the question arises
+- **Alternatives**: options considered
+- **Decision**: the chosen approach
+- **Consequences**: what follows from it
 
-Toute modification d'un ADR doit faire l'objet d'un nouvel ADR (statut "Supersede").
+Any modification to an existing ADR requires a new ADR with status "Supersedes".
 
 ---
 
-## ADR-001 : Choix de la stack technique
+## ADR-001: Technical Stack Selection
 
-**Statut** : Accepte
-**Date** : 2026-05-05
+**Status**: Accepted
+**Date**: 2026-05-05
 
-### Contexte
+### Context
 
-Plusieurs stacks sont envisageables pour delivrer un suivi mensuel automatise avec generation de PDF cumulatif :
+Several stacks were viable for delivering automated monthly tracking with cumulative PDF generation:
 
 - Microsoft 365 (Forms + SharePoint + Power Automate)
 - Google Workspace (Forms + Sheets + Apps Script)
-- Solution self-hosted (n8n + PostgreSQL)
-- Solution custom Node.js sur VPS
+- Self-hosted solution (n8n + PostgreSQL)
+- Custom Node.js solution on a VPS
 
-### Alternatives evaluees
+### Alternatives Evaluated
 
-| Stack | Cout | DSGVO | Maintenance | Adapte au contexte allemand |
+| Stack | Cost | DSGVO | Maintenance | Fit for German context |
 |---|---|---|---|---|
-| Microsoft 365 | 0 (deja paye) | Native | Quasi nulle | Tres fort |
-| Google Workspace | 0 si deja en place | OK | Faible | Moyen |
-| Self-hosted | ~30 EUR/mois | A gerer (AVV requis) | Forte | Faible |
-| Custom Node.js | Variable | A gerer | Forte | Faible |
+| Microsoft 365 | 0 (already licensed) | Native | Near zero | Very strong |
+| Google Workspace | 0 if already in place | Adequate | Low | Moderate |
+| Self-hosted | ~30 EUR/month | Must be managed (AVV required) | High | Weak |
+| Custom Node.js | Variable | Must be managed | High | Weak |
 
 ### Decision
 
-**Microsoft 365** est retenu comme stack unique.
+**Microsoft 365** is selected as the sole stack.
 
 ### Consequences
 
-- La solution s'integre dans l'ecosysteme deja deploye chez la majorite des Transfergesellschaften allemandes
-- Aucune dependance externe (tout reste dans le tenant client)
-- Conformite DSGVO acquise par construction
-- L'auteur du projet n'a aucune responsabilite d'hebergement ou de support
-- Le client peut faire evoluer la solution avec ses propres equipes IT
-- Compatible plan E3 standard, sans connecteur premium
+- The solution integrates into the ecosystem already deployed by the majority of German Transfergesellschaften.
+- No external dependencies: everything remains within the client tenant.
+- DSGVO compliance is satisfied by construction.
+- The project author bears no responsibility for hosting or support.
+- The client can extend the solution using its own IT teams.
+- Compatible with the standard E3 plan, without premium connectors.
 
 ---
 
-## ADR-002 : Signatures sur Zielvereinbarungen
+## ADR-002: Signatures on Zielvereinbarungen
 
-**Statut** : Accepte
-**Date** : 2026-05-05
+**Status**: Accepted
+**Date**: 2026-05-05
 
-### Contexte
+### Context
 
-Les Zielvereinbarungen entre participant et conseillere sont des documents avec valeur quasi-contractuelle, lies au cadre du § 111 SGB III. Leur tracabilite peut etre demandee par l'Agentur fuer Arbeit en cas de controle. Ils sont actuellement signes manuellement par les deux parties.
+Zielvereinbarungen between a Teilnehmer and a Beraterin carry near-contractual weight under the framework of Paragraph 111 SGB III. The Agentur fuer Arbeit may request evidence of these documents during an audit. They are currently signed manually by both parties.
 
-### Alternatives evaluees
+### Alternatives Evaluated
 
-1. **Signature electronique conforme eIDAS** (DocuSign, Adobe Sign, Microsoft eSign)
-2. **Signature electronique simple** dans Power Automate (champs texte)
-3. **Signature manuscrite preservee** : PDF genere avec emplacements vides, imprime, signe, scanne
+1. **eIDAS-compliant electronic signature** (DocuSign, Adobe Sign, Microsoft eSign)
+2. **Simple electronic signature** within Power Automate (text fields)
+3. **Preserved handwritten signature**: the generated PDF includes blank signature fields, is printed, signed physically by both parties, scanned, and stored in SharePoint if the organisation chooses to do so
 
 ### Decision
 
-**Option 3** : signature manuscrite preservee.
+**Option 3**: preserved handwritten signature.
 
-Le PDF cumulatif contient des emplacements de signature vides en bas de chaque Zielvereinbarung. Le document est imprime au RDV, signe physiquement par les deux parties, scanne et reverse dans SharePoint si la societe le souhaite.
+The cumulative PDF includes blank signature fields at the bottom of each Zielvereinbarung. The document is printed at the appointment, signed by both parties, scanned, and uploaded to SharePoint at the client's discretion.
 
 ### Consequences
 
-- Aucune licence premium requise (pas de DocuSign, pas de Microsoft eSign payant)
-- Conformite legale preservee (signatures manuscrites legalement suffisantes pour ce type de document)
-- Charge minimale au RDV (impression et scan, deja maitrises par toute societe)
-- Latitude pour la societe de basculer vers eSign en v0.2 si elle le souhaite
-- Ajoute dans `BACKLOG.md` : module eSign optionnel pour v0.2+
+- No premium licence required (no DocuSign, no paid Microsoft eSign).
+- Legal compliance preserved: handwritten signatures are legally sufficient for this document type.
+- Minimal burden at the appointment: printing and scanning are already routine in any organisation.
+- The client retains the option to switch to eSign in v0.2 if desired.
+- Added to `BACKLOG.md`: optional eSign module for v0.2 and later.
 
 ---
 
-## ADR-003 : Approche du suivi mensuel
+## ADR-003: Monthly Reporting Approach
 
-**Statut** : Accepte
-**Date** : 2026-05-05
+**Status**: Accepted
+**Date**: 2026-05-05
 
-### Contexte
+### Context
 
-Plusieurs approches du suivi mensuel ont ete envisagees, depuis le tracking detaille de chaque candidature et contact jusqu'au bilan declaratif libre.
+Several approaches to monthly reporting were considered, ranging from detailed tracking of every application and contact to a free-form declarative summary.
 
-La Transfer Mappe d'origine precise explicitement que le document appartient au participant et est un outil a son service, pas un outil de surveillance.
+The original Transfer Mappe explicitly states that the document belongs to the Teilnehmer and is a tool in their service, not a surveillance instrument.
 
-### Alternatives evaluees
+### Alternatives Evaluated
 
-1. **Saisie continue obligatoire** : le participant saisit chaque candidature et chaque contact au fil de l'eau via 3 formulaires distincts
-2. **Formulaire mensuel structure detaille** : 15 a 20 champs obligatoires couvrant toutes les dimensions
-3. **Bilan mensuel declaratif libre** : 6 champs, 1 seul obligatoire, le participant decide de ce qu'il partage
+1. **Mandatory continuous entry**: the Teilnehmer logs each application and each contact in real time via three separate forms.
+2. **Detailed structured monthly form**: 15 to 20 mandatory fields covering all dimensions.
+3. **Free-form declarative monthly review**: 6 fields, only one mandatory; the Teilnehmer decides what to share.
 
 ### Decision
 
-**Option 3** : bilan mensuel declaratif libre.
+**Option 3**: free-form declarative monthly review.
 
-Six champs dans le formulaire mensuel (bilan general, statut des objectifs, ce qui a bien marche, soutien necessaire, themes pour le RDV, autres remarques). Seul le bilan general est obligatoire. Tous les autres sont optionnels.
+Six fields in the monthly form (general summary, objective status, what went well, support needed, topics for the next appointment, other remarks). Only the general summary is mandatory. All other fields are optional.
 
 ### Consequences
 
-- Architecture technique simplifiee (une seule liste SharePoint pour les bilans, au lieu de quatre listes pour le tracking detaille)
-- Mise en place plus rapide
-- Conformite RGPD/DSGVO renforcee (minimisation des donnees collectees)
-- Respect de la dimension humaine de la relation participant-conseillere
-- La conseillere garde sa responsabilite d'orienter, pas de controler
-- Ajoute dans `BACKLOG.md` : module tracker personnel optionnel et opt-in pour v0.2
+- Simplified technical architecture: one SharePoint list for reviews instead of four lists for detailed tracking.
+- Faster deployment.
+- Stronger DSGVO compliance through data minimisation.
+- Respect for the human dimension of the Teilnehmer-Beraterin relationship.
+- The Beraterin retains responsibility for guiding, not monitoring.
+- Added to `BACKLOG.md`: optional opt-in personal tracker module for v0.2.
 
 ---
 
-## ADR-004 : Duree maximale du parcours
+## ADR-004: Maximum Programme Duration
 
-**Statut** : Accepte
-**Date** : 2026-05-05
+**Status**: Accepted
+**Date**: 2026-05-05
 
-### Contexte
+### Context
 
-Le PDF cumulatif empile les bilans mensuels chronologiquement. Le template Word doit dimensionner le nombre de sections mensuelles a empiler.
+The cumulative PDF stacks monthly reviews in chronological order. The Word template must account for the maximum number of monthly sections to be generated.
 
 ### Decision
 
-**12 mois** maximum, conforme au cadre legal allemand (§ 111 SGB III qui plafonne la duree d'une Transfergesellschaft a 12 mois).
+**12 months** maximum, consistent with the German legal framework (Paragraph 111 SGB III caps the duration of a Transfergesellschaft at 12 months).
 
 ### Consequences
 
-- Le template Word inclut jusqu'a 12 sections mensuelles avec un mecanisme de boucle Power Automate
-- Si une societe gere des cas plus longs (rare), il suffit d'ajouter des sections au template
-- Pas de limite technique cote Power Automate ou SharePoint (volume largement compatible)
+- The Word template includes up to 12 monthly sections, statically embedded in the .docx file (one section per possible month). Power Automate injects an empty string for months without a review. Note: "Repeating Section" Content Controls that would allow a dynamic loop are not supported by the Power Automate "Populate a Microsoft Word template" action.
+- If an organisation handles longer cases (rare), adding sections to the template is sufficient.
+- No technical limit on the Power Automate or SharePoint side: volume is well within platform capacity.
 
 ---
 
-## ADR-005 : Remplacement des .docx binaires par des specs de construction en Sprint 1
+## ADR-005: Replacement of Binary .docx Files with Construction Specs in Sprint 1
 
-**Statut** : Accepte
-**Date** : 2026-05-05
+**Status**: Accepted
+**Date**: 2026-05-05
 
-### Contexte
+### Context
 
-Le livrable Sprint 1 prevoyait la livraison de deux fichiers .docx avec Content Controls (`transfer_mappe_template_de.docx` et `transfer_mappe_template_en.docx`). Un fichier .docx contenant des Content Controls Word est un format binaire Office Open XML. Il ne peut pas etre produit correctement par un agent sans acces a un runtime Microsoft Word ou a une librairie python-docx specialisee.
+The Sprint 1 deliverable included two .docx files with Word Content Controls (`transfer_mappe_template_de.docx` and `transfer_mappe_template_en.docx`). A .docx file containing Word Content Controls is a binary Office Open XML format. It cannot be produced correctly by an agent without access to a Microsoft Word runtime or a specialised python-docx library.
 
-### Alternatives evaluees
+### Alternatives Evaluated
 
-1. Generer un .docx minimal via python-docx (sans Content Controls valides) - risque de casser le connecteur Power Automate
-2. Livrer des specs Markdown exhaustives documentant exactement la structure, et reporter la construction du .docx au Sprint 2 dans un vrai tenant
-3. Livrer un .docx vide sans Content Controls comme placeholder
+1. Generate a minimal .docx via python-docx (without valid Content Controls) -- risk of breaking the Power Automate connector.
+2. Deliver exhaustive Markdown specifications documenting the exact structure, and defer .docx construction to Sprint 2 within a real tenant.
+3. Deliver an empty .docx without Content Controls as a placeholder.
 
 ### Decision
 
-**Option 2** retenue : les specs de construction `.md` sont livrees en Sprint 1. La construction des fichiers .docx reels, avec leurs Content Controls valides, est une tache du debut du Sprint 2 (prerequis avant de pouvoir tester les Flows Power Automate).
+**Option 2**: construction specs in `.md` format are delivered in Sprint 1. The construction of the actual .docx files, with valid Content Controls, is a Sprint 2 task (prerequisite before Power Automate Flows can be tested).
 
 ### Consequences
 
-- Les specs `templates/word/transfer_mappe_template_de_spec.md` et `transfer_mappe_template_en_spec.md` documentent exactement les 118 Content Controls, leurs Tag values, leur structure XML et les instructions de construction Word pas-a-pas
-- La construction des .docx est estimee a 30 minutes par template pour un administrateur M365 competent
-- Aucune perte de qualite sur les livrables : les specs sont plus utilisables que des .docx mal formes
-- Le Sprint 2 demarre par la construction et validation des .docx dans un tenant Developer Program
+- The specs `templates/word/transfer_mappe_template_de_spec.md` and `transfer_mappe_template_en_spec.md` document all 118 Content Controls exactly: their Tag values, XML structure, and step-by-step Word construction instructions.
+- Construction of each .docx is estimated at 30 minutes for a competent M365 administrator.
+- No loss of deliverable quality: the specs are more usable than malformed .docx files.
+- Sprint 2 begins with the construction and validation of the .docx files in a Developer Program tenant.
 
 ---
 
-## ADR-006 : Livraison Sprint 2 en mode blueprint sans tenant Microsoft 365
+## ADR-006: Sprint 2 Delivery in Blueprint Mode Without a Microsoft 365 Tenant
 
-**Statut** : Accepte
-**Date** : 2026-05-05
+**Status**: Accepted
+**Date**: 2026-05-05
 
-### Contexte
+### Context
 
-Aucun tenant Microsoft 365 Developer Program n'etait disponible au moment du Sprint 2.
-Les options explorees (Visual Studio Dev Essentials, trial Business Basic) n'ont pas
-abouti dans le delai du sprint.
+No Microsoft 365 Developer Program tenant was available during Sprint 2. Options explored (Visual Studio Dev Essentials, Business Basic trial) did not materialise within the sprint timeframe.
 
-### Alternatives evaluees
+### Alternatives Evaluated
 
-1. Bloquer le sprint jusqu'a obtention d'un tenant (duree indefinie)
-2. Produire des exports JSON "simules" manuellement (risque d'erreurs non detectees,
-   et les JSON Power Automate sont difficilement lisibles sans interface graphique)
-3. Livrer un "blueprint" : implementation guides detailles en Markdown + assets
-   construisables et testes localement
+1. Block the sprint until a tenant is obtained (indefinite delay).
+2. Produce manually simulated JSON exports (risk of undetected errors; Power Automate JSON is difficult to review without a graphical interface).
+3. Deliver a "blueprint": detailed implementation guides in Markdown, plus assets that can be constructed and validated locally.
 
 ### Decision
 
-**Option 3** : livraison en mode blueprint.
+**Option 3**: delivery in blueprint mode.
 
-Les Flows Power Automate et Microsoft Forms ne sont pas exportes en JSON mais
-documentes comme "implementation guides" : des documents Markdown suffisamment
-precis pour qu'un administrateur M365 puisse reconstruire les Flows et Forms
-a partir de zero, action par action.
+Power Automate Flows and Microsoft Forms are not exported as JSON but documented as implementation guides -- Markdown documents precise enough for an M365 administrator to reconstruct Flows and Forms from scratch, action by action.
 
-Les templates Word sont construits par script Python (python-docx) et valides
-localement (118 Content Controls verifies par assertion). Les sample PDFs sont
-generes en local via LibreOffice headless.
+Word templates are built via a Python script (python-docx) and validated locally (118 Content Controls verified by assertion). Sample PDFs are generated locally via LibreOffice headless.
 
 ### Consequences
 
-- Le kit est entierement livrable sans tenant
-- Le deploiement sur tenant reel prend 2 a 4 heures au lieu de 30 minutes
-  (si les JSON etaient importables directement)
-- Les implementation guides sont verifiables de facon independante : chaque action
-  Power Automate est documentee avec ses parametres et expressions exactes
-- Le critere de "done" du Sprint 2 est ajuste : "implementation guides valides et
-  coherents entre eux" plutot que "tests bout-en-bout dans tenant Dev"
-- Si un tenant devient disponible apres livraison, les guides peuvent etre implementes
-  puis exportes en JSON pour une future v0.1.1
-- Aucune perte de qualite metier : les specs de reference (sharepoint_schema.md,
-  word_template_structure.md, forms_questions_*.md, email_templates.md) restent
-  la source de verite, et les guides blueprint en derivent directement
+- The kit is fully deliverable without a tenant.
+- Deployment on a real tenant takes 1 to 2 hours instead of 30 minutes (had the JSON been directly importable).
+- Implementation guides are independently verifiable: each Power Automate action is documented with its exact parameters and expressions.
+- The Sprint 2 "done" criterion is adjusted to: "implementation guides validated and internally consistent", rather than "end-to-end tests in a Dev tenant".
+- If a tenant becomes available after delivery, the guides can be implemented and then exported as JSON for a future v0.1.1.
+- No loss of domain quality: the reference specs (`sharepoint_schema.md`, `word_template_structure.md`, `forms_questions_*.md`, `email_templates.md`) remain the source of truth, and the blueprint guides are derived directly from them.
 
 ---
 
-## ADR-007 : Politique de langue par document
+## ADR-007: Language Policy by Document
 
-**Statut** : Accepte
-**Date** : 2026-05-06
+**Status**: Accepted -- partially superseded by ADR-008 (governance documents)
+**Date**: 2026-05-06
 
-### Contexte
+### Context
 
-Les documents du projet ont ete produits sans politique de langue explicite. Le resultat
-est un melange inconsistant : PITCH.pdf en partie francais alors qu'il vise des decideurs
-allemands, README.md en francais alors qu'il vise des visiteurs GitHub internationaux,
-INSTALLATION.md en francais alors qu'il vise un administrateur M365 en Allemagne.
+Project documents had been produced without an explicit language policy. The result was an inconsistent mix: PITCH.pdf partly in French despite targeting German decision-makers; README.md in French despite targeting international GitHub visitors; INSTALLATION.md in French despite targeting an M365 administrator in Germany.
 
-La politique de langue doit etre derivee du public cible de chaque document, pas d'une
-preference de redaction de l'auteur.
+Language policy must be derived from the intended audience of each document, not from the author's drafting preference.
 
 ### Decision
 
-Chaque document est redige dans la langue de son public cible.
+Each document is written in the language of its target audience.
 
-| Document | Public cible | Langue |
+| Document | Target audience | Language |
 |---|---|---|
-| README.md | Visiteurs GitHub (international) | English |
-| CHANGELOG.md | Developpeurs (international) | English |
-| docs/ARCHITECTURE.md | Architectes et decideurs IT (international) | English |
-| docs/INSTALLATION.md | Administrateur M365 du client (Allemagne) | Deutsch |
-| docs/FAQ.md | Conseillers et equipe IT du client (Allemagne) | Deutsch |
-| docs/PRIVACY.md | DPO et service juridique du client (Allemagne) | Deutsch |
-| docs/PITCH.pdf | Decideurs de la societe de reclassement (Allemagne) | Deutsch |
-| SCOPE.md, SPRINTS.md, BACKLOG.md, ASSUMPTIONS.md, DECISIONS.md, docs/SECURITY_REVIEWS.md | Auteur (usage interne) | Francais (inchange) |
-| .claude/agents/* | Auteur (usage interne) | Francais (inchange) |
+| README.md | GitHub visitors (international) | English |
+| CHANGELOG.md | Developers (international) | English |
+| docs/ARCHITECTURE.md | IT architects and decision-makers (international) | English |
+| docs/INSTALLATION.md | Client M365 administrator (Germany) | Deutsch |
+| docs/FAQ.md | Client advisors and IT team (Germany) | Deutsch |
+| docs/PRIVACY.md | Client DPO and legal department (Germany) | Deutsch |
+| docs/PITCH.pdf | Decision-makers at the outplacement firm (Germany) | Deutsch |
+| SCOPE.md, SPRINTS.md, BACKLOG.md, ASSUMPTIONS.md, DECISIONS.md, docs/SECURITY_REVIEWS.md | Author (internal use) | French (unchanged) |
+| .claude/agents/* | Author (internal use) | French (unchanged) |
 
 ### Consequences
 
-- Les documents en allemand utilisent les umlauts corrects (u, o, a, ss) et le
-  vocabulaire metier du secteur (Transfergesellschaft, Zielvereinbarung, Beraterin,
-  Teilnehmer, Bericht)
-- Les documents en anglais utilisent un anglais professionnel sobre, sans marketing
-- Les documents internes (auteur) restent en francais, inchanges
-- Les specs techniques dans specs/ et les implementation guides dans power_automate/
-  et forms/ ne sont pas dans le perimetre de cette correction : leur public cible est
-  l'auteur, leur langue est indifferente
-- ADR-007 s'applique retroactivement : les documents existants non conformes sont
-  reecrits
+- German documents use correct umlauts and domain vocabulary (Transfergesellschaft, Zielvereinbarung, Beraterin, Teilnehmer, Bericht).
+- English documents use sober professional British English, without marketing language.
+- Internal documents (author use) remain in French, unchanged.
+- Technical specs in `specs/` and implementation guides in `power_automate/` and `forms/` are outside the scope of this decision: their target audience is the author and their language is discretionary.
+- ADR-007 applies retroactively: non-compliant existing documents are rewritten.
+
+---
+
+## ADR-008: Final Language Policy
+
+**Status**: Accepted -- supersedes ADR-007 on governance document language
+**Date**: 2026-05-06
+
+### Context
+
+ADR-007 classified governance documents (SCOPE, SPRINTS, BACKLOG, ASSUMPTIONS, DECISIONS, SECURITY_REVIEWS) as internal-author documents and kept them in French. This is inconsistent for an open-source repository: GitHub visitors cannot read French by default, and the target market (Germany) does not speak French either. Public governance documents belong to the repository audience, not the author.
+
+### Decision
+
+All public governance documents move to English. Only client-facing documents remain in German.
+
+| Document | Audience | Language |
+|---|---|---|
+| README.md | GitHub visitors (international) | English |
+| CHANGELOG.md | International developers | English |
+| SCOPE.md | Project governance | English |
+| SPRINTS.md | Project governance | English |
+| BACKLOG.md | Project governance | English |
+| docs/ARCHITECTURE.md | Technical reviewers (international) | English |
+| docs/ASSUMPTIONS.md | Project governance | English |
+| docs/DECISIONS.md | Project governance | English |
+| docs/SECURITY_REVIEWS.md | Project governance | English |
+| docs/INSTALLATION.md | M365 admin of the client | Deutsch |
+| docs/FAQ.md | Client advisors and IT | Deutsch |
+| docs/PRIVACY.md | Client DPO / legal | Deutsch |
+| docs/PITCH.pdf | Decision-makers at 10 k Beratung | Deutsch |
+| .claude/agents/* | Internal (gitignored, private) | French |
+
+### Consequences
+
+- All governance documents are rewritten in British English (not translated literally: clean reformulation).
+- German domain vocabulary is preserved as-is throughout (Transfergesellschaft, Zielvereinbarung, etc.).
+- Client-facing documents (INSTALLATION.md, FAQ.md, PRIVACY.md, PITCH.pdf) remain in German unchanged.
+- Internal Claude agent definitions remain in French (gitignored).
+- ADR-007 is partially superseded on the governance document category. Its decisions on client-facing (German) and public-technical (English) documents remain valid.

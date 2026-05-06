@@ -1,126 +1,126 @@
 # SCOPE.md
 
-Document de reference pour le perimetre du projet `outplacement-tracker` v0.1.
+Reference document for the scope of the `outplacement-tracker` v0.1 project.
 
-**Tout ce qui n'est pas dans ce document est OUT.**
+**Everything not listed in this document is OUT.**
 
-Toute proposition d'evolution ou d'idee qui sort de ce perimetre va dans `BACKLOG.md`, jamais dans le code de la v0.1.
+Any proposed change or feature outside this scope goes into `BACKLOG.md`, never into v0.1 code.
 
 ---
 
-## 1. Objectif du projet
+## 1. Project objective
 
-Livrer un **kit installable** permettant a une societe de reclassement allemande (Transfergesellschaft) de digitaliser le suivi mensuel de ses participants, en s'appuyant exclusivement sur Microsoft 365.
+Deliver an installable kit that enables a German Transfergesellschaft to digitalise the monthly monitoring of its Teilnehmer, using Microsoft 365 exclusively.
 
-Le kit est publie en open source sur GitHub. La societe de reclassement decide librement de l'utiliser ou non. L'auteur ne fournit ni service d'hebergement ni support technique apres livraison.
+The kit is published as open source on GitHub. The Transfergesellschaft decides freely whether to use it. The author provides neither hosting nor technical support after delivery.
 
-## 2. Utilisateurs cibles
+## 2. Target users
 
-- **Le participant** : personne suivie en Transfergesellschaft. Recoit un mail mensuel, remplit un formulaire en 5 minutes.
-- **La conseillere (Beraterin)** : recoit un PDF cumulatif le matin du rendez-vous mensuel. N'a aucun outil specifique a installer.
-- **L'administrateur Microsoft 365 du client** : deploie le kit en suivant la documentation.
+- **The Teilnehmer**: the person enrolled in the Transfergesellschaft. Receives a monthly email and fills in a form in approximately five minutes.
+- **The Beraterin**: receives a cumulative PDF on the morning of the monthly appointment. No specific tooling to install.
+- **The client's Microsoft 365 administrator**: deploys the kit by following the documentation.
 
-## 3. Fonctionnalites IN scope
+## 3. Features IN scope
 
-### 3.1 Onboarding du participant (optionnel)
+### 3.1 Teilnehmer onboarding (optional)
 
-Formulaire Microsoft Forms (versions DE et EN) permettant au participant de saisir, s'il le souhaite, un profil de carriere comprenant :
+A Microsoft Forms form (DE and EN versions) allowing the Teilnehmer to enter, if they wish, a career profile comprising:
 
 - Berufliche Zielsetzung (Plan A / Plan B)
-- Marketingplan (positionnement, competences cles)
-- Zielmarkt (region, branche, taille d'entreprise)
+- Marketingplan (positioning, key competencies)
+- Zielmarkt (region, sector, company size)
 
-Ce formulaire est rempli **une fois** au debut du parcours et reste modifiable. Il n'est pas obligatoire.
+The Teilnehmer completes this form **once** at the start of the programme; it remains editable. It is not mandatory.
 
-### 3.2 Bilan mensuel
+### 3.2 Monthly review
 
-Formulaire Microsoft Forms court (versions DE et EN) envoye automatiquement par mail au participant **5 jours avant chaque rendez-vous**. Six champs, un seul obligatoire :
+A short Microsoft Forms form (DE and EN versions) sent automatically by email to the Teilnehmer **5 days before each appointment**. Six fields, one mandatory:
 
-1. Bilan general du mois (texte libre, **obligatoire**)
-2. Statut des objectifs precedents (choix : vollstaendig erreicht / teilweise erreicht / nicht erreicht / noch nicht relevant + texte libre)
-3. Was lief gut (texte libre, optionnel)
-4. Wo brauche ich Unterstuetzung (texte libre, optionnel)
-5. Themen fuer den naechsten Termin (texte libre, optionnel)
-6. Sonstige Anmerkungen (texte libre, optionnel)
+1. General review of the month (free text, **mandatory**)
+2. Status of previous objectives (choice: vollstaendig erreicht / teilweise erreicht / nicht erreicht / noch nicht relevant + free text)
+3. Was lief gut (free text, optional)
+4. Wo brauche ich Unterstuetzung (free text, optional)
+5. Themen fuer den naechsten Termin (free text, optional)
+6. Sonstige Anmerkungen (free text, optional)
 
-Le participant decide de ce qu'il partage.
+The Teilnehmer decides what they share.
 
-### 3.3 Generation du PDF cumulatif
+### 3.3 Cumulative PDF generation
 
-Power Automate Flow declenche **le matin du jour du RDV** :
+A Power Automate Flow triggered **on the morning of the appointment day**:
 
-- Recupere les donnees du participant (profil + tous les bilans mensuels precedents)
-- Remplit un template Word avec content controls
-- Convertit en PDF via l'action native Power Automate
-- Envoie le PDF par mail a la conseillere
-- Sauvegarde une copie dans SharePoint dans le dossier du participant
+- Retrieves the Teilnehmer data (profile + all previous monthly reviews)
+- Populates a Word template using content controls
+- Converts to PDF via the native Power Automate action
+- Sends the PDF by email to the Beraterin
+- Saves a copy in SharePoint in the Teilnehmer's folder
 
-Le PDF empile les bilans mensuels dans l'ordre chronologique. Il contient des emplacements de signature vides pour la Zielvereinbarung (signatures preservees en mode manuscrit, voir `DECISIONS.md` ADR-002).
+The PDF stacks monthly reviews in chronological order. It contains blank signature slots for the Zielvereinbarung (signatures retained in handwritten form, see `DECISIONS.md` ADR-002).
 
-### 3.4 Bilingue DE/EN
+### 3.4 Bilingual DE/EN
 
-L'ensemble de la solution est disponible en **deux versions distinctes** :
+The entire solution is available in **two distinct versions**:
 
-- Microsoft Forms DE et Forms EN (2 formulaires d'onboarding, 2 formulaires de bilan)
-- Templates d'email DE et EN (invitation J-5 et notification conseillere J)
-- Templates Word de PDF cumulatif DE et EN
+- Microsoft Forms DE and Forms EN (2 onboarding forms, 2 monthly review forms)
+- Email templates DE and EN (J-5 invitation and Beraterin notification J)
+- Cumulative PDF Word templates DE and EN
 
-Le choix de la langue est determine par un champ `Sprache` de la liste SharePoint Participants.
+The language is determined by a `Sprache` field in the SharePoint Participants list.
 
-### 3.5 Livrables documentaires
+### 3.5 Documentary deliverables
 
-- `README.md` (pitch GitHub)
-- `docs/PITCH.pdf` (pitch decisionnel pour 10 k Beratung et equivalents)
-- `docs/INSTALLATION.md` (guide pas-a-pas pour l'administrateur M365)
-- `docs/ARCHITECTURE.md` (justification technique des choix)
-- `docs/PRIVACY.md` (note RGPD/DSGVO, modele de responsabilite)
+- `README.md` (GitHub pitch)
+- `docs/PITCH.pdf` (decision-making pitch for 10 k Beratung and equivalent organisations)
+- `docs/INSTALLATION.md` (step-by-step guide for the M365 administrator)
+- `docs/ARCHITECTURE.md` (technical justification of design choices)
+- `docs/PRIVACY.md` (DSGVO/BDSG note, responsibility model)
 - `docs/FAQ.md`
 
-## 4. Fonctionnalites OUT scope (vont dans BACKLOG.md)
+## 4. Features OUT scope (go into BACKLOG.md)
 
-- Saisie continue des candidatures et contacts (rejetee, voir `DECISIONS.md` ADR-003)
-- Signature electronique conforme eIDAS
-- Reporting agrege multi-participants pour la conseillere ou la direction
-- Numerisation de la section "Qualifikationen und Zeugnisse"
-- Note de frais (Rechnung an die Transfer GmbH)
-- Notifications push, application mobile, integration Teams
-- Versioning ou historisation des modifications du profil
-- Gestion multi-conseilleres avec affectation dynamique
-- Tracker personnel optionnel de candidatures (envisage pour v0.2)
+- Continuous entry of applications and contacts (rejected, see `DECISIONS.md` ADR-003)
+- eIDAS-compliant electronic signature
+- Aggregated multi-Teilnehmer reporting for the Beraterin or management
+- Digitalisation of the "Qualifikationen und Zeugnisse" section
+- Expense claims (Rechnung an die Transfer GmbH)
+- Push notifications, mobile application, Teams integration
+- Versioning or change history for the profile
+- Multi-Berater management with dynamic assignment
+- Optional personal application tracker (considered for v0.2)
 
-## 5. Contraintes techniques
+## 5. Technical constraints
 
-- Compatible plan Microsoft 365 E3 standard (pas de Power Automate Premium, pas de Dataverse, pas d'AI Builder)
-- Donnees hebergees dans le tenant du client uniquement
-- Compatible avec un tenant **EU Data Boundary** Microsoft 365
-- Volume cible : jusqu'a 2 000 participants suivis simultanement, soit ~100 envois par jour ouvre
+- Compatible with a standard Microsoft 365 E3 plan (no Power Automate Premium, no Dataverse, no AI Builder)
+- Data hosted exclusively in the client's tenant
+- Compatible with a Microsoft 365 **EU Data Boundary** tenant
+- Target volume: up to 2,000 Teilnehmer tracked simultaneously, approximately 100 sends per working day
 
-## 6. Hypotheses retenues
+## 6. Retained assumptions
 
-Voir `docs/ASSUMPTIONS.md` pour le detail. En synthese :
+See `docs/ASSUMPTIONS.md` for detail. In summary:
 
-- Duree maximale d'un parcours : 12 mois (§ 111 SGB III)
-- Signatures sur Zielvereinbarung : preservees en mode manuscrit
-- Suivi mensuel : declaratif libre, pas de tracking d'activites detaillees
+- Maximum programme duration: 12 months (SS 111 SGB III)
+- Signatures on Zielvereinbarungen: retained in handwritten form
+- Monthly monitoring: voluntary and declarative, no detailed activity tracking
 
-## 7. Criteres de "done"
+## 7. Done criteria
 
-La v0.1 est consideree comme livree lorsque :
+v0.1 is considered delivered when:
 
-- [ ] Le repo GitHub contient l'integralite des fichiers listes dans la section 3.5
-- [ ] Le PDF de pitch est genere et integre dans `docs/`
-- [ ] Les implementation guides de la solution (Flows, Forms) sont valides et coherents avec les specs SharePoint et Word (ADR-006 : critere ajuste, test tenant Dev reporte post-livraison)
-- [ ] Au moins 5 sample PDFs de sortie sont disponibles dans `samples/`
-- [ ] Un Loom ou GIF de demonstration est integre au README ou au pitch
-- [ ] Le tag `v0.1.0` est cree sur le repo GitHub
-- [ ] Le `CHANGELOG.md` mentionne la release initiale
+- [ ] The GitHub repository contains all files listed in section 3.5
+- [ ] The pitch PDF is generated and integrated into `docs/`
+- [ ] The solution implementation guides (Flows, Forms) are valid and consistent with the SharePoint and Word specifications (ADR-006: adjusted criterion, Dev tenant test deferred post-delivery)
+- [ ] At least 5 sample output PDFs are available in `samples/`
+- [ ] A Loom or GIF demonstration is integrated into the README or the pitch
+- [ ] The tag `v0.1.0` is created on the GitHub repository
+- [ ] `CHANGELOG.md` mentions the initial release
 
-## 8. Engagement de l'auteur
+## 8. Author commitments
 
-- L'auteur ne fournit aucun service d'hebergement
-- L'auteur ne fournit aucun support technique apres livraison
-- L'auteur ne traite aucune donnee personnelle de participants
-- L'auteur ne signe aucun AVV (Auftragsverarbeitungsvertrag)
-- Toute utilisation est sous la responsabilite du deployeur final
+- The author provides no hosting service
+- The author provides no technical support after delivery
+- The author processes no personal data belonging to Teilnehmer
+- The author signs no Auftragsverarbeitungsvertrag
+- All use is the sole responsibility of the final deploying organisation
 
-Ce projet est un **don a la communaute**, pas une prestation.
+This project is a **contribution to the community**, not a commercial service.
